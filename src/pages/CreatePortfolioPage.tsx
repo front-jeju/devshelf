@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FloatingParticles } from '../components/FloatingParticles';
@@ -167,6 +167,12 @@ export function CreatePortfolioPage() {
   const [touched, setTouched] = useState({ name: false, role: false, tagline: false, liveDemo: false });
   const [isLoading, setIsLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [iframeLoading, setIframeLoading] = useState(false);
+
+  useEffect(() => {
+    setShowPreview(false);
+  }, [liveDemo]);
 
   const selectedTheme = BOOK_THEMES[themeIdx];
 
@@ -450,6 +456,162 @@ export function CreatePortfolioPage() {
                       onBlurCapture={(e) => { e.target.style.borderColor = touched.liveDemo && errors.liveDemo ? 'rgba(248,113,113,0.5)' : 'rgba(212,175,55,0.2)'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
                     />
                     <FieldError show={touched.liveDemo && !!errors.liveDemo} message={errors.liveDemo} />
+
+                    {/* 미리보기 토글 버튼 */}
+                    {liveDemo && /^https?:\/\/.+/.test(liveDemo) && !errors.liveDemo && (
+                      <motion.button
+                        type="button"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          if (!showPreview) setIframeLoading(true);
+                          setShowPreview((v) => !v);
+                        }}
+                        style={{
+                          marginTop: 8,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          fontFamily: "'Cinzel', serif",
+                          fontSize: '0.65rem',
+                          letterSpacing: '0.12em',
+                          color: showPreview ? '#f0c040' : 'rgba(200,176,138,0.6)',
+                          background: 'transparent',
+                          border: `1px solid ${showPreview ? 'rgba(212,175,55,0.4)' : 'rgba(212,175,55,0.15)'}`,
+                          borderRadius: 2,
+                          padding: '5px 12px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                        }}
+                      >
+                        <span style={{ fontSize: '0.7rem' }}>{showPreview ? '▲' : '▼'}</span>
+                        {showPreview ? 'PREVIEW CLOSE' : 'PREVIEW'}
+                      </motion.button>
+                    )}
+
+                    {/* iframe 미리보기 */}
+                    <AnimatePresence>
+                      {showPreview && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                          style={{ overflow: 'hidden', marginTop: 10 }}
+                        >
+                          <div
+                            style={{
+                              position: 'relative',
+                              border: '1px solid rgba(212,175,55,0.2)',
+                              borderRadius: 4,
+                              overflow: 'hidden',
+                              background: '#0a0500',
+                            }}
+                          >
+                            {/* 브라우저 크롬 바 */}
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                                padding: '7px 12px',
+                                background: 'rgba(212,175,55,0.06)',
+                                borderBottom: '1px solid rgba(212,175,55,0.15)',
+                              }}
+                            >
+                              <div style={{ display: 'flex', gap: 5 }}>
+                                {['#f87171', '#fb923c', '#34d399'].map((c) => (
+                                  <div key={c} style={{ width: 8, height: 8, borderRadius: '50%', background: c, opacity: 0.6 }} />
+                                ))}
+                              </div>
+                              <div
+                                style={{
+                                  flex: 1,
+                                  fontFamily: "'EB Garamond', serif",
+                                  fontSize: '0.72rem',
+                                  color: 'rgba(200,176,138,0.4)',
+                                  fontStyle: 'italic',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {liveDemo}
+                              </div>
+                              <a
+                                href={liveDemo}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  fontFamily: "'Cinzel', serif",
+                                  fontSize: '0.6rem',
+                                  letterSpacing: '0.08em',
+                                  color: 'rgba(212,175,55,0.5)',
+                                  textDecoration: 'none',
+                                  flexShrink: 0,
+                                }}
+                              >
+                                ↗ 열기
+                              </a>
+                            </div>
+
+                            {/* 로딩 오버레이 */}
+                            {iframeLoading && (
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  inset: '32px 0 0 0',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  background: '#0a0500',
+                                  zIndex: 1,
+                                  gap: 10,
+                                }}
+                              >
+                                <motion.div
+                                  animate={{ rotate: 360 }}
+                                  transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
+                                  style={{ width: 24, height: 24, border: '2px solid rgba(212,175,55,0.15)', borderTopColor: '#d4af37', borderRadius: '50%' }}
+                                />
+                                <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.4)', fontStyle: 'italic' }}>
+                                  불러오는 중...
+                                </span>
+                              </div>
+                            )}
+
+                            <iframe
+                              src={liveDemo}
+                              title="포트폴리오 미리보기"
+                              sandbox="allow-scripts allow-same-origin allow-forms"
+                              onLoad={() => setIframeLoading(false)}
+                              onError={() => setIframeLoading(false)}
+                              style={{
+                                display: 'block',
+                                width: '100%',
+                                height: 360,
+                                border: 'none',
+                                background: '#fff',
+                              }}
+                            />
+                          </div>
+
+                          {/* 안내 문구 */}
+                          <p
+                            style={{
+                              marginTop: 6,
+                              fontFamily: "'EB Garamond', serif",
+                              fontSize: '0.75rem',
+                              color: 'rgba(200,176,138,0.3)',
+                              fontStyle: 'italic',
+                            }}
+                          >
+                            * 일부 사이트는 보안 정책(X-Frame-Options)으로 인해 미리보기가 제한될 수 있습니다.
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                   <div>
                     <label style={labelStyle}>GitHub URL <span style={{ fontFamily: "'EB Garamond', serif", letterSpacing: 0, fontStyle: 'italic', color: 'rgba(200,176,138,0.4)' }}>(선택)</span></label>
