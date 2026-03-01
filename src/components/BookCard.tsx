@@ -23,6 +23,8 @@ const techColors: Record<string, string> = {
 export function BookCard({ portfolio, isFiltered }: BookCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
+  const [showIframe, setShowIframe] = useState(false);
+  const [iframeLoading, setIframeLoading] = useState(false);
 
   return (
     <>
@@ -312,7 +314,7 @@ export function BookCard({ portfolio, isFiltered }: BookCardProps) {
               padding: '20px',
               backdropFilter: 'blur(8px)',
             }}
-            onClick={() => setShowDetail(false)}
+            onClick={() => { setShowDetail(false); setShowIframe(false); }}
           >
             <motion.div
               initial={{ opacity: 0, y: 40, scale: 0.9 }}
@@ -322,7 +324,7 @@ export function BookCard({ portfolio, isFiltered }: BookCardProps) {
               onClick={(e) => e.stopPropagation()}
               style={{
                 width: '100%',
-                maxWidth: 640,
+                maxWidth: 720,
                 background: 'linear-gradient(135deg, #1e0f00 0%, #120800 60%, #0a0500 100%)',
                 border: `1px solid ${portfolio.accentColor}30`,
                 borderRadius: 6,
@@ -369,7 +371,7 @@ export function BookCard({ portfolio, isFiltered }: BookCardProps) {
                   </div>
 
                   <button
-                    onClick={() => setShowDetail(false)}
+                    onClick={() => { setShowDetail(false); setShowIframe(false); }}
                     style={{
                       fontFamily: "'Cinzel', serif",
                       fontSize: '0.75rem',
@@ -453,6 +455,177 @@ export function BookCard({ portfolio, isFiltered }: BookCardProps) {
                       </span>
                     ))}
                   </div>
+                </div>
+
+                {/* 포트폴리오 미리보기 */}
+                <div style={{ marginBottom: 20 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: showIframe ? 10 : 0 }}>
+                    <div
+                      style={{
+                        fontFamily: "'Cinzel', serif",
+                        fontSize: '0.72rem',
+                        letterSpacing: '0.2em',
+                        color: 'rgba(200,176,138,0.5)',
+                      }}
+                    >
+                      PREVIEW
+                    </div>
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => {
+                        if (!showIframe) setIframeLoading(true);
+                        setShowIframe((v) => !v);
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 5,
+                        fontFamily: "'Cinzel', serif",
+                        fontSize: '0.62rem',
+                        letterSpacing: '0.1em',
+                        color: showIframe ? portfolio.accentColor : 'rgba(200,176,138,0.5)',
+                        background: 'transparent',
+                        border: `1px solid ${showIframe ? portfolio.accentColor + '50' : 'rgba(200,176,138,0.2)'}`,
+                        borderRadius: 2,
+                        padding: '4px 10px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      <span>{showIframe ? '▲' : '▼'}</span>
+                      {showIframe ? '닫기' : '열기'}
+                    </motion.button>
+                  </div>
+
+                  <AnimatePresence>
+                    {showIframe && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <div
+                          style={{
+                            position: 'relative',
+                            border: `1px solid ${portfolio.accentColor}25`,
+                            borderRadius: 4,
+                            overflow: 'hidden',
+                            background: '#0a0500',
+                          }}
+                        >
+                          {/* 브라우저 크롬 바 */}
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 8,
+                              padding: '6px 10px',
+                              background: `${portfolio.accentColor}0a`,
+                              borderBottom: `1px solid ${portfolio.accentColor}20`,
+                            }}
+                          >
+                            <div style={{ display: 'flex', gap: 4 }}>
+                              {['#f87171', '#fb923c', '#34d399'].map((c) => (
+                                <div key={c} style={{ width: 7, height: 7, borderRadius: '50%', background: c, opacity: 0.55 }} />
+                              ))}
+                            </div>
+                            <div
+                              style={{
+                                flex: 1,
+                                fontFamily: "'EB Garamond', serif",
+                                fontSize: '0.68rem',
+                                color: 'rgba(200,176,138,0.35)',
+                                fontStyle: 'italic',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {portfolio.liveDemo}
+                            </div>
+                            <a
+                              href={portfolio.liveDemo}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              style={{
+                                fontFamily: "'Cinzel', serif",
+                                fontSize: '0.58rem',
+                                letterSpacing: '0.06em',
+                                color: `${portfolio.accentColor}80`,
+                                textDecoration: 'none',
+                                flexShrink: 0,
+                              }}
+                            >
+                              ↗ 열기
+                            </a>
+                          </div>
+
+                          {/* 로딩 오버레이 */}
+                          {iframeLoading && (
+                            <div
+                              style={{
+                                position: 'absolute',
+                                inset: '30px 0 0 0',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                background: '#0a0500',
+                                zIndex: 1,
+                                gap: 10,
+                              }}
+                            >
+                              <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
+                                style={{
+                                  width: 22,
+                                  height: 22,
+                                  border: `2px solid ${portfolio.accentColor}20`,
+                                  borderTopColor: portfolio.accentColor,
+                                  borderRadius: '50%',
+                                }}
+                              />
+                              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.78rem', color: 'rgba(200,176,138,0.4)', fontStyle: 'italic' }}>
+                                불러오는 중...
+                              </span>
+                            </div>
+                          )}
+
+                          <iframe
+                            src={portfolio.liveDemo}
+                            title={`${portfolio.name} 포트폴리오 미리보기`}
+                            sandbox="allow-scripts allow-same-origin allow-forms"
+                            onLoad={() => setIframeLoading(false)}
+                            onError={() => setIframeLoading(false)}
+                            style={{
+                              display: 'block',
+                              width: '100%',
+                              height: 380,
+                              border: 'none',
+                              background: '#fff',
+                            }}
+                          />
+                        </div>
+                        <p
+                          style={{
+                            marginTop: 5,
+                            fontFamily: "'EB Garamond', serif",
+                            fontSize: '0.7rem',
+                            color: 'rgba(200,176,138,0.25)',
+                            fontStyle: 'italic',
+                          }}
+                        >
+                          * 보안 정책에 따라 일부 사이트는 미리보기가 제한될 수 있습니다.
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* 링크 버튼 */}
