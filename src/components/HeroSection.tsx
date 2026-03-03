@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { PortalCanvas } from './PortalCanvas';
 
 function Candle({ delay = 0 }: { delay?: number }) {
   return (
@@ -70,6 +71,23 @@ export function HeroSection() {
           background: 'radial-gradient(ellipse at 50% 40%, rgba(212,175,55,0.06) 0%, transparent 65%)',
         }}
       />
+
+      {/* 포털 캔버스 — 촛불 그룹과 메인 콘텐츠 사이 중앙 배치 */}
+      <motion.div
+        className="absolute"
+        style={{
+          top: '37%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 1,
+          pointerEvents: 'none', // 하단 요소 클릭 차단 방지
+        }}
+        initial={{ opacity: 0, scale: 0.55 }}
+        animate={{ opacity: 0.88, scale: 1 }}
+        transition={{ delay: 0.5, duration: 2.2, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <PortalCanvas />
+      </motion.div>
 
       {/* 촛불 그룹 - 왼쪽 */}
       <motion.div
