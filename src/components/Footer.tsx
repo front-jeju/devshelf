@@ -1,6 +1,64 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import type { GuestbookMessage } from '../types';
+
+const STORAGE_KEY = 'devlibrary_guestbook';
+
+function loadMessages(): GuestbookMessage[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveMessages(messages: GuestbookMessage[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+}
 
 export function Footer() {
+  const [messages, setMessages] = useState<GuestbookMessage[]>(loadMessages);
+  const [name, setName] = useState(() => {
+    try {
+      const session = sessionStorage.getItem('devlibrary_session');
+      if (session) {
+        const parsed = JSON.parse(session);
+        if (parsed.name) return parsed.name as string;
+      }
+    } catch {
+      // 무시
+    }
+    return '';
+  });
+  const [text, setText] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit() {
+    const trimmedName = name.trim();
+    const trimmedText = text.trim();
+    if (!trimmedName || !trimmedText) return;
+
+    const newMessage: GuestbookMessage = {
+      id: Date.now().toString(),
+      name: trimmedName,
+      message: trimmedText,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updated = [newMessage, ...messages];
+    setMessages(updated);
+    saveMessages(updated);
+    setText('');
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 2000);
+  }
+
+  function formatDate(iso: string) {
+    const d = new Date(iso);
+    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  }
+
   return (
     <footer style={{ position: 'relative', paddingTop: 80, paddingBottom: 40 }}>
       {/* 상단 장식선 */}
@@ -50,7 +108,7 @@ export function Footer() {
           <br />당신의 한 마디로 누군가의 이야기를 시작할 수 있습니다.
         </p>
 
-        {/* 방명록 입력 (장식용) */}
+        {/* 방명록 입력 */}
         <div
           style={{
             background: 'linear-gradient(135deg, rgba(212,175,55,0.05) 0%, rgba(212,175,55,0.02) 100%)',
@@ -71,31 +129,59 @@ export function Footer() {
           >
             방문 메시지 남기기
           </div>
-          <div
+
+          {/* 이름 입력 */}
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="이름"
+            maxLength={30}
             style={{
               width: '100%',
-              height: 60,
               background: 'rgba(0,0,0,0.3)',
               border: '1px solid rgba(212,175,55,0.15)',
               borderRadius: 2,
-              display: 'flex',
-              alignItems: 'center',
-              paddingLeft: 12,
+              padding: '8px 12px',
+              marginBottom: 8,
+              fontFamily: "'EB Garamond', serif",
+              fontSize: '0.9rem',
+              color: 'rgba(200,176,138,0.9)',
+              outline: 'none',
+              boxSizing: 'border-box',
             }}
-          >
-            <span
-              style={{
-                fontFamily: "'EB Garamond', serif",
-                fontSize: '0.9rem',
-                color: 'rgba(200,176,138,0.3)',
-                fontStyle: 'italic',
-              }}
-            >
-              여기에 메시지를 남겨보세요...
+          />
+
+          {/* 메시지 입력 */}
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="여기에 메시지를 남겨보세요..."
+            maxLength={200}
+            rows={3}
+            style={{
+              width: '100%',
+              background: 'rgba(0,0,0,0.3)',
+              border: '1px solid rgba(212,175,55,0.15)',
+              borderRadius: 2,
+              padding: '10px 12px',
+              fontFamily: "'EB Garamond', serif",
+              fontSize: '0.9rem',
+              fontStyle: 'italic',
+              color: 'rgba(200,176,138,0.9)',
+              outline: 'none',
+              resize: 'none',
+              boxSizing: 'border-box',
+            }}
+          />
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
+            <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.3)' }}>
+              {text.length} / 200
             </span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
             <button
+              onClick={handleSubmit}
+              disabled={!name.trim() || !text.trim()}
               style={{
                 fontFamily: "'Cinzel', serif",
                 fontSize: '0.75rem',
@@ -103,15 +189,87 @@ export function Footer() {
                 padding: '8px 20px',
                 border: '1px solid rgba(212,175,55,0.3)',
                 borderRadius: 2,
-                color: '#d4af37',
+                color: submitted ? '#7dbf7d' : '#d4af37',
                 background: 'rgba(212,175,55,0.06)',
-                cursor: 'pointer',
+                cursor: name.trim() && text.trim() ? 'pointer' : 'not-allowed',
+                opacity: name.trim() && text.trim() ? 1 : 0.5,
+                transition: 'color 0.3s',
               }}
             >
-              기록하기 ✦
+              {submitted ? '기록됨 ✓' : '기록하기 ✦'}
             </button>
           </div>
         </div>
+
+        {/* 기존 메시지 목록 */}
+        {messages.length > 0 && (
+          <div style={{ marginTop: 32, textAlign: 'left' }}>
+            <div
+              style={{
+                fontFamily: "'Cinzel', serif",
+                fontSize: '0.7rem',
+                letterSpacing: '0.2em',
+                color: 'rgba(200,176,138,0.4)',
+                marginBottom: 16,
+                textAlign: 'center',
+              }}
+            >
+              — 방문자들의 흔적 —
+            </div>
+            <AnimatePresence initial={false}>
+              {messages.map((msg) => (
+                <motion.div
+                  key={msg.id}
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                  style={{
+                    background: 'rgba(212,175,55,0.03)',
+                    border: '1px solid rgba(212,175,55,0.1)',
+                    borderRadius: 3,
+                    padding: '12px 16px',
+                    marginBottom: 10,
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                    <span
+                      style={{
+                        fontFamily: "'Cinzel', serif",
+                        fontSize: '0.75rem',
+                        color: '#d4af37',
+                        letterSpacing: '0.05em',
+                      }}
+                    >
+                      {msg.name}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: "'EB Garamond', serif",
+                        fontSize: '0.75rem',
+                        color: 'rgba(200,176,138,0.3)',
+                      }}
+                    >
+                      {formatDate(msg.createdAt)}
+                    </span>
+                  </div>
+                  <p
+                    style={{
+                      fontFamily: "'EB Garamond', serif",
+                      fontSize: '0.9rem',
+                      fontStyle: 'italic',
+                      color: 'rgba(200,176,138,0.7)',
+                      lineHeight: 1.6,
+                      margin: 0,
+                    }}
+                  >
+                    {msg.message}
+                  </p>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
       </motion.div>
 
       {/* 하단 정보 */}

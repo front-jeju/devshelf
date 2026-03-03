@@ -10,6 +10,13 @@ export type TechStack =
   | 'GraphQL'
   | 'Three.js';
 
+export interface GuestbookMessage {
+  id: string;
+  name: string;
+  message: string;
+  createdAt: string;
+}
+
 export interface Portfolio {
   id: string;
   name: string;
