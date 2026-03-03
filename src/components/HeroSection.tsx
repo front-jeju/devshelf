@@ -142,27 +142,7 @@ export function HeroSection() {
           animate={{ opacity: 1, letterSpacing: '0.08em' }}
           transition={{ delay: 0.7, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
         >
-          The Developer's
-        </motion.h1>
-        <motion.h1
-          style={{
-            fontFamily: "'Cinzel Decorative', 'Cinzel', serif",
-            fontSize: 'clamp(2.2rem, 6vw, 5rem)',
-            fontWeight: 900,
-            letterSpacing: '0.08em',
-            lineHeight: 1.2,
-            background: 'linear-gradient(135deg, #f0c040 0%, #d4af37 30%, #c9a84c 60%, #f5d060 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            filter: 'drop-shadow(0 0 30px rgba(212,175,55,0.3))',
-            marginBottom: '1.5rem',
-          }}
-          initial={{ opacity: 0, letterSpacing: '0.5em' }}
-          animate={{ opacity: 1, letterSpacing: '0.08em' }}
-          transition={{ delay: 0.9, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        >
-          Library
+          DEVSHELF
         </motion.h1>
 
         {/* 한국어 부제목 */}
@@ -230,7 +210,6 @@ export function HeroSection() {
               boxShadow: '0 0 20px rgba(212,175,55,0.25)',
             }}
           >
-            <span>📚</span>
             서재 둘러보기
           </motion.a>
 
@@ -253,7 +232,6 @@ export function HeroSection() {
               cursor: 'pointer',
             }}
           >
-            <span>✍️</span>
             내 서재 등록
           </motion.a>
         </motion.div>
