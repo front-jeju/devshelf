@@ -105,13 +105,13 @@ export function Header() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <Link to="/login" style={{ textDecoration: 'none' }}>
               <motion.button
-                whileHover={{ scale: 1.04 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
                 style={{
                   fontFamily: "'Cinzel', serif",
-                  fontSize: '0.72rem',
+                  fontSize: '0.75rem',
                   letterSpacing: '0.1em',
-                  padding: '7px 16px',
+                  padding: '8px 20px',
                   border: '1px solid rgba(212,175,55,0.3)',
                   borderRadius: '2px',
                   color: 'rgba(200,176,138,0.8)',
