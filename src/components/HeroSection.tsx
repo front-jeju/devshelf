@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 function Candle({ delay = 0 }: { delay?: number }) {
   return (
@@ -51,6 +52,8 @@ function Candle({ delay = 0 }: { delay?: number }) {
 }
 
 export function HeroSection() {
+  const navigate = useNavigate();
+
   return (
     <section
       className="relative flex flex-col items-center justify-center text-center"
@@ -190,8 +193,8 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.8, duration: 0.6 }}
         >
-          <motion.a
-            href="#bookshelf"
+          <motion.button
+            onClick={() => navigate('/shelf')}
             whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(212,175,55,0.4)' }}
             whileTap={{ scale: 0.97 }}
             style={{
@@ -208,10 +211,11 @@ export function HeroSection() {
               borderRadius: '2px',
               cursor: 'pointer',
               boxShadow: '0 0 20px rgba(212,175,55,0.25)',
+              border: 'none',
             }}
           >
             서재 둘러보기
-          </motion.a>
+          </motion.button>
 
           <motion.a
             href="#"

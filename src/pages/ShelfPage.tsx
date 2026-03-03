@@ -1,9 +1,16 @@
+import { useState } from 'react';
 import { FloatingParticles } from '../components/FloatingParticles';
 import { Header } from '../components/Header';
-import { HeroSection } from '../components/HeroSection';
-import { Footer } from '../components/Footer';
+import { FilterBar } from '../components/FilterBar';
+import { BookShelf } from '../components/BookShelf';
+import portfoliosData from '../data/portfolios.json';
+import type { Portfolio, TechStack } from '../types';
 
-export function MainPage() {
+const portfolios = portfoliosData as Portfolio[];
+
+export function ShelfPage() {
+  const [selectedStack, setSelectedStack] = useState<TechStack | null>(null);
+
   return (
     <div
       style={{
@@ -32,13 +39,22 @@ export function MainPage() {
       <div style={{ position: 'relative', zIndex: 2 }}>
         <Header />
 
-        <main>
-          <HeroSection />
-        </main>
+        <main style={{ paddingTop: 80 }}>
+          <div
+            style={{
+              maxWidth: 900,
+              margin: '0 auto 0',
+              height: 1,
+              background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent)',
+            }}
+          />
 
-        <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 24px' }}>
-          <Footer />
-        </div>
+          <FilterBar selected={selectedStack} onSelect={setSelectedStack} />
+
+          <div style={{ padding: '0 24px 80px' }}>
+            <BookShelf portfolios={portfolios} selectedStack={selectedStack} />
+          </div>
+        </main>
       </div>
     </div>
   );
