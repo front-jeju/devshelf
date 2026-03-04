@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { GuestbookMessage } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
 const STORAGE_KEY = 'devlibrary_guestbook';
 
@@ -18,19 +19,15 @@ function saveMessages(messages: GuestbookMessage[]) {
 }
 
 export function Footer() {
+  const { user } = useAuth();
   const [messages, setMessages] = useState<GuestbookMessage[]>(loadMessages);
-  const [name, setName] = useState(() => {
-    try {
-      const session = sessionStorage.getItem('devlibrary_session');
-      if (session) {
-        const parsed = JSON.parse(session);
-        if (parsed.name) return parsed.name as string;
-      }
-    } catch {
-      // 무시
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      setName(user.displayName ?? user.email ?? '');
     }
-    return '';
-  });
+  }, [user]);
   const [text, setText] = useState('');
   const [submitted, setSubmitted] = useState(false);
 

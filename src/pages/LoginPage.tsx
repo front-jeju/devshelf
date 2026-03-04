@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { FloatingParticles } from '../components/FloatingParticles';
 import { auth, githubProvider, googleProvider, isConfigured } from '../lib/firebase';
 
@@ -19,28 +19,30 @@ export function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    const stored = localStorage.getItem('devlibrary_user');
-    if (stored) {
-      const user = JSON.parse(stored);
-      if (user.email === email && user.password === password) {
-        sessionStorage.setItem('devlibrary_session', JSON.stringify({ email: user.email, name: user.name }));
-        navigate('/');
-        return;
-      }
-    }
-
-    if (email === 'demo@library.dev' && password === 'password123') {
-      sessionStorage.setItem('devlibrary_session', JSON.stringify({ email, name: '데모 사용자' }));
-      navigate('/');
+    if (!isConfigured || !auth) {
+      setError('Firebase 설정이 필요합니다.');
       return;
     }
 
-    setError('이메일 또는 비밀번호가 올바르지 않습니다.');
-    setIsLoading(false);
+    setIsLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate('/');
+    } catch (err: unknown) {
+      const code = (err as { code?: string }).code;
+      if (
+        code === 'auth/user-not-found' ||
+        code === 'auth/wrong-password' ||
+        code === 'auth/invalid-credential'
+      ) {
+        setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+      } else {
+        setError('로그인에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleOAuth = async (provider: OAuthProvider) => {
@@ -49,12 +51,7 @@ export function LoginPage() {
     setOauthLoading(provider);
     try {
       const firebaseProvider = provider === 'github' ? githubProvider : googleProvider;
-      const result = await signInWithPopup(auth, firebaseProvider);
-      const { displayName, email: oauthEmail, uid } = result.user;
-      sessionStorage.setItem(
-        'devlibrary_session',
-        JSON.stringify({ email: oauthEmail, name: displayName ?? uid, provider }),
-      );
+      await signInWithPopup(auth, firebaseProvider);
       navigate('/');
     } catch (err: unknown) {
       const code = (err as { code?: string }).code;
@@ -496,29 +493,6 @@ export function LoginPage() {
               </Link>
             </div>
 
-            {/* 데모 힌트 */}
-            <div
-              style={{
-                marginTop: 20,
-                padding: '10px 14px',
-                background: 'rgba(212,175,55,0.04)',
-                border: '1px solid rgba(212,175,55,0.1)',
-                borderRadius: 3,
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "'EB Garamond', serif",
-                  fontSize: '0.78rem',
-                  color: 'rgba(200,176,138,0.4)',
-                  fontStyle: 'italic',
-                  textAlign: 'center',
-                  lineHeight: 1.6,
-                }}
-              >
-                데모 계정: demo@library.dev / password123
-              </div>
-            </div>
           </div>
         </div>
       </motion.div>

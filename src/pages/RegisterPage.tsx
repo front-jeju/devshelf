@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { FloatingParticles } from '../components/FloatingParticles';
+import { auth, isConfigured } from '../lib/firebase';
 
 interface FieldError {
   name: string;
@@ -81,20 +83,27 @@ export function RegisterPage() {
     setTouched({ name: true, email: true, password: true, confirm: true });
     if (!isFormValid) return;
 
-    setSubmitError('');
-    setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-
-    const existing = localStorage.getItem('devlibrary_user');
-    if (existing && JSON.parse(existing).email === email) {
-      setSubmitError('이미 사용 중인 이메일입니다.');
-      setIsLoading(false);
+    if (!isConfigured || !auth) {
+      setSubmitError('Firebase 설정이 필요합니다.');
       return;
     }
 
-    localStorage.setItem('devlibrary_user', JSON.stringify({ name, email, password }));
-    sessionStorage.setItem('devlibrary_session', JSON.stringify({ email, name }));
-    navigate('/');
+    setSubmitError('');
+    setIsLoading(true);
+    try {
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(user, { displayName: name });
+      navigate('/');
+    } catch (err: unknown) {
+      const code = (err as { code?: string }).code;
+      if (code === 'auth/email-already-in-use') {
+        setSubmitError('이미 사용 중인 이메일입니다.');
+      } else {
+        setSubmitError('회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const passwordStrength = (() => {

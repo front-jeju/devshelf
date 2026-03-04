@@ -1,7 +1,16 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 export function Header() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
+
   return (
     <motion.header
       className="fixed top-0 left-0 right-0"
@@ -103,46 +112,86 @@ export function Header() {
 
           {/* CTA 영역 */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Link to="/login" style={{ textDecoration: 'none' }}>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  fontFamily: "'Cinzel', serif",
-                  fontSize: '0.75rem',
-                  letterSpacing: '0.1em',
-                  padding: '8px 20px',
-                  border: '1px solid rgba(212,175,55,0.3)',
-                  borderRadius: '2px',
-                  color: 'rgba(200,176,138,0.8)',
-                  background: 'transparent',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-              >
-                로그인
-              </motion.button>
-            </Link>
-            <Link to="/portfolio/new" style={{ textDecoration: 'none' }}>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  fontFamily: "'Cinzel', serif",
-                  fontSize: '0.75rem',
-                  letterSpacing: '0.1em',
-                  padding: '8px 20px',
-                  border: '1px solid rgba(212,175,55,0.5)',
-                  borderRadius: '2px',
-                  color: '#d4af37',
-                  background: 'rgba(212,175,55,0.08)',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-              >
-                내 서재 등록
-              </motion.button>
-            </Link>
+            {user ? (
+              <>
+                <span
+                  style={{
+                    fontFamily: "'EB Garamond', serif",
+                    fontSize: '0.85rem',
+                    fontStyle: 'italic',
+                    color: '#c8b08a',
+                    maxWidth: 140,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {user.displayName ?? user.email}
+                </span>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handleLogout}
+                  style={{
+                    fontFamily: "'Cinzel', serif",
+                    fontSize: '0.75rem',
+                    letterSpacing: '0.1em',
+                    padding: '8px 20px',
+                    border: '1px solid rgba(212,175,55,0.3)',
+                    borderRadius: '2px',
+                    color: 'rgba(200,176,138,0.8)',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  로그아웃
+                </motion.button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" style={{ textDecoration: 'none' }}>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.97 }}
+                    style={{
+                      fontFamily: "'Cinzel', serif",
+                      fontSize: '0.75rem',
+                      letterSpacing: '0.1em',
+                      padding: '8px 20px',
+                      border: '1px solid rgba(212,175,55,0.3)',
+                      borderRadius: '2px',
+                      color: 'rgba(200,176,138,0.8)',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    로그인
+                  </motion.button>
+                </Link>
+                <Link to="/portfolio/new" style={{ textDecoration: 'none' }}>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.97 }}
+                    style={{
+                      fontFamily: "'Cinzel', serif",
+                      fontSize: '0.75rem',
+                      letterSpacing: '0.1em',
+                      padding: '8px 20px',
+                      border: '1px solid rgba(212,175,55,0.5)',
+                      borderRadius: '2px',
+                      color: '#d4af37',
+                      background: 'rgba(212,175,55,0.08)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    내 서재 등록
+                  </motion.button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
