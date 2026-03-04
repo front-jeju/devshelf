@@ -7,6 +7,7 @@ import { ShelfPage } from './pages/ShelfPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { CreatePortfolioPage } from './pages/CreatePortfolioPage';
+import { EditPortfolioPage } from './pages/EditPortfolioPage';
 
 /** 로그인 필수 라우트 — 미인증 시 /login으로 리다이렉트 */
 function PrivateRoute({ children }: { children: ReactNode }) {
@@ -32,6 +33,7 @@ function App() {
           <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
           <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
           <Route path="/portfolio/new" element={<PrivateRoute><CreatePortfolioPage /></PrivateRoute>} />
+          <Route path="/portfolio/edit/:id" element={<PrivateRoute><EditPortfolioPage /></PrivateRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

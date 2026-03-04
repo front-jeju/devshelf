@@ -19,6 +19,7 @@ export interface GuestbookMessage {
 
 export interface Portfolio {
   id: string;
+  uid?: string; // 이 포트폴리오를 등록한 사용자의 Firebase uid (수정/삭제 권한 확인에 사용)
   name: string;
   role: string;
   tagline: string;

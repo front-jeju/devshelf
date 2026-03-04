@@ -7,6 +7,7 @@ import type { Portfolio, TechStack } from '../types';
 interface BookShelfProps {
   portfolios: Portfolio[];
   selectedStack: TechStack | null;
+  onDelete: (id: string) => void; // 삭제 성공 시 부모(ShelfPage)로 전달하는 콜백
 }
 
 function ShelfRow({ portfolios, selectedStack, rowIndex, onSelect }: {
@@ -138,7 +139,7 @@ function DecorBook({ color, width, height }: { color: string; width: number; hei
 
 const BOOKS_PER_ROW = 6;
 
-export function BookShelf({ portfolios, selectedStack }: BookShelfProps) {
+export function BookShelf({ portfolios, selectedStack, onDelete }: BookShelfProps) {
   const [selectedPortfolio, setSelectedPortfolio] = useState<Portfolio | null>(null);
 
   const rows = useMemo(() => {
@@ -306,6 +307,7 @@ export function BookShelf({ portfolios, selectedStack }: BookShelfProps) {
           <PortfolioModal
             portfolio={selectedPortfolio}
             onClose={() => setSelectedPortfolio(null)}
+            onDelete={onDelete}
           />
         )}
       </AnimatePresence>

@@ -8,7 +8,7 @@ import type { TechStack } from '../types';
 
 export function ShelfPage() {
   const [selectedStack, setSelectedStack] = useState<TechStack | null>(null);
-  const { portfolios, loading } = usePortfolios();
+  const { portfolios, loading, removePortfolio } = usePortfolios();
 
   return (
     <div
@@ -56,7 +56,7 @@ export function ShelfPage() {
                 서재를 불러오는 중...
               </div>
             ) : (
-              <BookShelf portfolios={portfolios} selectedStack={selectedStack} />
+              <BookShelf portfolios={portfolios} selectedStack={selectedStack} onDelete={removePortfolio} />
             )}
           </div>
         </main>
