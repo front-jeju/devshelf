@@ -67,6 +67,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!auth) throw Object.assign(new Error('Firebase 설정이 필요합니다.'), { code: 'firebase/not-configured' });
     const { user: newUser } = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(newUser, { displayName: name });
+    // updateProfile은 user 객체를 in-place로 변경하지만 onAuthStateChanged를 재발화하지 않으므로
+    // 수동으로 React 상태를 갱신해 displayName이 즉시 반영되도록 함
+    setUser({ ...newUser });
   };
 
   const logout = async () => {
