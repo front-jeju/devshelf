@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FloatingParticles } from '../components/FloatingParticles';
-import { useLoginForm, type OAuthProvider } from '../hooks/useLoginForm';
+import { useLoginForm } from '../hooks/useLoginForm';
 
 export function LoginPage() {
   const {
