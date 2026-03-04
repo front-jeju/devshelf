@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { TechStack } from '../types';
+import { useAuth } from '../contexts/AuthContext';
+import { addPortfolio } from '../lib/portfolioService';
 
 export const BOOK_THEMES = [
   { label: '자수정', spineColor: '#7B2D8B', coverColor: '#4A0E6B', accentColor: '#E879F9' },
@@ -16,6 +17,7 @@ export type BookTheme = typeof BOOK_THEMES[0];
 
 export function usePortfolioForm() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [form, setForm] = useState({
     name: '',
@@ -30,6 +32,7 @@ export function usePortfolioForm() {
   const [touched, setTouched] = useState({ name: false, role: false, tagline: false, liveDemo: false });
   const [isLoading, setIsLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [iframeLoading, setIframeLoading] = useState(false);
 
@@ -67,32 +70,33 @@ export function usePortfolioForm() {
         : [...prev.techStack, stack],
     }));
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched({ name: true, role: true, tagline: true, liveDemo: true });
     if (!isValid) return;
 
+    setSubmitError('');
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 900));
-
-    const newPortfolio = {
-      id: Date.now().toString(),
-      name: form.name,
-      role: form.role,
-      tagline: form.tagline,
-      techStack: form.techStack,
-      description: form.description,
-      github: form.github || 'https://github.com',
-      liveDemo: form.liveDemo,
-      ...selectedTheme,
-      projectCount: 0,
-      featured: false,
-    };
-
-    const existing = JSON.parse(localStorage.getItem('devlibrary_portfolios') || '[]');
-    localStorage.setItem('devlibrary_portfolios', JSON.stringify([...existing, newPortfolio]));
-    setIsLoading(false);
-    setDone(true);
+    try {
+      await addPortfolio({
+        name: form.name,
+        role: form.role,
+        tagline: form.tagline,
+        techStack: form.techStack,
+        description: form.description,
+        github: form.github || 'https://github.com',
+        liveDemo: form.liveDemo,
+        ...selectedTheme,
+        projectCount: 0,
+        featured: false,
+        uid: user?.uid ?? '',
+      });
+      setDone(true);
+    } catch {
+      setSubmitError('등록에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
@@ -102,6 +106,7 @@ export function usePortfolioForm() {
     isValid,
     isLoading,
     done,
+    submitError,
     showPreview, setShowPreview,
     iframeLoading, setIframeLoading,
     selectedTheme,

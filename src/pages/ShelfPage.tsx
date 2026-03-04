@@ -3,13 +3,12 @@ import { FloatingParticles } from '../components/FloatingParticles';
 import { Header } from '../components/Header';
 import { FilterBar } from '../components/FilterBar';
 import { BookShelf } from '../components/BookShelf';
-import portfoliosData from '../data/portfolios.json';
-import type { Portfolio, TechStack } from '../types';
-
-const portfolios = portfoliosData as Portfolio[];
+import { usePortfolios } from '../hooks/usePortfolios';
+import type { TechStack } from '../types';
 
 export function ShelfPage() {
   const [selectedStack, setSelectedStack] = useState<TechStack | null>(null);
+  const { portfolios, loading } = usePortfolios();
 
   return (
     <div
@@ -52,7 +51,13 @@ export function ShelfPage() {
           <FilterBar selected={selectedStack} onSelect={setSelectedStack} />
 
           <div style={{ padding: '0 24px 80px' }}>
-            <BookShelf portfolios={portfolios} selectedStack={selectedStack} />
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '80px 0', fontFamily: "'EB Garamond', serif", color: 'rgba(200,176,138,0.5)', fontStyle: 'italic', fontSize: '1rem', letterSpacing: '0.1em' }}>
+                서재를 불러오는 중...
+              </div>
+            ) : (
+              <BookShelf portfolios={portfolios} selectedStack={selectedStack} />
+            )}
           </div>
         </main>
       </div>

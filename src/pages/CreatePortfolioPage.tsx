@@ -1,3 +1,4 @@
+import type { CSSProperties, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FloatingParticles } from '../components/FloatingParticles';
@@ -17,7 +18,7 @@ const ROLES = [
 ];
 
 /* ── 스타일 상수 ── */
-const labelStyle: React.CSSProperties = {
+const labelStyle: CSSProperties = {
   display: 'block',
   fontFamily: "'Cinzel', serif",
   fontSize: '0.68rem',
@@ -26,7 +27,7 @@ const labelStyle: React.CSSProperties = {
   marginBottom: 8,
 };
 
-const inputStyle: React.CSSProperties = {
+const inputStyle: CSSProperties = {
   width: '100%',
   background: 'rgba(255,255,255,0.04)',
   border: '1px solid rgba(212,175,55,0.2)',
@@ -40,7 +41,7 @@ const inputStyle: React.CSSProperties = {
   boxSizing: 'border-box' as const,
 };
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
+function SectionTitle({ children }: { children: ReactNode }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
       <div style={{ height: 1, flex: 1, background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.25))' }} />
@@ -132,9 +133,9 @@ export function CreatePortfolioPage() {
     form,
     touched,
     errors,
-    isValid,
     isLoading,
     done,
+    submitError,
     showPreview, setShowPreview,
     iframeLoading, setIframeLoading,
     selectedTheme,
@@ -161,7 +162,7 @@ export function CreatePortfolioPage() {
           </p>
           <motion.button
             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/shelf')}
             style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg, #d4af37, #f0c040, #d4af37)', border: 'none', borderRadius: 3, fontFamily: "'Cinzel', serif", fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.12em', color: '#1a0d00', cursor: 'pointer' }}
           >
             서재 둘러보기 →
@@ -622,6 +623,17 @@ export function CreatePortfolioPage() {
                   </div>
                 </div>
               </div>
+
+              {/* 에러 메시지 */}
+              {submitError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.88rem', color: '#f87171', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: 3, padding: '10px 14px', textAlign: 'center' }}
+                >
+                  {submitError}
+                </motion.div>
+              )}
 
               {/* ── 버튼 영역 ── */}
               <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>

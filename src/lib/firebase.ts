@@ -1,6 +1,9 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GithubAuthProvider, GoogleAuthProvider } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 import type { Auth } from 'firebase/auth';
+import type { Firestore } from 'firebase/firestore';
+
 const {
   VITE_FIREBASE_API_KEY: apiKey,
   VITE_FIREBASE_AUTH_DOMAIN: authDomain,
@@ -15,14 +18,16 @@ const {
 const isConfigured = !!(apiKey && authDomain && projectId);
 
 let auth: Auth | null = null;
+let db: Firestore | null = null;
 let githubProvider: GithubAuthProvider | null = null;
 let googleProvider: GoogleAuthProvider | null = null;
 
 if (isConfigured) {
   const app = initializeApp({ apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId });
   auth = getAuth(app);
+  db = getFirestore(app);
   githubProvider = new GithubAuthProvider();
   googleProvider = new GoogleAuthProvider();
 }
 
-export { auth, githubProvider, googleProvider, isConfigured };
+export { auth, db, githubProvider, googleProvider, isConfigured };
