@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { PortalCanvas } from './PortalCanvas';
 
 function Candle({ delay = 0 }: { delay?: number }) {
   return (
@@ -84,6 +85,21 @@ export function HeroSection() {
         <Candle delay={0.3} />
         <Candle delay={0.8} />
       </motion.div>
+
+      {/* 황금 에너지 포털 링 - 촛불과 히어로 콘텐츠 사이 */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 'min(520px, 88vw)',
+          height: 'min(520px, 88vw)',
+          zIndex: 1,
+        }}
+      >
+        <PortalCanvas />
+      </div>
 
       {/* 메인 콘텐츠 */}
       <div className="relative z-[2]">
