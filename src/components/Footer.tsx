@@ -1,26 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { GuestbookMessage } from '../types';
 import { useAuth } from '../contexts/AuthContext';
-
-const STORAGE_KEY = 'devlibrary_guestbook';
-
-function loadMessages(): GuestbookMessage[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveMessages(messages: GuestbookMessage[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-}
+import { addGuestbookMessage, subscribeGuestbookMessages } from '../lib/guestbookService';
 
 export function Footer() {
   const { user } = useAuth();
-  const [messages, setMessages] = useState<GuestbookMessage[]>(loadMessages);
+  const [messages, setMessages] = useState<GuestbookMessage[]>([]);
   const [name, setName] = useState('');
   const [text, setText] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -32,21 +18,17 @@ export function Footer() {
     setName(user ? (user.displayName ?? user.email ?? '') : '');
   }
 
-  function handleSubmit() {
+  useEffect(() => {
+    const unsubscribe = subscribeGuestbookMessages(setMessages);
+    return unsubscribe;
+  }, []);
+
+  async function handleSubmit() {
     const trimmedName = name.trim();
     const trimmedText = text.trim();
     if (!trimmedName || !trimmedText) return;
 
-    const newMessage: GuestbookMessage = {
-      id: Date.now().toString(),
-      name: trimmedName,
-      message: trimmedText,
-      createdAt: new Date().toISOString(),
-    };
-
-    const updated = [newMessage, ...messages];
-    setMessages(updated);
-    saveMessages(updated);
+    await addGuestbookMessage(trimmedName, trimmedText);
     setText('');
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 2000);
