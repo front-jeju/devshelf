@@ -114,9 +114,8 @@ export function EditPortfolioPage() {
       >
         <button onClick={() => navigate('/')} className="bg-transparent border-none cursor-pointer">
           <div className="flex items-center gap-3 justify-center">
-            <div style={{ fontSize: '2rem', filter: 'drop-shadow(0 0 12px rgba(212,175,55,0.6))' }}>📚</div>
             <div>
-              <div className="logo-title">The Developer's Library</div>
+              <div className="logo-title">DEVSHELF</div>
               <div className="logo-subtitle">개발자의 서재</div>
             </div>
           </div>
