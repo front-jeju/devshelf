@@ -15,11 +15,7 @@ export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
   return (
     <motion.div
       className="book-wrapper relative select-none"
-      style={{
-        width: 80,
-        height: 200,
-        cursor: 'pointer',
-      }}
+      style={{ width: 80, height: 200, cursor: 'pointer' }}
       animate={{
         opacity: isFiltered ? 0.18 : 1,
         filter: isFiltered ? 'saturate(0) brightness(0.4)' : 'none',
@@ -32,13 +28,8 @@ export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
     >
       {/* 책 본체 */}
       <motion.div
-        style={{
-          width: '100%',
-          height: '100%',
-          position: 'relative',
-          borderRadius: '2px 4px 4px 2px',
-          transformOrigin: 'left center',
-        }}
+        className="w-full h-full relative"
+        style={{ borderRadius: '2px 4px 4px 2px', transformOrigin: 'left center' }}
         animate={{
           x: isHovered ? -12 : 0,
           rotateY: isHovered ? 8 : 0,
@@ -50,9 +41,8 @@ export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
       >
         {/* 책 등(spine) */}
         <div
+          className="w-full h-full relative overflow-hidden flex flex-col items-center justify-between"
           style={{
-            width: '100%',
-            height: '100%',
             borderRadius: '2px 4px 4px 2px',
             background: `linear-gradient(180deg,
               ${portfolio.coverColor}ee 0%,
@@ -60,28 +50,15 @@ export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
               ${portfolio.spineColor}dd 70%,
               ${portfolio.coverColor}cc 100%
             )`,
-            position: 'relative',
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'space-between',
             padding: '14px 6px',
           }}
         >
           {/* 왼쪽 바인딩 선 */}
           <div
+            className="absolute left-0 top-0 bottom-0"
             style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              bottom: 0,
               width: 6,
-              background: `linear-gradient(180deg,
-                rgba(0,0,0,0.4) 0%,
-                rgba(0,0,0,0.2) 50%,
-                rgba(0,0,0,0.4) 100%
-              )`,
+              background: 'linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.4) 100%)',
               boxShadow: 'inset -1px 0 2px rgba(255,255,255,0.1)',
             }}
           />
@@ -147,8 +124,8 @@ export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
           {/* featured 배지 */}
           {portfolio.featured && (
             <div
+              className="absolute"
               style={{
-                position: 'absolute',
                 top: 8,
                 right: 4,
                 width: 6,
@@ -162,12 +139,8 @@ export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
 
           {/* 텍스처 오버레이 */}
           <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px)',
-              pointerEvents: 'none',
-            }}
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: 'repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px)' }}
           />
         </div>
       </motion.div>
@@ -180,8 +153,8 @@ export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -10, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute z-20 pointer-events-none"
             style={{
-              position: 'absolute',
               left: 'calc(100% + 12px)',
               top: 0,
               width: 220,
@@ -190,60 +163,28 @@ export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
               borderRadius: 4,
               padding: '16px',
               boxShadow: `0 8px 32px rgba(0,0,0,0.8), 0 0 20px ${portfolio.accentColor}15`,
-              zIndex: 20,
-              pointerEvents: 'none',
             }}
           >
             {/* 이름 */}
-            <div
-              style={{
-                fontFamily: "'Cinzel', serif",
-                fontSize: '0.9rem',
-                fontWeight: 700,
-                color: portfolio.accentColor,
-                marginBottom: 4,
-              }}
-            >
+            <div style={{ fontFamily: "'Cinzel', serif", fontSize: '0.9rem', fontWeight: 700, color: portfolio.accentColor, marginBottom: 4 }}>
               {portfolio.name}
             </div>
 
             {/* 역할 */}
-            <div
-              style={{
-                fontFamily: "'EB Garamond', serif",
-                fontSize: '0.82rem',
-                color: '#c8b08a',
-                fontStyle: 'italic',
-                marginBottom: 10,
-              }}
-            >
+            <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.82rem', color: '#c8b08a', fontStyle: 'italic', marginBottom: 10 }}>
               {portfolio.role}
             </div>
 
             {/* 구분선 */}
-            <div
-              style={{
-                height: 1,
-                background: `linear-gradient(90deg, ${portfolio.accentColor}40, transparent)`,
-                marginBottom: 10,
-              }}
-            />
+            <div style={{ height: 1, background: `linear-gradient(90deg, ${portfolio.accentColor}40, transparent)`, marginBottom: 10 }} />
 
             {/* 한 줄 소개 */}
-            <div
-              style={{
-                fontFamily: "'EB Garamond', serif",
-                fontSize: '0.82rem',
-                color: 'rgba(200,176,138,0.8)',
-                lineHeight: 1.6,
-                marginBottom: 10,
-              }}
-            >
+            <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.82rem', color: 'rgba(200,176,138,0.8)', lineHeight: 1.6, marginBottom: 10 }}>
               {portfolio.tagline}
             </div>
 
             {/* 기술 스택 */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+            <div className="flex flex-wrap gap-1">
               {portfolio.techStack.map((tech) => (
                 <span
                   key={tech}
@@ -263,15 +204,7 @@ export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
             </div>
 
             {/* 프로젝트 수 */}
-            <div
-              style={{
-                marginTop: 10,
-                fontFamily: "'Cinzel', serif",
-                fontSize: '0.7rem',
-                color: 'rgba(200,176,138,0.5)',
-                letterSpacing: '0.1em',
-              }}
-            >
+            <div style={{ marginTop: 10, fontFamily: "'Cinzel', serif", fontSize: '0.7rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.1em' }}>
               {portfolio.projectCount} projects · 클릭하여 열람
             </div>
           </motion.div>

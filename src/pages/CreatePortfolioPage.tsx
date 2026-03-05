@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FloatingParticles } from '../components/FloatingParticles';
@@ -17,38 +17,12 @@ const ROLES = [
   'ML / AI Engineer',
 ];
 
-/* ── 스타일 상수 ── */
-const labelStyle: CSSProperties = {
-  display: 'block',
-  fontFamily: "'Cinzel', serif",
-  fontSize: '0.68rem',
-  letterSpacing: '0.18em',
-  color: 'rgba(200,176,138,0.7)',
-  marginBottom: 8,
-};
-
-const inputStyle: CSSProperties = {
-  width: '100%',
-  background: 'rgba(255,255,255,0.04)',
-  border: '1px solid rgba(212,175,55,0.2)',
-  borderRadius: 3,
-  padding: '11px 14px',
-  fontFamily: "'EB Garamond', serif",
-  fontSize: '1rem',
-  color: '#e8d5b0',
-  outline: 'none',
-  transition: 'border-color 0.2s, background 0.2s',
-  boxSizing: 'border-box' as const,
-};
-
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-      <div style={{ height: 1, flex: 1, background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.25))' }} />
-      <span style={{ fontFamily: "'Cinzel', serif", fontSize: '0.7rem', letterSpacing: '0.22em', color: 'rgba(212,175,55,0.7)' }}>
-        {children}
-      </span>
-      <div style={{ height: 1, flex: 1, background: 'linear-gradient(90deg, rgba(212,175,55,0.25), transparent)' }} />
+    <div className="section-header">
+      <div className="section-header-line-l" />
+      <span className="section-header-text">{children}</span>
+      <div className="section-header-line-r" />
     </div>
   );
 }
@@ -62,11 +36,9 @@ function FieldError({ show, message }: { show: boolean; message: string }) {
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
           transition={{ duration: 0.18 }}
-          style={{ overflow: 'hidden' }}
+          className="overflow-hidden"
         >
-          <p style={{ marginTop: 6, fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: '#f87171', fontStyle: 'italic' }}>
-            {message}
-          </p>
+          <p className="field-error">{message}</p>
         </motion.div>
       )}
     </AnimatePresence>
@@ -149,21 +121,39 @@ export function CreatePortfolioPage() {
   /* 완료 화면 */
   if (done) {
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #0a0500 0%, #0f0700 30%, #120800 60%, #0a0500 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', position: 'relative', overflow: 'hidden' }}>
+      <div className="page-bg-flex px-6">
         <FloatingParticles />
-        <motion.div initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'relative', zIndex: 2, textAlign: 'center', maxWidth: 420 }}>
-          <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }} style={{ display: 'flex', justifyContent: 'center', marginBottom: 32 }}>
+        <motion.div
+          className="relative z-[2] text-center max-w-[420px]"
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <motion.div
+            className="flex justify-center mb-8"
+            initial={{ rotateY: 90 }}
+            animate={{ rotateY: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
             <MiniBook name={form.name} role={form.role} theme={selectedTheme} />
           </motion.div>
-          <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.2em', fontStyle: 'italic', marginBottom: 10 }}>— 서재에 새 책이 꽂혔습니다 —</div>
-          <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: '1.5rem', fontWeight: 700, background: 'linear-gradient(135deg, #f0c040, #d4af37)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', marginBottom: 12 }}>등록 완료</h2>
+          <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.2em', fontStyle: 'italic', marginBottom: 10 }}>
+            — 서재에 새 책이 꽂혔습니다 —
+          </div>
+          <h2
+            className="gold-gradient-text mb-3"
+            style={{ fontFamily: "'Cinzel', serif", fontSize: '1.5rem', fontWeight: 700 }}
+          >
+            등록 완료
+          </h2>
           <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.7)', fontStyle: 'italic', lineHeight: 1.7, marginBottom: 32 }}>
             "{form.name}"의 서재가 개발자의 도서관에<br />아름답게 자리를 잡았습니다.
           </p>
           <motion.button
-            whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => navigate('/shelf')}
-            style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg, #d4af37, #f0c040, #d4af37)', border: 'none', borderRadius: 3, fontFamily: "'Cinzel', serif", fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.12em', color: '#1a0d00', cursor: 'pointer' }}
+            className="btn-gold"
           >
             서재 둘러보기 →
           </motion.button>
@@ -173,43 +163,24 @@ export function CreatePortfolioPage() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(180deg, #0a0500 0%, #0f0700 30%, #120800 60%, #0a0500 100%)',
-        position: 'relative',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '60px 0 60px',
-      }}
-    >
+    <div className="page-bg-flex py-16">
       <FloatingParticles />
-
-      {/* 배경 패턴 */}
-      <div style={{ position: 'fixed', inset: 0, backgroundImage: `radial-gradient(circle at 15% 25%, rgba(139,69,19,0.04) 0%, transparent 50%), radial-gradient(circle at 85% 75%, rgba(100,40,10,0.05) 0%, transparent 50%)`, pointerEvents: 'none', zIndex: 0 }} />
-
-      {/* 상단 황금 장식선 */}
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg, transparent, #d4af37, #f0c040, #d4af37, transparent)', zIndex: 10 }} />
+      <div className="page-overlay" />
+      <div className="gold-top-line" />
 
       {/* 로고 */}
       <motion.div
+        className="relative z-[2] mb-9 text-center"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        style={{ position: 'relative', zIndex: 2, marginBottom: 36, textAlign: 'center' }}
       >
-        <Link to="/" style={{ textDecoration: 'none' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'center' }}>
+        <Link to="/">
+          <div className="flex items-center gap-3 justify-center">
             <div style={{ fontSize: '2rem', filter: 'drop-shadow(0 0 12px rgba(212,175,55,0.6))' }}>📚</div>
             <div>
-              <div style={{ fontFamily: "'Cinzel', serif", fontSize: '1.1rem', fontWeight: 700, letterSpacing: '0.12em', background: 'linear-gradient(135deg, #f0c040, #d4af37, #c9a84c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                The Developer's Library
-              </div>
-              <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.7rem', color: '#c8b08a', letterSpacing: '0.15em', fontStyle: 'italic', textAlign: 'center' }}>
-                개발자의 서재
-              </div>
+              <div className="logo-title">The Developer's Library</div>
+              <div className="logo-subtitle">개발자의 서재</div>
             </div>
           </div>
         </Link>
@@ -217,74 +188,65 @@ export function CreatePortfolioPage() {
 
       {/* 메인 카드 */}
       <motion.div
+        className="relative z-[2] w-full max-w-[600px] px-6"
         initial={{ opacity: 0, y: 30, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-        style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: 600, padding: '0 24px' }}
       >
-        <div style={{ background: 'linear-gradient(135deg, #1e0f00 0%, #120800 60%, #0a0500 100%)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: 6, overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,0.8), 0 0 40px rgba(212,175,55,0.05)' }}>
+        <div className="card-dark">
+          <div className="card-top-bar" />
 
-          {/* 상단 컬러 바 */}
-          <div style={{ height: 3, background: 'linear-gradient(90deg, #d4af37, #f0c040, #d4af37)' }} />
-
-          <div style={{ padding: '36px 32px' }}>
-
+          <div className="p-9 px-8">
             {/* 타이틀 */}
-            <div style={{ textAlign: 'center', marginBottom: 28 }}>
+            <div className="text-center mb-7">
               <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.25em', fontStyle: 'italic', marginBottom: 8 }}>
                 — 나의 이야기를 서재에 —
               </div>
-              <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: '1.6rem', fontWeight: 700, letterSpacing: '0.08em', background: 'linear-gradient(135deg, #f0c040, #d4af37)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              <h1
+                className="gold-gradient-text"
+                style={{ fontFamily: "'Cinzel', serif", fontSize: '1.6rem', fontWeight: 700, letterSpacing: '0.08em' }}
+              >
                 서재 등록
               </h1>
             </div>
 
-            {/* 구분선 */}
-            <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent)', marginBottom: 28 }} />
+            <div className="gold-divider mb-7" />
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
               {/* ── 1. 기본 정보 ── */}
               <div>
                 <SectionTitle>BASIC INFO</SectionTitle>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-                  {/* 이름 */}
+                <div className="flex flex-col gap-4">
                   <div>
-                    <label style={labelStyle}>이름 <span style={{ color: '#d4af37' }}>*</span></label>
+                    <label className="label-field">이름 <span style={{ color: '#d4af37' }}>*</span></label>
                     <input
                       type="text"
                       value={form.name}
                       onChange={(e) => setField('name', e.target.value)}
                       onBlur={() => touch('name')}
                       placeholder="홍길동"
-                      style={{ ...inputStyle, borderColor: touched.name && errors.name ? 'rgba(248,113,113,0.5)' : 'rgba(212,175,55,0.2)' }}
-                      onFocus={(e) => { e.target.style.borderColor = 'rgba(212,175,55,0.6)'; e.target.style.background = 'rgba(212,175,55,0.05)'; }}
-                      onBlurCapture={(e) => { e.target.style.borderColor = touched.name && errors.name ? 'rgba(248,113,113,0.5)' : 'rgba(212,175,55,0.2)'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
+                      className={`input-field ${touched.name && errors.name ? 'error' : ''}`}
                     />
                     <FieldError show={touched.name && !!errors.name} message={errors.name} />
                   </div>
 
-                  {/* 직군 */}
                   <div>
-                    <label style={labelStyle}>직군 <span style={{ color: '#d4af37' }}>*</span></label>
+                    <label className="label-field">직군 <span style={{ color: '#d4af37' }}>*</span></label>
                     <select
                       value={form.role}
                       onChange={(e) => setField('role', e.target.value)}
                       onBlur={() => touch('role')}
+                      className={`input-field ${touched.role && errors.role ? 'error' : ''}`}
                       style={{
-                        ...inputStyle,
-                        appearance: 'none' as const,
+                        appearance: 'none',
                         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23d4af37' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'right 14px center',
                         paddingRight: 36,
                         color: form.role ? '#e8d5b0' : 'rgba(200,176,138,0.4)',
-                        borderColor: touched.role && errors.role ? 'rgba(248,113,113,0.5)' : 'rgba(212,175,55,0.2)',
                         cursor: 'pointer',
                       }}
-                      onFocus={(e) => { e.target.style.borderColor = 'rgba(212,175,55,0.6)'; e.target.style.background = 'rgba(212,175,55,0.05)'; }}
-                      onBlurCapture={(e) => { e.target.style.borderColor = touched.role && errors.role ? 'rgba(248,113,113,0.5)' : 'rgba(212,175,55,0.2)'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
                     >
                       <option value="" style={{ background: '#120800', color: 'rgba(200,176,138,0.5)' }}>직군을 선택하세요</option>
                       {ROLES.map((r) => (
@@ -294,10 +256,9 @@ export function CreatePortfolioPage() {
                     <FieldError show={touched.role && !!errors.role} message={errors.role} />
                   </div>
 
-                  {/* 한 줄 소개 */}
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                      <label style={{ ...labelStyle, marginBottom: 0 }}>한 줄 소개 <span style={{ color: '#d4af37' }}>*</span></label>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="label-field" style={{ marginBottom: 0 }}>한 줄 소개 <span style={{ color: '#d4af37' }}>*</span></label>
                       <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: form.tagline.length > 60 ? '#f87171' : 'rgba(200,176,138,0.35)', fontStyle: 'italic' }}>
                         {form.tagline.length} / 60
                       </span>
@@ -308,9 +269,7 @@ export function CreatePortfolioPage() {
                       onChange={(e) => setField('tagline', e.target.value)}
                       onBlur={() => touch('tagline')}
                       placeholder="사용자의 경험을 코드로 완성하는 개발자"
-                      style={{ ...inputStyle, borderColor: touched.tagline && errors.tagline ? 'rgba(248,113,113,0.5)' : 'rgba(212,175,55,0.2)' }}
-                      onFocus={(e) => { e.target.style.borderColor = 'rgba(212,175,55,0.6)'; e.target.style.background = 'rgba(212,175,55,0.05)'; }}
-                      onBlurCapture={(e) => { e.target.style.borderColor = touched.tagline && errors.tagline ? 'rgba(248,113,113,0.5)' : 'rgba(212,175,55,0.2)'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
+                      className={`input-field ${touched.tagline && errors.tagline ? 'error' : ''}`}
                     />
                     <FieldError show={touched.tagline && !!errors.tagline} message={errors.tagline} />
                   </div>
@@ -320,7 +279,7 @@ export function CreatePortfolioPage() {
               {/* ── 2. 기술 스택 ── */}
               <div>
                 <SectionTitle>TECH STACK</SectionTitle>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                <div className="flex flex-wrap gap-2">
                   {ALL_STACKS.map((stack) => {
                     const selected = form.techStack.includes(stack);
                     return (
@@ -330,6 +289,7 @@ export function CreatePortfolioPage() {
                         whileHover={{ y: -2, scale: 1.04 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => toggleStack(stack)}
+                        className="flex items-center gap-1.5"
                         style={{
                           fontFamily: "'EB Garamond', serif",
                           fontSize: '0.88rem',
@@ -337,9 +297,6 @@ export function CreatePortfolioPage() {
                           padding: '6px 14px',
                           borderRadius: 2,
                           cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 6,
                           border: selected ? '1px solid #d4af37' : '1px solid rgba(212,175,55,0.2)',
                           background: selected
                             ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06))'
@@ -366,9 +323,9 @@ export function CreatePortfolioPage() {
               {/* ── 3. 링크 ── */}
               <div>
                 <SectionTitle>LINKS</SectionTitle>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div className="flex flex-col gap-3.5">
                   <div>
-                    <label style={labelStyle}>포트폴리오 URL <span style={{ color: '#d4af37' }}>*</span></label>
+                    <label className="label-field">포트폴리오 URL <span style={{ color: '#d4af37' }}>*</span></label>
                     <input
                       type="url"
                       value={form.liveDemo}
@@ -378,9 +335,7 @@ export function CreatePortfolioPage() {
                       }}
                       onBlur={() => touch('liveDemo')}
                       placeholder="https://your-portfolio.com"
-                      style={{ ...inputStyle, borderColor: touched.liveDemo && errors.liveDemo ? 'rgba(248,113,113,0.5)' : 'rgba(212,175,55,0.2)' }}
-                      onFocus={(e) => { e.target.style.borderColor = 'rgba(212,175,55,0.6)'; e.target.style.background = 'rgba(212,175,55,0.05)'; }}
-                      onBlurCapture={(e) => { e.target.style.borderColor = touched.liveDemo && errors.liveDemo ? 'rgba(248,113,113,0.5)' : 'rgba(212,175,55,0.2)'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
+                      className={`input-field ${touched.liveDemo && errors.liveDemo ? 'error' : ''}`}
                     />
                     <FieldError show={touched.liveDemo && !!errors.liveDemo} message={errors.liveDemo} />
 
@@ -395,11 +350,8 @@ export function CreatePortfolioPage() {
                           if (opening) setIframeLoading(true);
                           setShowPreview(opening);
                         }}
+                        className="mt-2 flex items-center gap-1.5"
                         style={{
-                          marginTop: 8,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 6,
                           fontFamily: "'Cinzel', serif",
                           fontSize: '0.65rem',
                           letterSpacing: '0.12em',
@@ -425,44 +377,25 @@ export function CreatePortfolioPage() {
                           animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
                           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                          style={{ overflow: 'hidden', marginTop: 10 }}
+                          className="overflow-hidden mt-2.5"
                         >
                           <div
-                            style={{
-                              position: 'relative',
-                              border: '1px solid rgba(212,175,55,0.2)',
-                              borderRadius: 4,
-                              overflow: 'hidden',
-                              background: '#0a0500',
-                            }}
+                            className="relative overflow-hidden rounded"
+                            style={{ border: '1px solid rgba(212,175,55,0.2)', background: '#0a0500' }}
                           >
                             {/* 브라우저 크롬 바 */}
                             <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 8,
-                                padding: '7px 12px',
-                                background: 'rgba(212,175,55,0.06)',
-                                borderBottom: '1px solid rgba(212,175,55,0.15)',
-                              }}
+                              className="flex items-center gap-2"
+                              style={{ padding: '7px 12px', background: 'rgba(212,175,55,0.06)', borderBottom: '1px solid rgba(212,175,55,0.15)' }}
                             >
-                              <div style={{ display: 'flex', gap: 5 }}>
+                              <div className="flex gap-1.5">
                                 {['#f87171', '#fb923c', '#34d399'].map((c) => (
-                                  <div key={c} style={{ width: 8, height: 8, borderRadius: '50%', background: c, opacity: 0.6 }} />
+                                  <div key={c} className="w-2 h-2 rounded-full opacity-60" style={{ background: c }} />
                                 ))}
                               </div>
                               <div
-                                style={{
-                                  flex: 1,
-                                  fontFamily: "'EB Garamond', serif",
-                                  fontSize: '0.72rem',
-                                  color: 'rgba(200,176,138,0.4)',
-                                  fontStyle: 'italic',
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  whiteSpace: 'nowrap',
-                                }}
+                                className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap"
+                                style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.72rem', color: 'rgba(200,176,138,0.4)', fontStyle: 'italic' }}
                               >
                                 {form.liveDemo}
                               </div>
@@ -470,14 +403,7 @@ export function CreatePortfolioPage() {
                                 href={form.liveDemo}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                style={{
-                                  fontFamily: "'Cinzel', serif",
-                                  fontSize: '0.6rem',
-                                  letterSpacing: '0.08em',
-                                  color: 'rgba(212,175,55,0.5)',
-                                  textDecoration: 'none',
-                                  flexShrink: 0,
-                                }}
+                                style={{ fontFamily: "'Cinzel', serif", fontSize: '0.6rem', letterSpacing: '0.08em', color: 'rgba(212,175,55,0.5)', flexShrink: 0 }}
                               >
                                 ↗ 열기
                               </a>
@@ -485,19 +411,7 @@ export function CreatePortfolioPage() {
 
                             {/* 로딩 오버레이 */}
                             {iframeLoading && (
-                              <div
-                                style={{
-                                  position: 'absolute',
-                                  inset: '32px 0 0 0',
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  background: '#0a0500',
-                                  zIndex: 1,
-                                  gap: 10,
-                                }}
-                              >
+                              <div className="absolute inset-0 top-8 flex flex-col items-center justify-center z-[1] gap-2.5" style={{ background: '#0a0500' }}>
                                 <motion.div
                                   animate={{ rotate: 360 }}
                                   transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
@@ -515,41 +429,30 @@ export function CreatePortfolioPage() {
                               sandbox="allow-scripts allow-same-origin allow-forms"
                               onLoad={() => setIframeLoading(false)}
                               onError={() => setIframeLoading(false)}
-                              style={{
-                                display: 'block',
-                                width: '100%',
-                                height: 360,
-                                border: 'none',
-                                background: '#fff',
-                              }}
+                              className="block w-full border-none"
+                              style={{ height: 360, background: '#fff' }}
                             />
                           </div>
 
-                          <p
-                            style={{
-                              marginTop: 6,
-                              fontFamily: "'EB Garamond', serif",
-                              fontSize: '0.75rem',
-                              color: 'rgba(200,176,138,0.3)',
-                              fontStyle: 'italic',
-                            }}
-                          >
+                          <p style={{ marginTop: 6, fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.3)', fontStyle: 'italic' }}>
                             * 일부 사이트는 보안 정책(X-Frame-Options)으로 인해 미리보기가 제한될 수 있습니다.
                           </p>
                         </motion.div>
                       )}
                     </AnimatePresence>
                   </div>
+
                   <div>
-                    <label style={labelStyle}>GitHub URL <span style={{ fontFamily: "'EB Garamond', serif", letterSpacing: 0, fontStyle: 'italic', color: 'rgba(200,176,138,0.4)' }}>(선택)</span></label>
+                    <label className="label-field">
+                      GitHub URL{' '}
+                      <span style={{ fontFamily: "'EB Garamond', serif", letterSpacing: 0, fontStyle: 'italic', color: 'rgba(200,176,138,0.4)' }}>(선택)</span>
+                    </label>
                     <input
                       type="url"
                       value={form.github}
                       onChange={(e) => setField('github', e.target.value)}
                       placeholder="https://github.com/username"
-                      style={inputStyle}
-                      onFocus={(e) => { e.target.style.borderColor = 'rgba(212,175,55,0.6)'; e.target.style.background = 'rgba(212,175,55,0.05)'; }}
-                      onBlur={(e) => { e.target.style.borderColor = 'rgba(212,175,55,0.2)'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
+                      className="input-field"
                     />
                   </div>
                 </div>
@@ -557,39 +460,27 @@ export function CreatePortfolioPage() {
 
               {/* ── 4. 자기소개 ── */}
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <SectionTitle>ABOUT ME</SectionTitle>
-                </div>
+                <SectionTitle>ABOUT ME</SectionTitle>
                 <textarea
                   value={form.description}
                   onChange={(e) => setField('description', e.target.value)}
                   placeholder="나의 개발 철학, 경험, 관심사를 자유롭게 작성해주세요..."
                   rows={4}
-                  style={{
-                    ...inputStyle,
-                    resize: 'vertical' as const,
-                    minHeight: 100,
-                    lineHeight: 1.7,
-                    marginTop: -12,
-                  }}
-                  onFocus={(e) => { e.target.style.borderColor = 'rgba(212,175,55,0.6)'; e.target.style.background = 'rgba(212,175,55,0.05)'; }}
-                  onBlur={(e) => { e.target.style.borderColor = 'rgba(212,175,55,0.2)'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
+                  className="input-field -mt-3"
+                  style={{ resize: 'vertical', minHeight: 100, lineHeight: 1.7 }}
                 />
               </div>
 
               {/* ── 5. 책 테마 ── */}
               <div>
                 <SectionTitle>BOOK THEME</SectionTitle>
-                <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-                  {/* 미니 책 미리보기 */}
+                <div className="flex gap-4 items-center">
                   <MiniBook name={form.name} role={form.role} theme={selectedTheme} />
-
-                  {/* 색상 선택 */}
-                  <div style={{ flex: 1 }}>
+                  <div className="flex-1">
                     <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.82rem', color: 'rgba(200,176,138,0.5)', fontStyle: 'italic', marginBottom: 12 }}>
                       서재에 꽂힐 당신의 책 색상을 골라보세요.
                     </p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    <div className="flex flex-wrap gap-2">
                       {BOOK_THEMES.map((theme, i) => (
                         <motion.button
                           key={i}
@@ -598,6 +489,7 @@ export function CreatePortfolioPage() {
                           whileTap={{ scale: 0.93 }}
                           onClick={() => setField('themeIdx', i)}
                           title={theme.label}
+                          className="relative flex-shrink-0"
                           style={{
                             width: 36,
                             height: 36,
@@ -606,13 +498,11 @@ export function CreatePortfolioPage() {
                             background: `linear-gradient(135deg, ${theme.coverColor}, ${theme.spineColor})`,
                             cursor: 'pointer',
                             boxShadow: form.themeIdx === i ? `0 0 12px ${theme.accentColor}60` : '0 2px 8px rgba(0,0,0,0.4)',
-                            position: 'relative',
                             transition: 'box-shadow 0.2s',
-                            flexShrink: 0,
                           }}
                         >
                           {form.themeIdx === i && (
-                            <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', color: theme.accentColor }}>✓</span>
+                            <span className="absolute inset-0 flex items-center justify-center" style={{ fontSize: '0.7rem', color: theme.accentColor }}>✓</span>
                           )}
                         </motion.button>
                       ))}
@@ -627,33 +517,23 @@ export function CreatePortfolioPage() {
               {/* 에러 메시지 */}
               {submitError && (
                 <motion.div
+                  className="error-box"
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.88rem', color: '#f87171', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: 3, padding: '10px 14px', textAlign: 'center' }}
                 >
                   {submitError}
                 </motion.div>
               )}
 
               {/* ── 버튼 영역 ── */}
-              <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+              <div className="flex gap-2.5 mt-1">
                 <motion.button
                   type="button"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => navigate(-1)}
-                  style={{
-                    flex: '0 0 auto',
-                    padding: '13px 20px',
-                    background: 'transparent',
-                    border: '1px solid rgba(212,175,55,0.25)',
-                    borderRadius: 3,
-                    fontFamily: "'Cinzel', serif",
-                    fontSize: '0.78rem',
-                    letterSpacing: '0.1em',
-                    color: 'rgba(200,176,138,0.6)',
-                    cursor: 'pointer',
-                  }}
+                  className="btn-ghost flex-shrink-0"
+                  style={{ padding: '13px 20px', fontSize: '0.78rem', letterSpacing: '0.1em' }}
                 >
                   ← 취소
                 </motion.button>
@@ -662,20 +542,7 @@ export function CreatePortfolioPage() {
                   disabled={isLoading}
                   whileHover={{ scale: isLoading ? 1 : 1.02 }}
                   whileTap={{ scale: isLoading ? 1 : 0.98 }}
-                  style={{
-                    flex: 1,
-                    padding: '13px',
-                    background: isLoading ? 'rgba(212,175,55,0.3)' : 'linear-gradient(135deg, #d4af37, #f0c040, #d4af37)',
-                    border: 'none',
-                    borderRadius: 3,
-                    fontFamily: "'Cinzel', serif",
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.12em',
-                    color: isLoading ? 'rgba(26,13,0,0.5)' : '#1a0d00',
-                    cursor: isLoading ? 'not-allowed' : 'pointer',
-                    transition: 'background 0.2s',
-                  }}
+                  className="btn-gold flex-1"
                 >
                   {isLoading ? '서재에 꽂는 중...' : '서재에 등록하기 →'}
                 </motion.button>
