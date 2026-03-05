@@ -12,6 +12,7 @@ export type TechStack =
 
 export interface GuestbookMessage {
   id: string;
+  uid?: string;
   name: string;
   message: string;
   createdAt: string;

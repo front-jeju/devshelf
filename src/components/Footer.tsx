@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { GuestbookMessage } from '../types';
 import { useAuth } from '../contexts/AuthContext';
-import { addGuestbookMessage, subscribeGuestbookMessages } from '../lib/guestbookService';
+import { addGuestbookMessage, updateGuestbookMessage, deleteGuestbookMessage, subscribeGuestbookMessages } from '../lib/guestbookService';
 
 export function Footer() {
   const { user } = useAuth();
@@ -12,6 +12,8 @@ export function Footer() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({ name: false, text: false });
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState('');
   const [lastUid, setLastUid] = useState<string | null | undefined>(undefined);
 
   const currentUid = user?.uid ?? null;
@@ -38,7 +40,7 @@ export function Footer() {
 
     setSubmitting(true);
     try {
-      await addGuestbookMessage(trimmedName, trimmedText);
+      await addGuestbookMessage(trimmedName, trimmedText, user?.uid);
       setText('');
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 2000);
@@ -46,6 +48,25 @@ export function Footer() {
       console.error('방명록 저장 실패:', err);
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleEditSave(id: string) {
+    const trimmed = editText.trim();
+    if (!trimmed) return;
+    try {
+      await updateGuestbookMessage(id, trimmed);
+    } catch (err) {
+      console.error('수정 실패:', err);
+    }
+    setEditingId(null);
+  }
+
+  async function handleDelete(id: string) {
+    try {
+      await deleteGuestbookMessage(id);
+    } catch (err) {
+      console.error('삭제 실패:', err);
     }
   }
 
@@ -136,28 +157,77 @@ export function Footer() {
               — 방문자들의 흔적 —
             </div>
             <AnimatePresence initial={false}>
-              {messages.map((msg) => (
-                <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="rounded-sm mb-2.5 bg-gold/[0.03] border border-gold/10 px-4 py-3"
-                >
-                  <div className="flex justify-between mb-1.5">
-                    <span className="font-magic text-[0.75rem] text-gold tracking-[0.05em]">
-                      {msg.name}
-                    </span>
-                    <span className="font-body text-[0.75rem] text-parchment-dim/30">
-                      {formatDate(msg.createdAt)}
-                    </span>
-                  </div>
-                  <p className="font-body text-[0.9rem] italic text-parchment-dim/70 leading-[1.6] m-0">
-                    {msg.message}
-                  </p>
-                </motion.div>
-              ))}
+              {messages.map((msg) => {
+                const isOwner = !!user && user.uid === msg.uid;
+                const isEditing = editingId === msg.id;
+                return (
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="rounded-sm mb-2.5 bg-gold/[0.03] border border-gold/10 px-4 py-3"
+                  >
+                    <div className="flex justify-between items-start mb-1.5">
+                      <span className="font-magic text-[0.75rem] text-gold tracking-[0.05em]">
+                        {msg.name}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-body text-[0.75rem] text-parchment-dim/30">
+                          {formatDate(msg.createdAt)}
+                        </span>
+                        {isOwner && !isEditing && (
+                          <>
+                            <button
+                              onClick={() => { setEditingId(msg.id); setEditText(msg.message); }}
+                              className="font-body text-[0.7rem] text-parchment-dim/30 hover:text-gold/70 transition-colors duration-200"
+                            >
+                              수정
+                            </button>
+                            <button
+                              onClick={() => handleDelete(msg.id)}
+                              className="font-body text-[0.7rem] text-parchment-dim/30 hover:text-red-400/70 transition-colors duration-200"
+                            >
+                              삭제
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    {isEditing ? (
+                      <div>
+                        <textarea
+                          value={editText}
+                          onChange={(e) => setEditText(e.target.value)}
+                          maxLength={200}
+                          rows={3}
+                          className="input-field resize-none mb-2"
+                        />
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => setEditingId(null)}
+                            className="font-magic text-[0.7rem] tracking-[0.05em] px-3 py-1.5 border border-gold/20 rounded-sm text-parchment-dim/40 hover:text-parchment-dim/70 transition-colors duration-200"
+                          >
+                            취소
+                          </button>
+                          <button
+                            onClick={() => handleEditSave(msg.id)}
+                            disabled={!editText.trim()}
+                            className="font-magic text-[0.7rem] tracking-[0.05em] px-3 py-1.5 border border-gold/30 rounded-sm bg-gold/[0.06] text-gold disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
+                          >
+                            저장
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="font-body text-[0.9rem] italic text-parchment-dim/70 leading-[1.6] m-0">
+                        {msg.message}
+                      </p>
+                    )}
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </div>
         )}
