@@ -10,6 +10,7 @@ export function Footer() {
   const [name, setName] = useState('');
   const [text, setText] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [lastUid, setLastUid] = useState<string | null | undefined>(undefined);
 
   const currentUid = user?.uid ?? null;
@@ -26,12 +27,19 @@ export function Footer() {
   async function handleSubmit() {
     const trimmedName = name.trim();
     const trimmedText = text.trim();
-    if (!trimmedName || !trimmedText) return;
+    if (!trimmedName || !trimmedText || submitting) return;
 
-    await addGuestbookMessage(trimmedName, trimmedText);
-    setText('');
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 2000);
+    setSubmitting(true);
+    try {
+      await addGuestbookMessage(trimmedName, trimmedText);
+      setText('');
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 2000);
+    } catch (err) {
+      console.error('방명록 저장 실패:', err);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function formatDate(iso: string) {
@@ -95,15 +103,15 @@ export function Footer() {
             </span>
             <button
               onClick={handleSubmit}
-              disabled={!name.trim() || !text.trim()}
+              disabled={!name.trim() || !text.trim() || submitting}
               className={[
                 'font-magic text-[0.75rem] tracking-[0.1em] px-5 py-2',
                 'border border-gold/30 rounded-sm bg-gold/[0.06] transition-colors duration-300',
-                name.trim() && text.trim() ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-50',
+                name.trim() && text.trim() && !submitting ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-50',
                 submitted ? 'text-green-400' : 'text-gold',
               ].join(' ')}
             >
-              {submitted ? '기록됨 ✓' : '기록하기 ✦'}
+              {submitting ? '기록 중...' : submitted ? '기록됨 ✓' : '기록하기 ✦'}
             </button>
           </div>
         </div>
