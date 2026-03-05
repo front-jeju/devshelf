@@ -158,11 +158,7 @@ export function Footer() {
             </div>
             <AnimatePresence initial={false}>
               {messages.map((msg) => {
-                const isOwner = !!user && (
-                  msg.uid
-                    ? msg.uid === user.uid
-                    : msg.name === (user.displayName ?? user.email ?? '')
-                );
+                const isOwner = !!user && msg.uid === user.uid;
                 const isEditing = editingId === msg.id;
                 return (
                   <motion.div
