@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { GuestbookMessage } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -22,14 +22,15 @@ export function Footer() {
   const { user } = useAuth();
   const [messages, setMessages] = useState<GuestbookMessage[]>(loadMessages);
   const [name, setName] = useState('');
-
-  useEffect(() => {
-    if (user) {
-      setName(user.displayName ?? user.email ?? '');
-    }
-  }, [user]);
   const [text, setText] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [lastUid, setLastUid] = useState<string | null | undefined>(undefined);
+
+  const currentUid = user?.uid ?? null;
+  if (lastUid !== currentUid) {
+    setLastUid(currentUid);
+    setName(user ? (user.displayName ?? user.email ?? '') : '');
+  }
 
   function handleSubmit() {
     const trimmedName = name.trim();
@@ -70,28 +71,21 @@ export function Footer() {
         transition={{ duration: 0.7 }}
       >
         <div className="flex items-center justify-center gap-4 mb-6">
-          <div className="h-px w-[50px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.4))' }} />
-          <span style={{ fontFamily: "'Cinzel', serif", fontSize: '0.8rem', letterSpacing: '0.3em', color: '#c8b08a' }}>
+          <div className="h-px w-[50px] bg-gradient-to-r from-transparent to-gold/40" />
+          <span className="font-magic text-[0.8rem] tracking-[0.3em] text-parchment-dim">
             THE GUESTBOOK
           </span>
-          <div className="h-px w-[50px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.4), transparent)' }} />
+          <div className="h-px w-[50px] bg-gradient-to-r from-gold/40 to-transparent" />
         </div>
 
-        <p style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', fontStyle: 'italic', color: 'rgba(200,176,138,0.6)', marginBottom: 24, lineHeight: 1.8 }}>
+        <p className="font-display text-[1.1rem] italic text-parchment-dim/60 mb-6 leading-[1.8]">
           이 서재를 방문한 흔적을 남겨주세요.
           <br />당신의 한 마디로 누군가의 이야기를 시작할 수 있습니다.
         </p>
 
         {/* 방명록 입력 */}
-        <div
-          className="text-left rounded"
-          style={{
-            background: 'linear-gradient(135deg, rgba(212,175,55,0.05) 0%, rgba(212,175,55,0.02) 100%)',
-            border: '1px solid rgba(212,175,55,0.2)',
-            padding: '20px 24px',
-          }}
-        >
-          <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.1em', marginBottom: 8 }}>
+        <div className="text-left rounded bg-gradient-to-br from-gold/5 to-gold/[0.02] border border-gold/20 px-6 py-5">
+          <div className="font-body text-[0.8rem] text-parchment-dim/50 tracking-[0.1em] mb-2">
             방문 메시지 남기기
           </div>
 
@@ -110,30 +104,22 @@ export function Footer() {
             placeholder="여기에 메시지를 남겨보세요..."
             maxLength={200}
             rows={3}
-            className="input-field"
-            style={{ resize: 'none' }}
+            className="input-field resize-none"
           />
 
           <div className="flex justify-between items-center mt-2.5">
-            <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.3)' }}>
+            <span className="font-body text-[0.75rem] text-parchment-dim/30">
               {text.length} / 200
             </span>
             <button
               onClick={handleSubmit}
               disabled={!name.trim() || !text.trim()}
-              style={{
-                fontFamily: "'Cinzel', serif",
-                fontSize: '0.75rem',
-                letterSpacing: '0.1em',
-                padding: '8px 20px',
-                border: '1px solid rgba(212,175,55,0.3)',
-                borderRadius: 2,
-                color: submitted ? '#7dbf7d' : '#d4af37',
-                background: 'rgba(212,175,55,0.06)',
-                cursor: name.trim() && text.trim() ? 'pointer' : 'not-allowed',
-                opacity: name.trim() && text.trim() ? 1 : 0.5,
-                transition: 'color 0.3s',
-              }}
+              className={[
+                'font-magic text-[0.75rem] tracking-[0.1em] px-5 py-2',
+                'border border-gold/30 rounded-sm bg-gold/[0.06] transition-colors duration-300',
+                name.trim() && text.trim() ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-50',
+                submitted ? 'text-green-400' : 'text-gold',
+              ].join(' ')}
             >
               {submitted ? '기록됨 ✓' : '기록하기 ✦'}
             </button>
@@ -143,7 +129,7 @@ export function Footer() {
         {/* 기존 메시지 목록 */}
         {messages.length > 0 && (
           <div className="mt-8 text-left">
-            <div style={{ fontFamily: "'Cinzel', serif", fontSize: '0.7rem', letterSpacing: '0.2em', color: 'rgba(200,176,138,0.4)', marginBottom: 16, textAlign: 'center' }}>
+            <div className="font-magic text-[0.7rem] tracking-[0.2em] text-parchment-dim/40 mb-4 text-center">
               — 방문자들의 흔적 —
             </div>
             <AnimatePresence initial={false}>
@@ -154,22 +140,17 @@ export function Footer() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.4 }}
-                  className="rounded-sm mb-2.5"
-                  style={{
-                    background: 'rgba(212,175,55,0.03)',
-                    border: '1px solid rgba(212,175,55,0.1)',
-                    padding: '12px 16px',
-                  }}
+                  className="rounded-sm mb-2.5 bg-gold/[0.03] border border-gold/10 px-4 py-3"
                 >
                   <div className="flex justify-between mb-1.5">
-                    <span style={{ fontFamily: "'Cinzel', serif", fontSize: '0.75rem', color: '#d4af37', letterSpacing: '0.05em' }}>
+                    <span className="font-magic text-[0.75rem] text-gold tracking-[0.05em]">
                       {msg.name}
                     </span>
-                    <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.3)' }}>
+                    <span className="font-body text-[0.75rem] text-parchment-dim/30">
                       {formatDate(msg.createdAt)}
                     </span>
                   </div>
-                  <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.9rem', fontStyle: 'italic', color: 'rgba(200,176,138,0.7)', lineHeight: 1.6, margin: 0 }}>
+                  <p className="font-body text-[0.9rem] italic text-parchment-dim/70 leading-[1.6] m-0">
                     {msg.message}
                   </p>
                 </motion.div>
@@ -180,14 +161,11 @@ export function Footer() {
       </motion.div>
 
       {/* 하단 정보 */}
-      <div className="text-center pt-8" style={{ borderTop: '1px solid rgba(212,175,55,0.1)' }}>
-        <div
-          className="gold-gradient-text mb-2"
-          style={{ fontFamily: "'Cinzel', serif", fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.15em' }}
-        >
+      <div className="text-center pt-8 border-t border-gold/10">
+        <div className="gold-gradient-text mb-2 font-magic text-[0.85rem] font-bold tracking-[0.15em]">
           DEVSHELF
         </div>
-        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.4)', fontStyle: 'italic', marginBottom: 16 }}>
+        <p className="font-body text-[0.8rem] text-parchment-dim/40 italic mb-4">
           개발자의 서재 — 모든 코드는 하나의 이야기다
         </p>
         <div className="flex justify-center gap-6 mb-5">
@@ -195,13 +173,13 @@ export function Footer() {
             <a
               key={link}
               href="#"
-              style={{ fontFamily: "'Cinzel', serif", fontSize: '0.72rem', letterSpacing: '0.1em', color: 'rgba(200,176,138,0.4)', transition: 'color 0.2s' }}
+              className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200"
             >
               {link}
             </a>
           ))}
         </div>
-        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.25)' }}>
+        <p className="font-body text-[0.75rem] text-parchment-dim/25">
           MMXXVI · Built with React & Framer Motion
         </p>
       </div>

@@ -254,6 +254,11 @@
     background: rgba(212, 175, 55, 0.05);
   }
 
+  .input-field::placeholder {
+    color: rgba(200, 176, 138, 0.35);
+    font-style: italic;
+  }
+
   .label-field {
     display: block;
     font-family: 'Cinzel', serif;
