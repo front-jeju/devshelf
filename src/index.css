@@ -241,17 +241,17 @@
     box-sizing: border-box;
   }
 
-  .input-field:focus {
-    border-color: rgba(212, 175, 55, 0.6);
-    background: rgba(212, 175, 55, 0.05);
-  }
-
   .input-field.error {
     border-color: rgba(248, 113, 113, 0.5);
   }
 
   .input-field.success {
     border-color: rgba(52, 211, 153, 0.5);
+  }
+
+  .input-field:focus {
+    border-color: rgba(212, 175, 55, 0.6);
+    background: rgba(212, 175, 55, 0.05);
   }
 
   .label-field {
