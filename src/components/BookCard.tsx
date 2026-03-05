@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import type { Portfolio } from '../types';
-import { TECH_COLORS } from '../data/stacks';
 
 interface BookCardProps {
   portfolio: Portfolio;
@@ -144,72 +143,6 @@ export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
           />
         </div>
       </motion.div>
-
-      {/* 호버 시 미리보기 패널 */}
-      <AnimatePresence>
-        {isHovered && (
-          <motion.div
-            initial={{ opacity: 0, x: -10, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -10, scale: 0.95 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute z-20 pointer-events-none"
-            style={{
-              left: 'calc(100% + 12px)',
-              top: 0,
-              width: 220,
-              background: `linear-gradient(135deg, #1a0d00f5 0%, #0f0700f0 100%)`,
-              border: `1px solid ${portfolio.accentColor}40`,
-              borderRadius: 4,
-              padding: '16px',
-              boxShadow: `0 8px 32px rgba(0,0,0,0.8), 0 0 20px ${portfolio.accentColor}15`,
-            }}
-          >
-            {/* 이름 */}
-            <div style={{ fontFamily: "'Cinzel', serif", fontSize: '0.9rem', fontWeight: 700, color: portfolio.accentColor, marginBottom: 4 }}>
-              {portfolio.name}
-            </div>
-
-            {/* 역할 */}
-            <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.82rem', color: '#c8b08a', fontStyle: 'italic', marginBottom: 10 }}>
-              {portfolio.role}
-            </div>
-
-            {/* 구분선 */}
-            <div style={{ height: 1, background: `linear-gradient(90deg, ${portfolio.accentColor}40, transparent)`, marginBottom: 10 }} />
-
-            {/* 한 줄 소개 */}
-            <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.82rem', color: 'rgba(200,176,138,0.8)', lineHeight: 1.6, marginBottom: 10 }}>
-              {portfolio.tagline}
-            </div>
-
-            {/* 기술 스택 */}
-            <div className="flex flex-wrap gap-1">
-              {portfolio.techStack.map((tech) => (
-                <span
-                  key={tech}
-                  style={{
-                    fontFamily: "'EB Garamond', serif",
-                    fontSize: '0.72rem',
-                    padding: '2px 8px',
-                    borderRadius: 2,
-                    border: `1px solid ${TECH_COLORS[tech] || '#d4af37'}30`,
-                    color: TECH_COLORS[tech] || '#d4af37',
-                    background: `${TECH_COLORS[tech] || '#d4af37'}10`,
-                  }}
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-
-            {/* 프로젝트 수 */}
-            <div style={{ marginTop: 10, fontFamily: "'Cinzel', serif", fontSize: '0.7rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.1em' }}>
-              {portfolio.projectCount} projects · 클릭하여 열람
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }
