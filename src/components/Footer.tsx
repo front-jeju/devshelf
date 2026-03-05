@@ -11,6 +11,7 @@ export function Footer() {
   const [text, setText] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState({ name: false, text: false });
   const [lastUid, setLastUid] = useState<string | null | undefined>(undefined);
 
   const currentUid = user?.uid ?? null;
@@ -27,7 +28,13 @@ export function Footer() {
   async function handleSubmit() {
     const trimmedName = name.trim();
     const trimmedText = text.trim();
-    if (!trimmedName || !trimmedText || submitting) return;
+    const nameErr = !trimmedName;
+    const textErr = !trimmedText;
+    if (nameErr || textErr) {
+      setErrors({ name: nameErr, text: textErr });
+      return;
+    }
+    if (submitting) return;
 
     setSubmitting(true);
     try {
@@ -82,20 +89,26 @@ export function Footer() {
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: false })); }}
             placeholder="이름"
             maxLength={30}
-            className="input-field mb-2"
+            className={`input-field mb-1 ${errors.name ? 'error' : ''}`}
           />
+          {errors.name && (
+            <p className="font-body text-[0.78rem] italic text-red-400/80 mb-2 pl-1">이름을 입력해주세요.</p>
+          )}
 
           <textarea
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => { setText(e.target.value); setErrors((p) => ({ ...p, text: false })); }}
             placeholder="여기에 메시지를 남겨보세요..."
             maxLength={200}
             rows={3}
-            className="input-field resize-none"
+            className={`input-field resize-none ${errors.text ? 'error' : ''}`}
           />
+          {errors.text && (
+            <p className="font-body text-[0.78rem] italic text-red-400/80 mt-1 pl-1">메시지를 입력해주세요.</p>
+          )}
 
           <div className="flex justify-between items-center mt-2.5">
             <span className="font-body text-[0.75rem] text-parchment-dim/30">
