@@ -12,23 +12,32 @@ import { fetchPortfolios } from '../lib/portfolioService';
 import type { Portfolio } from '../types/index';
 import portfoliosData from '../data/portfolios.json';
 
+// 모듈 스코프 캐시: 페이지 이동 후 돌아와도 재fetch하지 않음
+let cachedPortfolios: Portfolio[] | null = null;
+
 export function usePortfolios() {
   // portfolios: 화면에 표시할 포트폴리오 목록
-  const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
+  const [portfolios, setPortfolios] = useState<Portfolio[]>(cachedPortfolios ?? []);
   // loading: 데이터를 불러오는 중인지 여부 (true면 로딩 스피너 표시)
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(cachedPortfolios === null);
 
   useEffect(() => {
+    // 캐시가 있으면 fetch 생략
+    if (cachedPortfolios !== null) return;
+
     // 컴포넌트가 처음 화면에 나타날 때 Firestore에서 데이터를 불러옵니다
     fetchPortfolios()
       .then((firestoreData) => {
         // Firestore 데이터를 앞에, 정적 데모 데이터를 뒤에 배치
         // (실제 등록 데이터가 먼저 보이도록)
-        setPortfolios([...firestoreData, ...(portfoliosData as Portfolio[])]);
+        const merged = [...firestoreData, ...(portfoliosData as Portfolio[])];
+        cachedPortfolios = merged;
+        setPortfolios(merged);
       })
       .catch(() => {
         // Firestore 연결 실패 시 정적 JSON 데이터만 표시
-        setPortfolios(portfoliosData as Portfolio[]);
+        cachedPortfolios = portfoliosData as Portfolio[];
+        setPortfolios(cachedPortfolios);
       })
       .finally(() => setLoading(false)); // 성공/실패 모두 로딩 종료
   }, []); // [] 빈 배열: 컴포넌트 마운트 시 딱 한 번만 실행
@@ -43,7 +52,11 @@ export function usePortfolios() {
    *   생성되는 것을 방지해 불필요한 리렌더링을 막습니다.
    */
   const removePortfolio = useCallback((id: string) => {
-    setPortfolios((prev) => prev.filter((p) => p.id !== id));
+    setPortfolios((prev) => {
+      const next = prev.filter((p) => p.id !== id);
+      cachedPortfolios = next;
+      return next;
+    });
   }, []);
 
   return { portfolios, loading, removePortfolio };

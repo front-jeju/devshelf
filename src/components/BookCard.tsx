@@ -1,14 +1,14 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { motion } from 'framer-motion';
 import type { Portfolio } from '../types';
 
 interface BookCardProps {
   portfolio: Portfolio;
   isFiltered: boolean;
-  onSelect: () => void;
+  onSelect: (portfolio: Portfolio) => void;
 }
 
-export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
+export const BookCard = memo(function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -23,7 +23,7 @@ export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       onHoverStart={() => !isFiltered && setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      onClick={() => !isFiltered && onSelect()}
+      onClick={() => !isFiltered && onSelect(portfolio)}
     >
       {/* 책 본체 */}
       <motion.div
@@ -145,4 +145,4 @@ export function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
       </motion.div>
     </motion.div>
   );
-}
+});

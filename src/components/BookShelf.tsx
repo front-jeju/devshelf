@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookCard } from './BookCard';
 import { PortfolioModal } from './PortfolioModal';
@@ -41,7 +41,7 @@ function ShelfRow({ portfolios, selectedStack, rowIndex, onSelect }: {
               key={portfolio.id}
               portfolio={portfolio}
               isFiltered={isFiltered}
-              onSelect={() => onSelect(portfolio)}
+              onSelect={onSelect}
             />
           );
         })}
@@ -110,6 +110,10 @@ const BOOKS_PER_ROW = 6;
 
 export function BookShelf({ portfolios, selectedStack, onDelete }: BookShelfProps) {
   const [selectedPortfolio, setSelectedPortfolio] = useState<Portfolio | null>(null);
+
+  const handleSelect = useCallback((portfolio: Portfolio) => {
+    setSelectedPortfolio(portfolio);
+  }, []);
 
   const rows = useMemo(() => {
     const result: Portfolio[][] = [];
@@ -191,7 +195,7 @@ export function BookShelf({ portfolios, selectedStack, onDelete }: BookShelfProp
               portfolios={rowPortfolios}
               selectedStack={selectedStack}
               rowIndex={idx}
-              onSelect={setSelectedPortfolio}
+              onSelect={handleSelect}
             />
           ))}
         </div>
