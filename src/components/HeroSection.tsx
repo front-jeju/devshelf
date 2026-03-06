@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 function Candle({ delay = 0 }: { delay?: number }) {
   return (
@@ -49,6 +50,7 @@ function Candle({ delay = 0 }: { delay?: number }) {
 
 export function HeroSection() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <section
@@ -205,8 +207,8 @@ export function HeroSection() {
             서재 둘러보기
           </motion.button>
 
-          <motion.a
-            href="#"
+          <motion.button
+            onClick={() => navigate(user ? '/portfolio/new' : '/login')}
             whileHover={{ scale: 1.05, borderColor: 'rgba(212,175,55,0.8)' }}
             whileTap={{ scale: 0.97 }}
             className="inline-flex items-center gap-2.5"
@@ -223,7 +225,7 @@ export function HeroSection() {
             }}
           >
             내 서재 등록
-          </motion.a>
+          </motion.button>
         </motion.div>
 
         {/* 하단 장식 */}
