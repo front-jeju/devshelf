@@ -77,7 +77,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="relative pt-20 pb-10">
+    <footer id="guestbook" className="relative pt-20 pb-10">
       {/* 상단 장식선 */}
       <div className="gold-divider max-w-[800px] mx-auto mb-16" />
 
@@ -258,15 +258,19 @@ export function Footer() {
           개발자의 서재 — 모든 코드는 하나의 이야기다
         </p>
         <div className="flex justify-center gap-6 mb-5">
-          {['The Shelf', 'Our Story', 'Guestbook'].map((link) => (
-            <a
-              key={link}
-              href="#"
-              className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200"
-            >
-              {link}
-            </a>
-          ))}
+          <Link to="/shelf" className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200">
+            The Shelf
+          </Link>
+          <Link to="/" className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200">
+            Our Story
+          </Link>
+          <a
+            href="#guestbook"
+            onClick={(e) => { e.preventDefault(); document.getElementById('guestbook')?.scrollIntoView({ behavior: 'smooth' }); }}
+            className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200"
+          >
+            Guestbook
+          </a>
         </div>
         <p className="font-body text-[0.75rem] text-parchment-dim/25">
           MMXXVI · Built with React & Framer Motion

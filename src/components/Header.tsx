@@ -1,15 +1,42 @@
 import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+
+const NAV_ITEMS = [
+  { label: 'The Shelf', sub: '책장',  to: '/shelf' },
+  { label: 'Our Story', sub: '팀 소개', to: '/' },
+  { label: 'Guestbook', sub: '방명록', to: '/#guestbook' },
+] as const;
 
 export function Header() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     await logout();
     navigate('/');
   };
+
+  /** Guestbook처럼 같은 페이지 앵커 또는 다른 페이지 앵커를 모두 처리 */
+  function handleNavClick(e: React.MouseEvent<HTMLAnchorElement>, to: string) {
+    if (!to.includes('#')) return; // 일반 라우트는 Link가 처리
+
+    e.preventDefault();
+    const [path, hash] = to.split('#');
+    const targetPath = path || '/';
+
+    if (location.pathname === targetPath || path === '') {
+      // 이미 같은 페이지 → 바로 스크롤
+      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // 다른 페이지 → 이동 후 스크롤
+      navigate(targetPath);
+      setTimeout(() => {
+        document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    }
+  }
 
   return (
     <motion.header
@@ -48,14 +75,11 @@ export function Header() {
 
           {/* 네비게이션 */}
           <nav className="hidden md:flex items-center gap-8">
-            {[
-              { label: 'The Shelf', sub: '책장' },
-              { label: 'Our Story', sub: '팀 소개' },
-              { label: 'Guestbook', sub: '방명록' },
-            ].map((item) => (
+            {NAV_ITEMS.map((item) => (
               <motion.a
                 key={item.label}
-                href="#"
+                href={item.to}
+                onClick={(e) => handleNavClick(e, item.to)}
                 className="group flex flex-col items-center"
                 whileHover={{ y: -2 }}
                 transition={{ type: 'spring', stiffness: 400 }}
