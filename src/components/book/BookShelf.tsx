@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BookCard } from './BookCard';
 import { BookCover } from './BookCover';
 import { OpenBook } from './OpenBook';
-import type { Portfolio, TechStack } from '../types';
+import type { Portfolio, TechStack } from '../../types';
 
 type BookPhase = 'cover' | 'open';
 interface BookSelection {

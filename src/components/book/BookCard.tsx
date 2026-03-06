@@ -1,6 +1,6 @@
 import { useState, memo } from 'react';
 import { motion } from 'framer-motion';
-import type { Portfolio } from '../types';
+import type { Portfolio } from '../../types';
 
 interface BookCardProps {
   portfolio: Portfolio;

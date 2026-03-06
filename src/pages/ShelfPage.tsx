@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { FloatingParticles } from '../components/FloatingParticles';
 import { Header } from '../components/Header';
 import { FilterBar } from '../components/FilterBar';
-import { BookShelf } from '../components/BookShelf';
+import { BookShelf } from '../components/book/BookShelf';
 import { usePortfolios } from '../hooks/usePortfolios';
 import type { TechStack } from '../types';
 

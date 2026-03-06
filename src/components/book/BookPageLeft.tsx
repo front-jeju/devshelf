@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { Portfolio } from '../types';
+import type { Portfolio } from '../../types';
 
 interface BookPageLeftProps {
   portfolio: Portfolio;

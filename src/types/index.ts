@@ -31,6 +31,7 @@ export interface Portfolio {
   spineColor: string;
   coverColor: string;
   accentColor: string;
+  label?: string;
   projectCount: number;
   featured?: boolean;
 }

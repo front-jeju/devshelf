@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import type { Portfolio } from '../types';
+import type { Portfolio } from '../../types';
 import { BookPageLeft } from './BookPageLeft';
 import { BookPageRight } from './BookPageRight';
 

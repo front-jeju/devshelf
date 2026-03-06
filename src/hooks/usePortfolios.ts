@@ -28,15 +28,16 @@ export function usePortfolios() {
     // 컴포넌트가 처음 화면에 나타날 때 Firestore에서 데이터를 불러옵니다
     fetchPortfolios()
       .then((firestoreData) => {
-        // Firestore 데이터를 앞에, 정적 데모 데이터를 뒤에 배치
-        // (실제 등록 데이터가 먼저 보이도록)
-        const merged = [...firestoreData, ...(portfoliosData as Portfolio[])];
+        // 개발 환경에서만 정적 데모 데이터를 함께 표시
+        const merged = import.meta.env.DEV
+          ? [...firestoreData, ...(portfoliosData as Portfolio[])]
+          : firestoreData;
         cachedPortfolios = merged;
         setPortfolios(merged);
       })
       .catch(() => {
-        // Firestore 연결 실패 시 정적 JSON 데이터만 표시
-        cachedPortfolios = portfoliosData as Portfolio[];
+        // Firestore 연결 실패 시 개발 환경에서만 정적 JSON 데이터 표시
+        cachedPortfolios = import.meta.env.DEV ? (portfoliosData as Portfolio[]) : [];
         setPortfolios(cachedPortfolios);
       })
       .finally(() => setLoading(false)); // 성공/실패 모두 로딩 종료

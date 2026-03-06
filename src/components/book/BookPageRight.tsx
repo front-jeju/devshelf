@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import type { Portfolio } from '../types';
-import { TECH_COLORS } from '../data/stacks';
-import { useAuth } from '../contexts/AuthContext';
-import { deletePortfolio } from '../lib/portfolioService';
+import type { Portfolio } from '../../types';
+import { TECH_COLORS } from '../../data/stacks';
+import { useAuth } from '../../contexts/AuthContext';
+import { deletePortfolio } from '../../lib/portfolioService';
 
 interface BookPageRightProps {
   portfolio: Portfolio;
