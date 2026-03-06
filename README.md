@@ -58,7 +58,7 @@
 
 ### 2.2 배포 URL
 
-- **Production**: `https://your-devshelf.netlify.app`
+- **Production**: `https://thedevshelf.netlify.app/`
 - 테스트 계정
   ```
   id: test@devshelf.dev
@@ -183,31 +183,31 @@ gantt
     title DevShelf 개발 일정
     dateFormat YYYY-MM-DD
     section 기획 / 설계
-        서비스 기획 및 컨셉 확정     :2025-01-01, 2d
-        Firestore 구조 설계          :2025-01-03, 1d
-        컴포넌트 구조 설계           :2025-01-04, 1d
+        서비스 기획 및 컨셉 확정     :2026-02-27, 2d
+        Firestore 구조 설계          :2026-02-27, 3d
+        컴포넌트 구조 설계           :2026-03-01, 3d
     section 인증
-        Firebase Auth 연동           :2025-01-05, 1d
-        로그인 / 회원가입 페이지     :2025-01-06, 2d
-        PrivateRoute / GuestRoute    :2025-01-08, 1d
+        Firebase Auth 연동           :2026-03-02, 1d
+        로그인 / 회원가입 페이지     :2026-03-01, 1d
+        PrivateRoute / GuestRoute    :2026-03-04, 1d
     section 포트폴리오
-        Firestore CRUD 구현          :2025-01-09, 2d
-        포트폴리오 등록 폼           :2025-01-11, 3d
-        포트폴리오 수정 폼           :2025-01-14, 2d
-        공통 폼 훅 분리              :2025-01-16, 1d
+        Firestore CRUD 구현          :2026-03-04, 1d
+        포트폴리오 등록 폼           :2026-03-01, 4d
+        포트폴리오 수정 폼           :2026-03-05, 1d
+        공통 폼 훅 분리              :2026-03-04, 2d
     section 책 인터랙션
-        BookCard / BookCover         :2025-01-17, 2d
-        OpenBook (펼침 애니메이션)   :2025-01-19, 3d
-        BookShelf 그리드             :2025-01-22, 1d
+        BookCard / BookCover         :2026-03-01, 1d
+        OpenBook (펼침 애니메이션)   :2026-03-06, 1d
+        BookShelf 그리드             :2026-03-06, 1d
     section UI / UX
-        HeroSection                  :2025-01-23, 2d
-        Header 반응형 + 햄버거 메뉴  :2025-01-25, 2d
-        FilterBar                    :2025-01-27, 1d
-        방명록                       :2025-01-28, 2d
+        HeroSection                  :2026-03-01, 2d
+        Header 반응형 + 햄버거 메뉴  :2026-03-03, 4d
+        FilterBar                    :2026-03-05, 1d
+        방명록                       :2026-03-03, 3d
     section 최적화 / 배포
-        코드 중복 제거 / 리팩토링   :2025-01-30, 2d
-        Netlify 배포                 :2025-02-01, 1d
-        QA 및 버그 수정              :2025-02-02, 2d
+        코드 중복 제거 / 리팩토링   :2026-03-04, 3d
+        Netlify 배포                 :2026-03-06, 1d
+        QA 및 버그 수정              :2026-03-06, 1d
 ```
 
 ---
