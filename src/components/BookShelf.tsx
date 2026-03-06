@@ -1,8 +1,15 @@
 import { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookCard } from './BookCard';
-import { PortfolioModal } from './PortfolioModal';
+import { BookCover } from './BookCover';
+import { OpenBook } from './OpenBook';
 import type { Portfolio, TechStack } from '../types';
+
+type BookPhase = 'cover' | 'open';
+interface BookSelection {
+  portfolio: Portfolio;
+  phase: BookPhase;
+}
 
 interface BookShelfProps {
   portfolios: Portfolio[];
@@ -109,10 +116,18 @@ function DecorBook({ color, width, height }: { color: string; width: number; hei
 const BOOKS_PER_ROW = 6;
 
 export function BookShelf({ portfolios, selectedStack, onDelete }: BookShelfProps) {
-  const [selectedPortfolio, setSelectedPortfolio] = useState<Portfolio | null>(null);
+  const [selection, setSelection] = useState<BookSelection | null>(null);
 
   const handleSelect = useCallback((portfolio: Portfolio) => {
-    setSelectedPortfolio(portfolio);
+    setSelection({ portfolio, phase: 'cover' });
+  }, []);
+
+  const handleOpen = useCallback(() => {
+    setSelection((prev) => prev ? { ...prev, phase: 'open' } : null);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setSelection(null);
   }, []);
 
   const rows = useMemo(() => {
@@ -228,13 +243,22 @@ export function BookShelf({ portfolios, selectedStack, onDelete }: BookShelfProp
         </div>
       </motion.div>
 
-      {/* 포트폴리오 모달 */}
+      {/* Book interaction overlay (COVER → OPEN) */}
       <AnimatePresence>
-        {selectedPortfolio && (
-          <PortfolioModal
-            portfolio={selectedPortfolio}
-            onClose={() => setSelectedPortfolio(null)}
+        {selection?.phase === 'cover' && (
+          <BookCover
+            key="cover"
+            portfolio={selection.portfolio}
+            onOpen={handleOpen}
+            onClose={handleClose}
+          />
+        )}
+        {selection?.phase === 'open' && (
+          <OpenBook
+            key="open"
+            portfolio={selection.portfolio}
             onDelete={onDelete}
+            onClose={handleClose}
           />
         )}
       </AnimatePresence>
