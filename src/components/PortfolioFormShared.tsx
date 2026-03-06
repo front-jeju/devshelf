@@ -1,18 +1,6 @@
 import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-/* ── 직군 선택 목록 ── */
-export const ROLES = [
-  'Frontend Engineer',
-  'Backend Engineer',
-  'Full-Stack Developer',
-  'UI/UX & Frontend',
-  'Mobile Developer',
-  'DevOps Engineer',
-  'Data Engineer',
-  'ML / AI Engineer',
-];
-
 /* ── 섹션 구분 제목 컴포넌트 ── */
 export function SectionTitle({ children }: { children: ReactNode }) {
   return (

@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FloatingParticles } from '../components/FloatingParticles';
-import { SectionTitle, FieldError, MiniBook, ROLES } from '../components/PortfolioFormShared';
+import { SectionTitle, FieldError, MiniBook } from '../components/PortfolioFormShared';
+import { ROLES } from '../data/roles';
 import { ALL_STACKS, STACK_ICONS } from '../data/stacks';
 import { useEditPortfolioForm, BOOK_THEMES } from '../hooks/useEditPortfolioForm';
 
