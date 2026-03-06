@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
-/* ─── 커스텀 CSS 변수 ─── */
-:root {
+/* ─── Tailwind v4 테마 토큰 ─── */
+@theme {
   --color-bg-deep: #0a0500;
   --color-bg-dark: #120800;
+  --color-bg-mid: #0f0700;
   --color-shelf: #3d1a06;
   --color-shelf-dark: #2a1104;
   --color-shelf-light: #6b3010;
@@ -13,47 +14,47 @@
   --color-gold-light: #f0c040;
   --color-gold-dim: #8b6914;
   --color-candle: #ff8c00;
-  --color-candle-glow: rgba(255, 140, 0, 0.15);
+
   --font-magic: 'Cinzel', serif;
   --font-display: 'Playfair Display', serif;
   --font-body: 'EB Garamond', serif;
 }
 
 /* ─── 기본 리셋 ─── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-html {
-  scroll-behavior: smooth;
-}
+  html {
+    scroll-behavior: smooth;
+  }
 
-body {
-  background-color: var(--color-bg-deep);
-  color: var(--color-parchment);
-  font-family: var(--font-body);
-  font-size: 16px;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
+  body {
+    background-color: var(--color-bg-deep);
+    color: var(--color-parchment);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
 
-/* ─── 마법 배경 ─── */
-.magic-bg {
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(180, 100, 20, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(120, 60, 10, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 100%, rgba(80, 30, 5, 0.1) 0%, transparent 60%),
-    #0a0500;
-}
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 
-/* ─── 황금 텍스트 효과 ─── */
-.text-gold-gradient {
-  background: linear-gradient(135deg, #f0c040 0%, #d4af37 40%, #c9a84c 70%, #f0c040 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #1a0d00; }
+  ::-webkit-scrollbar-thumb { background: #8b6914; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+
+  ::selection {
+    background: rgba(212, 175, 55, 0.3);
+    color: #f5e6c8;
+  }
 }
 
 /* ─── 키프레임 애니메이션 ─── */
@@ -102,25 +103,234 @@ body {
   100% { background-position: 200% center; }
 }
 
-/* ─── 책 3D 효과 ─── */
-.book-wrapper {
-  perspective: 1000px;
-}
+/* ─── 공통 컴포넌트 클래스 ─── */
+@layer components {
 
-/* ─── 스크롤바 ─── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #1a0d00; }
-::-webkit-scrollbar-thumb { background: #8b6914; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+  /* ── 페이지 배경 ── */
+  .page-bg {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0a0500 0%, #0f0700 30%, #120800 60%, #0a0500 100%);
+    position: relative;
+    overflow: hidden;
+  }
 
-/* ─── 선택 색상 ─── */
-::selection {
-  background: rgba(212, 175, 55, 0.3);
-  color: #f5e6c8;
-}
+  .page-bg-flex {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0a0500 0%, #0f0700 30%, #120800 60%, #0a0500 100%);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 
-/* ─── 링크 기본 ─── */
-a {
-  text-decoration: none;
-  color: inherit;
+  .page-overlay {
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 25%, rgba(139, 69, 19, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 85% 75%, rgba(100, 40, 10, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(60, 20, 5, 0.03) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── 황금 장식선 ── */
+  .gold-top-line {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #d4af37, #f0c040, #d4af37, transparent);
+    z-index: 10;
+  }
+
+  .gold-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+  }
+
+  .gold-divider-faint {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
+  }
+
+  /* ── 텍스트 그라데이션 ── */
+  .gold-gradient-text {
+    background: linear-gradient(135deg, #f0c040 0%, #d4af37 40%, #c9a84c 70%, #f0c040 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .logo-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    background: linear-gradient(135deg, #f0c040, #d4af37, #c9a84c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .logo-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.7rem;
+    color: #c8b08a;
+    letter-spacing: 0.15em;
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* ── 다크 카드 ── */
+  .card-dark {
+    background: linear-gradient(135deg, #1e0f00 0%, #120800 60%, #0a0500 100%);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 175, 55, 0.05);
+  }
+
+  .card-top-bar {
+    height: 3px;
+    background: linear-gradient(90deg, #d4af37, #f0c040, #d4af37);
+  }
+
+  /* ── 카드 내 구분 제목 ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .section-header-line-l {
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.25));
+  }
+
+  .section-header-line-r {
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, rgba(212, 175, 55, 0.25), transparent);
+  }
+
+  .section-header-text {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    color: rgba(212, 175, 55, 0.7);
+  }
+
+  /* ── 입력 필드 ── */
+  .input-field {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 3px;
+    padding: 11px 14px;
+    font-family: 'EB Garamond', serif;
+    font-size: 1rem;
+    color: #e8d5b0;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    box-sizing: border-box;
+  }
+
+  .input-field.error {
+    border-color: rgba(248, 113, 113, 0.5);
+  }
+
+  .input-field.success {
+    border-color: rgba(52, 211, 153, 0.5);
+  }
+
+  .input-field:focus {
+    border-color: rgba(212, 175, 55, 0.6);
+    background: rgba(212, 175, 55, 0.05);
+  }
+
+  .input-field::placeholder {
+    color: rgba(200, 176, 138, 0.35);
+    font-style: italic;
+  }
+
+  .label-field {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    color: rgba(200, 176, 138, 0.7);
+    margin-bottom: 8px;
+  }
+
+  /* ── 버튼 ── */
+  .btn-gold {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #d4af37, #f0c040, #d4af37);
+    border: none;
+    border-radius: 3px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #1a0d00;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-gold:disabled {
+    background: rgba(212, 175, 55, 0.3);
+    color: rgba(26, 13, 0, 0.5);
+    cursor: not-allowed;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 3px;
+    font-family: 'Cinzel', serif;
+    color: rgba(200, 176, 138, 0.6);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  /* ── 에러/피드백 ── */
+  .error-box {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.88rem;
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    border-radius: 3px;
+    padding: 10px 14px;
+    text-align: center;
+  }
+
+  .field-error {
+    margin-top: 6px;
+    font-family: 'EB Garamond', serif;
+    font-size: 0.8rem;
+    color: #f87171;
+    font-style: italic;
+  }
+
+  /* ── 책 3D 효과 ── */
+  .book-wrapper {
+    perspective: 1000px;
+  }
+
+  /* ── 마법 배경 ── */
+  .magic-bg {
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(180, 100, 20, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(120, 60, 10, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 100%, rgba(80, 30, 5, 0.1) 0%, transparent 60%),
+      #0a0500;
+  }
 }

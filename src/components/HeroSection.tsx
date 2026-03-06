@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 function Candle({ delay = 0 }: { delay?: number }) {
   return (
@@ -16,11 +18,7 @@ function Candle({ delay = 0 }: { delay?: number }) {
           borderRadius: '50% 50% 30% 30%',
           filter: 'blur(1px)',
         }}
-        animate={{
-          scaleX: [1, 0.8, 1.1, 0.9, 1],
-          scaleY: [1, 1.1, 0.9, 1.05, 1],
-          opacity: [0.9, 1, 0.85, 1, 0.9],
-        }}
+        animate={{ scaleX: [1, 0.8, 1.1, 0.9, 1], scaleY: [1, 1.1, 0.9, 1.05, 1], opacity: [0.9, 1, 0.85, 1, 0.9] }}
         transition={{ duration: 1.5 + delay * 0.3, repeat: Infinity, ease: 'easeInOut' }}
       />
       {/* glow */}
@@ -51,21 +49,18 @@ function Candle({ delay = 0 }: { delay?: number }) {
 }
 
 export function HeroSection() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
   return (
     <section
       className="relative flex flex-col items-center justify-center text-center"
-      style={{
-        minHeight: '100vh',
-        paddingTop: 100,
-        paddingBottom: 40,
-      }}
+      style={{ minHeight: '100vh', paddingTop: 100, paddingBottom: 40 }}
     >
       {/* 배경 빛 효과 */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse at 50% 40%, rgba(212,175,55,0.06) 0%, transparent 65%)',
-        }}
+        style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(212,175,55,0.06) 0%, transparent 65%)' }}
       />
 
       {/* 촛불 그룹 - 왼쪽 */}
@@ -93,7 +88,7 @@ export function HeroSection() {
       </motion.div>
 
       {/* 메인 콘텐츠 */}
-      <div className="relative" style={{ zIndex: 2 }}>
+      <div className="relative z-[2]">
         {/* 상단 장식 */}
         <motion.div
           className="flex items-center justify-center gap-4 mb-6"
@@ -101,9 +96,9 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
         >
-          <div style={{ height: 1, width: 80, background: 'linear-gradient(90deg, transparent, #d4af37)' }} />
+          <div className="h-px w-20" style={{ background: 'linear-gradient(90deg, transparent, #d4af37)' }} />
           <span style={{ color: '#d4af37', fontSize: '1.2rem' }}>✦</span>
-          <div style={{ height: 1, width: 80, background: 'linear-gradient(90deg, #d4af37, transparent)' }} />
+          <div className="h-px w-20" style={{ background: 'linear-gradient(90deg, #d4af37, transparent)' }} />
         </motion.div>
 
         {/* 서브타이틀 */}
@@ -142,27 +137,7 @@ export function HeroSection() {
           animate={{ opacity: 1, letterSpacing: '0.08em' }}
           transition={{ delay: 0.7, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
         >
-          The Developer's
-        </motion.h1>
-        <motion.h1
-          style={{
-            fontFamily: "'Cinzel Decorative', 'Cinzel', serif",
-            fontSize: 'clamp(2.2rem, 6vw, 5rem)',
-            fontWeight: 900,
-            letterSpacing: '0.08em',
-            lineHeight: 1.2,
-            background: 'linear-gradient(135deg, #f0c040 0%, #d4af37 30%, #c9a84c 60%, #f5d060 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            filter: 'drop-shadow(0 0 30px rgba(212,175,55,0.3))',
-            marginBottom: '1.5rem',
-          }}
-          initial={{ opacity: 0, letterSpacing: '0.5em' }}
-          animate={{ opacity: 1, letterSpacing: '0.08em' }}
-          transition={{ delay: 0.9, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        >
-          Library
+          DEVSHELF
         </motion.h1>
 
         {/* 한국어 부제목 */}
@@ -210,14 +185,12 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.8, duration: 0.6 }}
         >
-          <motion.a
-            href="#bookshelf"
+          <motion.button
+            onClick={() => navigate('/shelf')}
             whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(212,175,55,0.4)' }}
             whileTap={{ scale: 0.97 }}
+            className="inline-flex items-center gap-2.5"
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 10,
               fontFamily: "'Cinzel', serif",
               fontSize: '0.9rem',
               letterSpacing: '0.15em',
@@ -228,20 +201,18 @@ export function HeroSection() {
               borderRadius: '2px',
               cursor: 'pointer',
               boxShadow: '0 0 20px rgba(212,175,55,0.25)',
+              border: 'none',
             }}
           >
-            <span>📚</span>
             서재 둘러보기
-          </motion.a>
+          </motion.button>
 
-          <motion.a
-            href="#"
+          <motion.button
+            onClick={() => navigate(user ? '/portfolio/new' : '/login')}
             whileHover={{ scale: 1.05, borderColor: 'rgba(212,175,55,0.8)' }}
             whileTap={{ scale: 0.97 }}
+            className="inline-flex items-center gap-2.5"
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 10,
               fontFamily: "'Cinzel', serif",
               fontSize: '0.85rem',
               letterSpacing: '0.12em',
@@ -253,9 +224,8 @@ export function HeroSection() {
               cursor: 'pointer',
             }}
           >
-            <span>✍️</span>
             내 서재 등록
-          </motion.a>
+          </motion.button>
         </motion.div>
 
         {/* 하단 장식 */}
@@ -265,11 +235,11 @@ export function HeroSection() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 0.8 }}
         >
-          <div style={{ height: 1, width: 60, background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.4))' }} />
+          <div className="h-px w-15" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.4))' }} />
           <span style={{ color: 'rgba(212,175,55,0.4)', fontSize: '0.8rem', fontFamily: "'Cinzel', serif", letterSpacing: '0.2em' }}>
             MMXXVI
           </span>
-          <div style={{ height: 1, width: 60, background: 'linear-gradient(90deg, rgba(212,175,55,0.4), transparent)' }} />
+          <div className="h-px w-15" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.4), transparent)' }} />
         </motion.div>
       </div>
 
@@ -284,19 +254,11 @@ export function HeroSection() {
         <motion.div
           animate={{ opacity: 1 }}
           transition={{ delay: 2.5 }}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 4,
-            color: 'rgba(212,175,55,0.5)',
-            fontFamily: "'EB Garamond', serif",
-            fontSize: '0.75rem',
-            letterSpacing: '0.2em',
-          }}
+          className="flex flex-col items-center gap-1"
+          style={{ color: 'rgba(212,175,55,0.5)', fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', letterSpacing: '0.2em' }}
         >
           <span>scroll</span>
-          <div style={{ width: 1, height: 30, background: 'linear-gradient(180deg, rgba(212,175,55,0.5), transparent)' }} />
+          <div className="w-px h-8" style={{ background: 'linear-gradient(180deg, rgba(212,175,55,0.5), transparent)' }} />
         </motion.div>
       </motion.div>
     </section>

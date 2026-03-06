@@ -10,8 +10,17 @@ export type TechStack =
   | 'GraphQL'
   | 'Three.js';
 
+export interface GuestbookMessage {
+  id: string;
+  uid?: string;
+  name: string;
+  message: string;
+  createdAt: string;
+}
+
 export interface Portfolio {
   id: string;
+  uid?: string; // 이 포트폴리오를 등록한 사용자의 Firebase uid (수정/삭제 권한 확인에 사용)
   name: string;
   role: string;
   tagline: string;
@@ -22,6 +31,7 @@ export interface Portfolio {
   spineColor: string;
   coverColor: string;
   accentColor: string;
+  label?: string;
   projectCount: number;
   featured?: boolean;
 }
