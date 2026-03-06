@@ -1,12 +1,13 @@
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FloatingParticles } from '../components/FloatingParticles';
-import { SectionTitle, FieldError, MiniBook } from '../components/PortfolioFormShared';
-import { ROLES } from '../data/roles';
-import { ALL_STACKS, STACK_ICONS } from '../data/stacks';
-import { useEditPortfolioForm, BOOK_THEMES } from '../hooks/useEditPortfolioForm';
+import {
+  SectionTitle,
+  BasicInfoFields, TechStackFields, LinksFields, AboutMeField,
+  BookThemePicker, FormActionButtons, DoneScreen,
+} from '../components/PortfolioFormShared';
+import { useEditPortfolioForm } from '../hooks/useEditPortfolioForm';
 
-/* ── 메인 컴포넌트 ── */
 export function EditPortfolioPage() {
   const { id } = useParams<{ id: string }>();
 
@@ -60,41 +61,15 @@ export function EditPortfolioPage() {
     return (
       <div className="page-bg-flex px-6">
         <FloatingParticles />
-        <motion.div
-          className="relative z-[2] text-center max-w-[420px]"
-          initial={{ opacity: 0, scale: 0.85 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <motion.div
-            className="flex justify-center mb-8"
-            initial={{ rotateY: 90 }}
-            animate={{ rotateY: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <MiniBook name={form.name} role={form.role} theme={selectedTheme} />
-          </motion.div>
-          <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.2em', fontStyle: 'italic', marginBottom: 10 }}>
-            — 서재가 새롭게 정돈되었습니다 —
-          </div>
-          <h2
-            className="gold-gradient-text mb-3"
-            style={{ fontFamily: "'Cinzel', serif", fontSize: '1.5rem', fontWeight: 700 }}
-          >
-            수정 완료
-          </h2>
-          <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.7)', fontStyle: 'italic', lineHeight: 1.7, marginBottom: 32 }}>
-            "{form.name}"의 서재가 아름답게 수정되었습니다.
-          </p>
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => navigate('/shelf')}
-            className="btn-gold"
-          >
-            서재 둘러보기 →
-          </motion.button>
-        </motion.div>
+        <DoneScreen
+          name={form.name}
+          role={form.role}
+          theme={selectedTheme}
+          subtitle="— 서재가 새롭게 정돈되었습니다 —"
+          title="수정 완료"
+          description={`"${form.name}"의 서재가 아름답게 수정되었습니다.`}
+          onNavigate={() => navigate('/shelf')}
+        />
       </div>
     );
   }
@@ -154,190 +129,51 @@ export function EditPortfolioPage() {
               {/* ── 1. 기본 정보 ── */}
               <div>
                 <SectionTitle>BASIC INFO</SectionTitle>
-                <div className="flex flex-col gap-4">
-                  <div>
-                    <label className="label-field">이름 <span style={{ color: '#d4af37' }}>*</span></label>
-                    <input
-                      type="text"
-                      value={form.name}
-                      onChange={(e) => setField('name', e.target.value)}
-                      onBlur={() => touch('name')}
-                      placeholder="홍길동"
-                      className={`input-field ${touched.name && errors.name ? 'error' : ''}`}
-                    />
-                    <FieldError show={touched.name && !!errors.name} message={errors.name} />
-                  </div>
-
-                  <div>
-                    <label className="label-field">직군 <span style={{ color: '#d4af37' }}>*</span></label>
-                    <select
-                      value={form.role}
-                      onChange={(e) => setField('role', e.target.value)}
-                      onBlur={() => touch('role')}
-                      className={`input-field ${touched.role && errors.role ? 'error' : ''}`}
-                      style={{
-                        appearance: 'none',
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23d4af37' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'right 14px center',
-                        paddingRight: 36,
-                        color: form.role ? '#e8d5b0' : 'rgba(200,176,138,0.4)',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <option value="" style={{ background: '#120800', color: 'rgba(200,176,138,0.5)' }}>직군을 선택하세요</option>
-                      {ROLES.map((r) => (
-                        <option key={r} value={r} style={{ background: '#120800', color: '#e8d5b0' }}>{r}</option>
-                      ))}
-                    </select>
-                    <FieldError show={touched.role && !!errors.role} message={errors.role} />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <label className="label-field" style={{ marginBottom: 0 }}>한 줄 소개 <span style={{ color: '#d4af37' }}>*</span></label>
-                      <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: form.tagline.length > 60 ? '#f87171' : 'rgba(200,176,138,0.35)', fontStyle: 'italic' }}>
-                        {form.tagline.length} / 60
-                      </span>
-                    </div>
-                    <input
-                      type="text"
-                      value={form.tagline}
-                      onChange={(e) => setField('tagline', e.target.value)}
-                      onBlur={() => touch('tagline')}
-                      placeholder="사용자의 경험을 코드로 완성하는 개발자"
-                      className={`input-field ${touched.tagline && errors.tagline ? 'error' : ''}`}
-                    />
-                    <FieldError show={touched.tagline && !!errors.tagline} message={errors.tagline} />
-                  </div>
-                </div>
+                <BasicInfoFields
+                  fields={{ name: form.name, role: form.role, tagline: form.tagline }}
+                  touched={touched}
+                  errors={errors}
+                  onChange={(key, value) => setField(key, value)}
+                  onBlur={(key) => touch(key)}
+                />
               </div>
 
               {/* ── 2. 기술 스택 ── */}
               <div>
                 <SectionTitle>TECH STACK</SectionTitle>
-                <div className="flex flex-wrap gap-2">
-                  {ALL_STACKS.map((stack) => {
-                    const selected = form.techStack.includes(stack);
-                    return (
-                      <motion.button
-                        key={stack}
-                        type="button"
-                        whileHover={{ y: -2, scale: 1.04 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => toggleStack(stack)}
-                        className="flex items-center gap-1.5"
-                        style={{
-                          fontFamily: "'EB Garamond', serif",
-                          fontSize: '0.88rem',
-                          letterSpacing: '0.04em',
-                          padding: '6px 14px',
-                          borderRadius: 2,
-                          cursor: 'pointer',
-                          border: selected ? '1px solid #d4af37' : '1px solid rgba(212,175,55,0.2)',
-                          background: selected
-                            ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06))'
-                            : 'rgba(212,175,55,0.03)',
-                          color: selected ? '#f0c040' : 'rgba(200,176,138,0.6)',
-                          boxShadow: selected ? '0 0 10px rgba(212,175,55,0.15)' : 'none',
-                          transition: 'all 0.2s',
-                        }}
-                      >
-                        <span>{STACK_ICONS[stack]}</span>
-                        {stack}
-                        {selected && <span style={{ marginLeft: 2, fontSize: '0.7rem' }}>✓</span>}
-                      </motion.button>
-                    );
-                  })}
-                </div>
+                <TechStackFields techStack={form.techStack} toggleStack={toggleStack} />
               </div>
 
               {/* ── 3. 링크 ── */}
               <div>
                 <SectionTitle>LINKS</SectionTitle>
-                <div className="flex flex-col gap-3.5">
-                  <div>
-                    <label className="label-field">포트폴리오 URL <span style={{ color: '#d4af37' }}>*</span></label>
-                    <input
-                      type="url"
-                      value={form.liveDemo}
-                      onChange={(e) => setField('liveDemo', e.target.value)}
-                      onBlur={() => touch('liveDemo')}
-                      placeholder="https://your-portfolio.com"
-                      className={`input-field ${touched.liveDemo && errors.liveDemo ? 'error' : ''}`}
-                    />
-                    <FieldError show={touched.liveDemo && !!errors.liveDemo} message={errors.liveDemo} />
-                  </div>
-                  <div>
-                    <label className="label-field">
-                      GitHub URL{' '}
-                      <span style={{ fontFamily: "'EB Garamond', serif", letterSpacing: 0, fontStyle: 'italic', color: 'rgba(200,176,138,0.4)' }}>(선택)</span>
-                    </label>
-                    <input
-                      type="url"
-                      value={form.github}
-                      onChange={(e) => setField('github', e.target.value)}
-                      placeholder="https://github.com/username"
-                      className="input-field"
-                    />
-                  </div>
-                </div>
+                <LinksFields
+                  liveDemo={form.liveDemo}
+                  liveDemoTouched={touched.liveDemo}
+                  liveDemoError={errors.liveDemo}
+                  github={form.github}
+                  onLiveDemoChange={(v) => setField('liveDemo', v)}
+                  onLiveDemoBlur={() => touch('liveDemo')}
+                  onGithubChange={(v) => setField('github', v)}
+                />
               </div>
 
               {/* ── 4. 자기소개 ── */}
               <div>
                 <SectionTitle>ABOUT ME</SectionTitle>
-                <textarea
-                  value={form.description}
-                  onChange={(e) => setField('description', e.target.value)}
-                  placeholder="나의 개발 철학, 경험, 관심사를 자유롭게 작성해주세요..."
-                  rows={4}
-                  className="input-field -mt-3"
-                  style={{ resize: 'vertical', minHeight: 100, lineHeight: 1.7 }}
-                />
+                <AboutMeField value={form.description} onChange={(v) => setField('description', v)} />
               </div>
 
               {/* ── 5. 책 테마 ── */}
               <div>
                 <SectionTitle>BOOK THEME</SectionTitle>
-                <div className="flex gap-4 items-center">
-                  <MiniBook name={form.name} role={form.role} theme={selectedTheme} />
-                  <div className="flex-1">
-                    <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.82rem', color: 'rgba(200,176,138,0.5)', fontStyle: 'italic', marginBottom: 12 }}>
-                      서재에 꽂힐 당신의 책 색상을 골라보세요.
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {BOOK_THEMES.map((theme, i) => (
-                        <motion.button
-                          key={i}
-                          type="button"
-                          whileHover={{ scale: 1.12 }}
-                          whileTap={{ scale: 0.93 }}
-                          onClick={() => setField('themeIdx', i)}
-                          title={theme.label}
-                          className="relative flex-shrink-0"
-                          style={{
-                            width: 36,
-                            height: 36,
-                            borderRadius: 3,
-                            border: form.themeIdx === i ? `2px solid ${theme.accentColor}` : '2px solid transparent',
-                            background: `linear-gradient(135deg, ${theme.coverColor}, ${theme.spineColor})`,
-                            cursor: 'pointer',
-                            boxShadow: form.themeIdx === i ? `0 0 12px ${theme.accentColor}60` : '0 2px 8px rgba(0,0,0,0.4)',
-                            transition: 'box-shadow 0.2s',
-                          }}
-                        >
-                          {form.themeIdx === i && (
-                            <span className="absolute inset-0 flex items-center justify-center" style={{ fontSize: '0.7rem', color: theme.accentColor }}>✓</span>
-                          )}
-                        </motion.button>
-                      ))}
-                    </div>
-                    <p style={{ marginTop: 8, fontFamily: "'Cinzel', serif", fontSize: '0.65rem', letterSpacing: '0.1em', color: 'rgba(200,176,138,0.4)' }}>
-                      {selectedTheme.label}
-                    </p>
-                  </div>
-                </div>
+                <BookThemePicker
+                  name={form.name}
+                  role={form.role}
+                  themeIdx={form.themeIdx}
+                  selectedTheme={selectedTheme}
+                  onThemeChange={(i) => setField('themeIdx', i)}
+                />
               </div>
 
               {/* 에러 메시지 */}
@@ -351,28 +187,12 @@ export function EditPortfolioPage() {
                 </motion.div>
               )}
 
-              {/* ── 버튼 영역 ── */}
-              <div className="flex gap-2.5 mt-1">
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => navigate(-1)}
-                  className="btn-ghost flex-shrink-0"
-                  style={{ padding: '13px 20px', fontSize: '0.78rem', letterSpacing: '0.1em' }}
-                >
-                  ← 취소
-                </motion.button>
-                <motion.button
-                  type="submit"
-                  disabled={isLoading}
-                  whileHover={{ scale: isLoading ? 1 : 1.02 }}
-                  whileTap={{ scale: isLoading ? 1 : 0.98 }}
-                  className="btn-gold flex-1"
-                >
-                  {isLoading ? '수정하는 중...' : '수정 완료 →'}
-                </motion.button>
-              </div>
+              <FormActionButtons
+                isLoading={isLoading}
+                onCancel={() => navigate(-1)}
+                loadingText="수정하는 중..."
+                submitText="수정 완료 →"
+              />
             </form>
           </div>
         </div>
