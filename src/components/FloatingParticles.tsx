@@ -23,11 +23,17 @@ export function FloatingParticles() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const resize = () => {
+    const applyResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
-    resize();
+    applyResize();
+
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    const resize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(applyResize, 150);
+    };
     window.addEventListener('resize', resize);
 
     const particles: Particle[] = [];
@@ -73,6 +79,7 @@ export function FloatingParticles() {
         particles.push(spawnParticle());
       }
 
+      // 파티클 상태 업데이트 및 만료 제거
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.life++;
@@ -90,45 +97,56 @@ export function FloatingParticles() {
 
         if (p.life >= p.maxLife || p.y < -20) {
           particles.splice(i, 1);
-          continue;
-        }
-
-        const alpha = p.opacity * (p.type === 'dust' ? 0.5 : 0.8);
-
-        if (p.type === 'star') {
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.life * 0.03);
-          ctx.fillStyle = `${p.color}${alpha})`;
-          ctx.shadowBlur = 6;
-          ctx.shadowColor = `${p.color}0.6)`;
-          for (let j = 0; j < 4; j++) {
-            ctx.beginPath();
-            ctx.moveTo(0, -p.size);
-            ctx.lineTo(p.size * 0.3, -p.size * 0.3);
-            ctx.lineTo(p.size, 0);
-            ctx.lineTo(p.size * 0.3, p.size * 0.3);
-            ctx.lineTo(0, p.size);
-            ctx.lineTo(-p.size * 0.3, p.size * 0.3);
-            ctx.lineTo(-p.size, 0);
-            ctx.lineTo(-p.size * 0.3, -p.size * 0.3);
-            ctx.closePath();
-            ctx.fill();
-            ctx.rotate(Math.PI / 2);
-          }
-          ctx.restore();
-        } else {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fillStyle = `${p.color}${alpha})`;
-          if (p.type === 'spark') {
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = `${p.color}0.8)`;
-          }
-          ctx.fill();
-          ctx.shadowBlur = 0;
         }
       }
+
+      // 1단계: shadowBlur 없이 dust 렌더
+      ctx.shadowBlur = 0;
+      for (const p of particles) {
+        if (p.type !== 'dust') continue;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `${p.color}${p.opacity * 0.5})`;
+        ctx.fill();
+      }
+
+      // 2단계: spark 렌더 (shadowBlur 8, 한 번만 설정)
+      ctx.shadowBlur = 8;
+      for (const p of particles) {
+        if (p.type !== 'spark') continue;
+        ctx.shadowColor = `${p.color}0.8)`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `${p.color}${p.opacity * 0.8})`;
+        ctx.fill();
+      }
+
+      // 3단계: star 렌더 (shadowBlur 6)
+      ctx.shadowBlur = 6;
+      for (const p of particles) {
+        if (p.type !== 'star') continue;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.life * 0.03);
+        ctx.fillStyle = `${p.color}${p.opacity * 0.8})`;
+        ctx.shadowColor = `${p.color}0.6)`;
+        for (let j = 0; j < 4; j++) {
+          ctx.beginPath();
+          ctx.moveTo(0, -p.size);
+          ctx.lineTo(p.size * 0.3, -p.size * 0.3);
+          ctx.lineTo(p.size, 0);
+          ctx.lineTo(p.size * 0.3, p.size * 0.3);
+          ctx.lineTo(0, p.size);
+          ctx.lineTo(-p.size * 0.3, p.size * 0.3);
+          ctx.lineTo(-p.size, 0);
+          ctx.lineTo(-p.size * 0.3, -p.size * 0.3);
+          ctx.closePath();
+          ctx.fill();
+          ctx.rotate(Math.PI / 2);
+        }
+        ctx.restore();
+      }
+      ctx.shadowBlur = 0;
 
       frameId = requestAnimationFrame(draw);
     };
@@ -136,6 +154,7 @@ export function FloatingParticles() {
     draw();
     return () => {
       cancelAnimationFrame(frameId);
+      clearTimeout(resizeTimer);
       window.removeEventListener('resize', resize);
     };
   }, []);
