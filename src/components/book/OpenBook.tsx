@@ -17,13 +17,18 @@ export function OpenBook({ portfolio, onDelete, onClose }: OpenBookProps) {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => setIsMobile(window.innerWidth < 768), 150);
+    };
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimer);
     };
   }, [onClose]);
 

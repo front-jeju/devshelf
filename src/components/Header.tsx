@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -21,7 +21,7 @@ export function Header() {
     setMenuOpen(false);
   };
 
-  function handleNavClick(e: React.MouseEvent<HTMLAnchorElement>, to: string) {
+  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, to: string) => {
     e.preventDefault();
     setMenuOpen(false);
 
@@ -41,7 +41,7 @@ export function Header() {
         document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
       }, 300);
     }
-  }
+  }, [navigate, location.pathname]);
 
   return (
     <motion.header
