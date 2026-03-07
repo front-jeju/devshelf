@@ -1,3 +1,15 @@
+/**
+ * ShelfPage.tsx
+ * /shelf 경로에 렌더링되는 책장 페이지입니다.
+ *
+ * 상태:
+ *   selectedStack — FilterBar에서 선택한 기술 스택 (null이면 전체 표시)
+ *
+ * 로직 흐름:
+ *   1. usePortfolios()로 Firestore에서 포트폴리오 목록을 불러옵니다.
+ *   2. FilterBar에서 스택 선택 → selectedStack 변경 → BookShelf가 필터링 처리.
+ *   3. BookShelf에서 책 삭제 → removePortfolio()로 UI에서 즉시 제거.
+ */
 import { useState } from 'react';
 import { FloatingParticles } from '../components/FloatingParticles';
 import { Header } from '../components/Header';
@@ -7,6 +19,7 @@ import { usePortfolios } from '../hooks/usePortfolios';
 import type { TechStack } from '../types';
 
 export function ShelfPage() {
+  // 선택된 기술 스택 필터 (null = 전체 표시)
   const [selectedStack, setSelectedStack] = useState<TechStack | null>(null);
   const { portfolios, loading, removePortfolio } = usePortfolios();
 

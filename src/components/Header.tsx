@@ -1,8 +1,26 @@
+/**
+ * Header.tsx
+ * 모든 페이지 상단에 고정되는 내비게이션 바입니다.
+ *
+ * 기능:
+ *   - 데스크탑: 가로 nav + 로그인/로그아웃/서재 등록 버튼
+ *   - 모바일: 햄버거 아이콘 클릭 → 드롭다운 메뉴 (AnimatePresence로 슬라이드 애니메이션)
+ *   - 해시 링크(/#guestbook) 처리: 현재 페이지면 smooth scroll, 다른 페이지면 이동 후 스크롤
+ *
+ * 상태:
+ *   menuOpen — 모바일 드롭다운 열림 여부
+ *
+ * 로직 흐름 (해시 링크 클릭):
+ *   클릭 → handleNavClick → 해시 포함 여부 확인
+ *     같은 페이지: scrollIntoView 바로 호출
+ *     다른 페이지: navigate() 후 300ms 대기 → scrollIntoView
+ */
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
+/** 네비게이션 링크 목록 (label: 영문, sub: 한글 설명, to: 경로) */
 const NAV_ITEMS = [
   { label: 'The Shelf', sub: '책장',  to: '/shelf' },
   { label: 'Our Story', sub: '팀 소개', to: '/' },
@@ -13,6 +31,7 @@ export function Header() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  // 모바일 햄버거 메뉴 열림 상태
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -21,10 +40,16 @@ export function Header() {
     setMenuOpen(false);
   };
 
+  /**
+   * 네비게이션 링크 클릭 핸들러.
+   * 해시(#) 링크는 브라우저 기본 동작 대신 smooth scroll을 수동으로 처리합니다.
+   * useCallback으로 감싸 불필요한 자식 리렌더링을 방지합니다.
+   */
   const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, to: string) => {
     e.preventDefault();
     setMenuOpen(false);
 
+    // 해시 없는 일반 경로는 바로 이동
     if (!to.includes('#')) {
       navigate(to);
       return;
@@ -34,8 +59,10 @@ export function Header() {
     const targetPath = path || '/';
 
     if (location.pathname === targetPath || path === '') {
+      // 현재 페이지 내 스크롤
       document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
     } else {
+      // 다른 페이지로 이동 후 스크롤 (페이지 렌더링 완료 대기)
       navigate(targetPath);
       setTimeout(() => {
         document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });

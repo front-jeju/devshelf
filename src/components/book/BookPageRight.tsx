@@ -1,3 +1,19 @@
+/**
+ * BookPageRight.tsx
+ * OpenBook의 오른쪽 페이지 컴포넌트입니다.
+ * 포트폴리오 상세 정보(이름·역할·태그라인·설명·기술스택·링크)를 표시합니다.
+ *
+ * 소유자 전용 기능:
+ *   isOwner = 로그인 사용자 uid === portfolio.uid 일 때 Edit·Delete 버튼 노출
+ *
+ * 삭제 로직 흐름:
+ *   "Delete" 클릭 → showDeleteConfirm=true → 확인 UI 표시
+ *   "Delete" 재클릭 → handleDelete() → Firestore 삭제 → onDelete() → onClose()
+ *   실패 시 → showDeleteConfirm=false (확인 UI 닫기, 에러 메시지는 미표시)
+ *
+ * 수정 로직 흐름:
+ *   "Edit" 클릭 → /portfolio/edit/:id 로 navigate
+ */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -8,15 +24,17 @@ import { deletePortfolio } from '../../lib/portfolioService';
 
 interface BookPageRightProps {
   portfolio: Portfolio;
-  onDelete: (id: string) => void;
-  onClose: () => void;
+  onDelete: (id: string) => void; // 삭제 성공 후 부모(BookShelf)에서 목록 갱신
+  onClose: () => void;            // 삭제 성공 후 모달 닫기
 }
 
 export function BookPageRight({ portfolio, onDelete, onClose }: BookPageRightProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  // 현재 로그인 사용자가 이 포트폴리오의 등록자인지 여부
   const isOwner = !!user && !!portfolio.uid && user.uid === portfolio.uid;
 
+  // 삭제 확인 UI 표시 여부 (2단계 삭제 확인)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 

@@ -1,3 +1,22 @@
+/**
+ * BookShelf.tsx
+ * 포트폴리오 목록을 책장 형태로 표시하는 메인 컴포넌트입니다.
+ *
+ * 구성:
+ *   BookShelf  — 전체 책장 프레임 + 책 클릭 상태 관리
+ *   ShelfRow   — 책장의 한 행 (최대 BOOKS_PER_ROW개 책 + 장식용 빈 책)
+ *   DecorBook  — 양 끝에 배치되는 장식용 빈 책
+ *
+ * 책 클릭 상태 머신 (BookPhase):
+ *   null → 'cover' (BookCover 오버레이 표시)
+ *   'cover' → 'open' (OpenBook 오버레이로 전환)
+ *   'open' → null (닫기)
+ *
+ * 로직 흐름:
+ *   책 클릭 → handleSelect → selection = { portfolio, phase: 'cover' }
+ *   BookCover에서 "OPEN" 클릭 → handleOpen → phase = 'open'
+ *   OpenBook에서 ESC/닫기 → handleClose → selection = null
+ */
 import { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookCard } from './BookCard';
@@ -5,16 +24,18 @@ import { BookCover } from './BookCover';
 import { OpenBook } from './OpenBook';
 import type { Portfolio, TechStack } from '../../types';
 
+/** 책 상세 보기의 단계: 'cover' = 표지 오버레이, 'open' = 펼쳐진 책 모달 */
 type BookPhase = 'cover' | 'open';
+/** 현재 선택된 책과 단계를 함께 저장하는 상태 타입 */
 interface BookSelection {
   portfolio: Portfolio;
   phase: BookPhase;
 }
 
 interface BookShelfProps {
-  portfolios: Portfolio[];
-  selectedStack: TechStack | null;
-  onDelete: (id: string) => void;
+  portfolios: Portfolio[];            // 표시할 포트폴리오 전체 목록
+  selectedStack: TechStack | null;   // FilterBar에서 선택된 스택 (null = 전체)
+  onDelete: (id: string) => void;    // 삭제 완료 후 부모에서 목록 제거
 }
 
 function ShelfRow({ portfolios, selectedStack, rowIndex, onSelect }: {

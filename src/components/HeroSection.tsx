@@ -1,7 +1,20 @@
+/**
+ * HeroSection.tsx
+ * 메인 페이지(/)의 풀스크린 히어로 영역입니다.
+ *
+ * 구성:
+ *   Candle        — 촛불 장식 컴포넌트 (데스크탑 좌우 2개씩 배치)
+ *   HeroSection   — 메인 타이틀, 설명 문구, CTA 버튼 2개, 스크롤 인디케이터
+ *
+ * CTA 버튼 로직:
+ *   "서재 둘러보기" → /shelf 이동
+ *   "내 서재 등록"  → 로그인 상태면 /portfolio/new, 비로그인이면 /login 으로 이동
+ */
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
+/** 촛불 장식 컴포넌트. delay 값으로 각 촛불의 애니메이션 위상을 다르게 합니다. */
 function Candle({ delay = 0 }: { delay?: number }) {
   return (
     <motion.div

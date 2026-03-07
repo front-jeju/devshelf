@@ -1,3 +1,21 @@
+/**
+ * OpenBook.tsx
+ * 책을 펼쳐 상세 정보를 보여주는 모달 컴포넌트입니다.
+ * BookShelf의 phase='open' 단계에서 표시됩니다.
+ *
+ * 반응형 분기:
+ *   데스크탑(≥768px) → DesktopBook: 좌우 2페이지 레이아웃 (책 펼치기 3D 애니메이션)
+ *   모바일(<768px)   → MobileCard: 탭 전환 카드 (PROFILE / PREVIEW)
+ *
+ * 내부 컴포넌트:
+ *   BookPageLeft  — 왼쪽 페이지: liveDemo URL iframe 미리보기
+ *   BookPageRight — 오른쪽 페이지: 프로필·기술스택·링크·수정/삭제
+ *
+ * 이벤트:
+ *   ESC 키     → onClose()
+ *   배경 클릭  → onClose()
+ *   resize     → isMobile 상태 갱신 (디바운스 150ms)
+ */
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Portfolio } from '../../types';
@@ -6,11 +24,12 @@ import { BookPageRight } from './BookPageRight';
 
 interface OpenBookProps {
   portfolio: Portfolio;
-  onDelete: (id: string) => void;
-  onClose: () => void;
+  onDelete: (id: string) => void; // 삭제 완료 후 부모(BookShelf)에서 목록 갱신
+  onClose: () => void;            // 모달 닫기
 }
 
 export function OpenBook({ portfolio, onDelete, onClose }: OpenBookProps) {
+  // 뷰포트 너비 기준으로 모바일/데스크탑 레이아웃 전환
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
   useEffect(() => {

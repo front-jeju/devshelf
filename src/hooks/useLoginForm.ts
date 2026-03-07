@@ -1,3 +1,20 @@
+/**
+ * useLoginForm.ts
+ * 로그인 페이지(LoginPage)의 폼 상태와 제출 로직을 담당하는 훅입니다.
+ *
+ * 지원하는 로그인 방식:
+ *   1. 이메일/비밀번호 (handleSubmit)
+ *   2. GitHub OAuth (handleOAuth('github'))
+ *   3. Google OAuth (handleOAuth('google'))
+ *
+ * 로직 흐름 (이메일 로그인):
+ *   handleSubmit → login() → 성공 시 / 로 navigate
+ *   실패 시 → Firebase 에러 코드별 한국어 메시지를 error 상태에 저장
+ *
+ * 로직 흐름 (OAuth):
+ *   handleOAuth → loginWithGithub/Google() → 팝업 인증 → 성공 시 / 로 navigate
+ *   팝업 닫힘(사용자 취소) → 에러 메시지 없이 조용히 처리
+ */
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';

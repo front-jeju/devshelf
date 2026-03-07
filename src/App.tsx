@@ -1,3 +1,20 @@
+/**
+ * App.tsx
+ * 앱의 최상위 컴포넌트입니다.
+ *
+ * 역할:
+ *   - AuthProvider로 전체 앱을 감싸 인증 상태를 전역 공유합니다.
+ *   - React Router로 URL별 페이지를 연결합니다.
+ *   - lazy + Suspense로 각 페이지를 코드 스플리팅해 초기 로딩 속도를 개선합니다.
+ *
+ * 라우트 구조:
+ *   /            → MainPage (공개)
+ *   /shelf       → ShelfPage (공개)
+ *   /login       → LoginPage (GuestRoute: 로그인 상태면 / 로 리다이렉트)
+ *   /register    → RegisterPage (GuestRoute)
+ *   /portfolio/new       → CreatePortfolioPage (PrivateRoute: 비로그인 시 /login 으로)
+ *   /portfolio/edit/:id  → EditPortfolioPage (PrivateRoute)
+ */
 import { type ReactNode, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './index.css';

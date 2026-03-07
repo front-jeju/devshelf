@@ -1,10 +1,24 @@
+/**
+ * FilterBar.tsx
+ * ShelfPage 상단에 표시되는 기술 스택 필터 바입니다.
+ *
+ * Props:
+ *   selected  — 현재 선택된 스택 (null이면 '전체' 선택 상태)
+ *   onSelect  — 버튼 클릭 시 호출되는 콜백 (선택된 스택 또는 null 전달)
+ *
+ * 로직 흐름:
+ *   "All Books" 클릭  → onSelect(null)  → 전체 표시
+ *   스택 버튼 클릭    → 이미 선택된 스택이면 onSelect(null) (토글 해제),
+ *                       다른 스택이면 onSelect(stack) (해당 스택 선택)
+ *   → ShelfPage의 selectedStack 변경 → BookShelf에서 isFiltered 계산 → 책 흐림/선명 처리
+ */
 import { motion } from 'framer-motion';
 import type { TechStack } from '../types';
 import { ALL_STACKS, STACK_ICONS } from '../data/stacks';
 
 interface FilterBarProps {
-  selected: TechStack | null;
-  onSelect: (stack: TechStack | null) => void;
+  selected: TechStack | null;  // 현재 선택된 스택 (null = 전체)
+  onSelect: (stack: TechStack | null) => void; // 스택 선택/해제 콜백
 }
 
 export function FilterBar({ selected, onSelect }: FilterBarProps) {
