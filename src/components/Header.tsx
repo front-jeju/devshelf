@@ -22,10 +22,14 @@ export function Header() {
   };
 
   function handleNavClick(e: React.MouseEvent<HTMLAnchorElement>, to: string) {
-    setMenuOpen(false);
-    if (!to.includes('#')) return;
-
     e.preventDefault();
+    setMenuOpen(false);
+
+    if (!to.includes('#')) {
+      navigate(to);
+      return;
+    }
+
     const [path, hash] = to.split('#');
     const targetPath = path || '/';
 
