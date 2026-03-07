@@ -10,7 +10,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchPortfolios } from '../lib/portfolioService';
 import type { Portfolio } from '../types/index';
-import portfoliosData from '../data/portfolios.json';
 
 // 모듈 스코프 캐시: 페이지 이동 후 돌아와도 재fetch하지 않음
 let cachedPortfolios: Portfolio[] | null = null;
@@ -28,17 +27,12 @@ export function usePortfolios() {
     // 컴포넌트가 처음 화면에 나타날 때 Firestore에서 데이터를 불러옵니다
     fetchPortfolios()
       .then((firestoreData) => {
-        // 개발 환경에서만 정적 데모 데이터를 함께 표시
-        const merged = import.meta.env.DEV
-          ? [...firestoreData, ...(portfoliosData as Portfolio[])]
-          : firestoreData;
-        cachedPortfolios = merged;
-        setPortfolios(merged);
+        cachedPortfolios = firestoreData;
+        setPortfolios(firestoreData);
       })
       .catch(() => {
-        // Firestore 연결 실패 시 개발 환경에서만 정적 JSON 데이터 표시
-        cachedPortfolios = import.meta.env.DEV ? (portfoliosData as Portfolio[]) : [];
-        setPortfolios(cachedPortfolios);
+        cachedPortfolios = [];
+        setPortfolios([]);
       })
       .finally(() => setLoading(false)); // 성공/실패 모두 로딩 종료
   }, []); // [] 빈 배열: 컴포넌트 마운트 시 딱 한 번만 실행
