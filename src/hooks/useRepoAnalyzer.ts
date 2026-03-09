@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { getGithubRepoData } from "@/services/githubService";
+import { getGithubRepoData, parseRepoKey } from "@/services/githubService";
 import { analyzeWithGemini, type GeminiAnalysisResult } from "@/services/geminiService";
 import { addProject, getCachedAnalysis, setCachedAnalysis, type ProjectData } from "@/services/firestoreService";
-import { parseGithubUrl } from "@/utils/parseGithubUrl";
 import { toErrorMessage } from "@/utils/errors";
 
 export type Step =
@@ -47,8 +46,7 @@ export function useRepoAnalyzer(): UseRepoAnalyzerReturn {
       setStep("fetching");
 
       // 캐시 확인 — 동일 레포는 Gemini를 재호출하지 않음
-      const { owner, repo } = parseGithubUrl(url);
-      const cacheKey = `${owner}__${repo}`.toLowerCase();
+      const cacheKey = parseRepoKey(url);
       const cached = await getCachedAnalysis(cacheKey);
       if (cached) {
         setAnalysis(cached);

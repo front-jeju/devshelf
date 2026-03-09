@@ -59,6 +59,11 @@ function decodeBase64Readme(content: string): string {
   }
 }
 
+export function parseRepoKey(repoUrl: string): string {
+  const { owner, repo } = parseGithubUrl(repoUrl);
+  return `${owner}__${repo}`.toLowerCase();
+}
+
 export async function getGithubRepoData(repoUrl: string): Promise<GithubRepoData> {
   const { owner, repo } = parseGithubUrl(repoUrl);
   const baseUrl = `https://api.github.com/repos/${owner}/${repo}`;
