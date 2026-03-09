@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { motion } from "framer-motion";
 
 interface RepoAnalyzerProps {
@@ -6,7 +6,7 @@ interface RepoAnalyzerProps {
   isLoading: boolean;
 }
 
-export function RepoAnalyzer({ onAnalyze, isLoading }: RepoAnalyzerProps) {
+export const RepoAnalyzer = memo(function RepoAnalyzer({ onAnalyze, isLoading }: RepoAnalyzerProps) {
   const [url, setUrl] = useState("");
 
   function handleAnalyze() {
@@ -123,4 +123,4 @@ export function RepoAnalyzer({ onAnalyze, isLoading }: RepoAnalyzerProps) {
       </div>
     </div>
   );
-}
+});

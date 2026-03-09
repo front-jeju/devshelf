@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { getGithubRepoData, parseRepoKey } from "@/services/githubService";
 import { analyzeWithGemini, type GeminiAnalysisResult } from "@/services/geminiService";
 import { addProject, getCachedAnalysis, setCachedAnalysis, type ProjectData } from "@/services/firestoreService";
@@ -29,14 +29,18 @@ export function useRepoAnalyzer(): UseRepoAnalyzerReturn {
   const [savedId, setSavedId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
 
-  function handleError(e: unknown, fallback: string) {
+  // step의 최신 값을 ref로 추적 — useCallback [] 클로저의 stale closure 방지
+  const stepRef = useRef(step);
+  stepRef.current = step;
+
+  const handleError = useCallback((e: unknown, fallback: string) => {
     setErrorMsg(toErrorMessage(e, fallback));
     setStep("error");
-  }
+  }, []);
 
   /** 1단계·2단계: GitHub → Gemini (캐시 우선) */
-  async function analyze(url: string) {
-    if (step === "fetching" || step === "analyzing") return;
+  const analyze = useCallback(async (url: string) => {
+    if (stepRef.current === "fetching" || stepRef.current === "analyzing") return;
 
     setErrorMsg("");
     setAnalysis(null);
@@ -67,10 +71,10 @@ export function useRepoAnalyzer(): UseRepoAnalyzerReturn {
     } catch (e) {
       handleError(e, "분석 중 오류가 발생했습니다.");
     }
-  }
+  }, [handleError]);
 
   /** 3단계: Firestore 저장 */
-  async function save(data: ProjectData) {
+  const save = useCallback(async (data: ProjectData) => {
     try {
       setStep("saving");
       const id = await addProject(data);
@@ -79,14 +83,14 @@ export function useRepoAnalyzer(): UseRepoAnalyzerReturn {
     } catch (e) {
       handleError(e, "저장 중 오류가 발생했습니다.");
     }
-  }
+  }, [handleError]);
 
-  function reset() {
+  const reset = useCallback(() => {
     setStep("idle");
     setAnalysis(null);
     setSavedId(null);
     setErrorMsg("");
-  }
+  }, []);
 
   return { step, analysis, savedId, errorMsg, analyze, save, reset };
 }
