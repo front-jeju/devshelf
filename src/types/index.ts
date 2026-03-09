@@ -21,6 +21,12 @@ export type TechStack =
   | 'GraphQL'
   | 'Three.js';
 
+/** 개발자의 현재 상태 */
+export type DevStatus = '취준' | '재직' | '학생' | '이직준비';
+
+/** 프로젝트 유형 */
+export type ProjectType = '토이' | '팀' | '사이드' | '오픈소스';
+
 /**
  * Firestore 'guestbook' 컬렉션의 단일 문서 구조.
  * createdAt은 Firestore Timestamp → ISO 문자열로 변환해 저장합니다.
@@ -58,4 +64,6 @@ export interface Portfolio {
   label?: string;       // 선택적 뱃지 레이블
   projectCount: number; // 프로젝트 수 (현재 0으로 고정, 추후 활용 예정)
   featured?: boolean;   // true면 책 등에 황금 점 배지 표시
+  status?: DevStatus;         // 개발자 현재 상태 (취준/재직/학생/이직준비)
+  projectTypes?: ProjectType[]; // 진행한 프로젝트 유형 목록
 }

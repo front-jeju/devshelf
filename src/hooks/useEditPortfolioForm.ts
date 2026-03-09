@@ -54,6 +54,8 @@ export function useEditPortfolioForm(portfolioId: string) {
           github: portfolio.github === 'https://github.com' ? '' : portfolio.github,
           description: portfolio.description,
           themeIdx: themeIdx >= 0 ? themeIdx : 0,
+          status: portfolio.status ?? '',
+          projectTypes: portfolio.projectTypes ?? [],
         });
       })
       .catch(() => setNotFound(true))
@@ -79,6 +81,8 @@ export function useEditPortfolioForm(portfolioId: string) {
         liveDemo: base.form.liveDemo,
         ...base.selectedTheme,
         uid: user?.uid ?? '',
+        ...(base.form.status ? { status: base.form.status } : {}),
+        ...(base.form.projectTypes.length > 0 ? { projectTypes: base.form.projectTypes } : {}),
       });
       base.setDone(true);
     } catch {

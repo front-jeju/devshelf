@@ -22,7 +22,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BookCard } from './BookCard';
 import { BookCover } from './BookCover';
 import { OpenBook } from './OpenBook';
-import type { Portfolio, TechStack } from '../../types';
+import type { Portfolio, TechStack, DevStatus, ProjectType } from '../../types';
 
 /** 책 상세 보기의 단계: 'cover' = 표지 오버레이, 'open' = 펼쳐진 책 모달 */
 type BookPhase = 'cover' | 'open';
@@ -33,14 +33,18 @@ interface BookSelection {
 }
 
 interface BookShelfProps {
-  portfolios: Portfolio[];            // 표시할 포트폴리오 전체 목록
-  selectedStack: TechStack | null;   // FilterBar에서 선택된 스택 (null = 전체)
-  onDelete: (id: string) => void;    // 삭제 완료 후 부모에서 목록 제거
-}
-
-function ShelfRow({ portfolios, selectedStack, rowIndex, onSelect }: {
   portfolios: Portfolio[];
   selectedStack: TechStack | null;
+  selectedStatus: DevStatus | null;
+  selectedProject: ProjectType | null;
+  onDelete: (id: string) => void;
+}
+
+function ShelfRow({ portfolios, selectedStack, selectedStatus, selectedProject, rowIndex, onSelect }: {
+  portfolios: Portfolio[];
+  selectedStack: TechStack | null;
+  selectedStatus: DevStatus | null;
+  selectedProject: ProjectType | null;
   rowIndex: number;
   onSelect: (portfolio: Portfolio) => void;
 }) {
@@ -63,7 +67,10 @@ function ShelfRow({ portfolios, selectedStack, rowIndex, onSelect }: {
 
         {/* 실제 포트폴리오 책들 */}
         {portfolios.map((portfolio) => {
-          const isFiltered = selectedStack !== null && !portfolio.techStack.includes(selectedStack);
+          const isFiltered =
+            (selectedStack !== null && !portfolio.techStack.includes(selectedStack)) ||
+            (selectedStatus !== null && portfolio.status !== selectedStatus) ||
+            (selectedProject !== null && !portfolio.projectTypes?.includes(selectedProject));
           return (
             <BookCard
               key={portfolio.id}
@@ -136,7 +143,7 @@ function DecorBook({ color, width, height }: { color: string; width: number; hei
 
 const BOOKS_PER_ROW = 6;
 
-export function BookShelf({ portfolios, selectedStack, onDelete }: BookShelfProps) {
+export function BookShelf({ portfolios, selectedStack, selectedStatus, selectedProject, onDelete }: BookShelfProps) {
   const [selection, setSelection] = useState<BookSelection | null>(null);
 
   const handleSelect = useCallback((portfolio: Portfolio) => {
@@ -230,6 +237,8 @@ export function BookShelf({ portfolios, selectedStack, onDelete }: BookShelfProp
               key={idx}
               portfolios={rowPortfolios}
               selectedStack={selectedStack}
+              selectedStatus={selectedStatus}
+              selectedProject={selectedProject}
               rowIndex={idx}
               onSelect={handleSelect}
             />

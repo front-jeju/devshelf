@@ -14,7 +14,7 @@
  *   touch / touchAll — 필드 touched 상태 설정 (제출 버튼 클릭 시 전체 표시)
  */
 import { useState } from 'react';
-import type { TechStack } from '../types';
+import type { TechStack, DevStatus, ProjectType } from '../types';
 import { BOOK_THEMES } from '../data/bookThemes';
 
 export interface FormState {
@@ -26,6 +26,8 @@ export interface FormState {
   github: string;
   description: string;
   themeIdx: number;
+  status: DevStatus | '';
+  projectTypes: ProjectType[];
 }
 
 const initialForm: FormState = {
@@ -37,6 +39,8 @@ const initialForm: FormState = {
   github: '',
   description: '',
   themeIdx: 0,
+  status: '',
+  projectTypes: [],
 };
 
 export function usePortfolioFormBase(defaultForm: Partial<FormState> = {}) {
@@ -81,6 +85,14 @@ export function usePortfolioFormBase(defaultForm: Partial<FormState> = {}) {
         : [...prev.techStack, stack],
     }));
 
+  const toggleProjectType = (type: ProjectType) =>
+    setForm((prev) => ({
+      ...prev,
+      projectTypes: prev.projectTypes.includes(type)
+        ? prev.projectTypes.filter((t) => t !== type)
+        : [...prev.projectTypes, type],
+    }));
+
   return {
     form, setForm,
     touched,
@@ -94,5 +106,6 @@ export function usePortfolioFormBase(defaultForm: Partial<FormState> = {}) {
     touch,
     touchAll,
     toggleStack,
+    toggleProjectType,
   };
 }

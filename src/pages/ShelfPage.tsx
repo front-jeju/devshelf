@@ -16,11 +16,12 @@ import { Header } from '../components/Header';
 import { FilterBar } from '../components/FilterBar';
 import { BookShelf } from '../components/book/BookShelf';
 import { usePortfolios } from '../hooks/usePortfolios';
-import type { TechStack } from '../types';
+import type { TechStack, DevStatus, ProjectType } from '../types';
 
 export function ShelfPage() {
-  // 선택된 기술 스택 필터 (null = 전체 표시)
   const [selectedStack, setSelectedStack] = useState<TechStack | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<DevStatus | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectType | null>(null);
   const { portfolios, loading, removePortfolio } = usePortfolios();
 
   return (
@@ -34,7 +35,14 @@ export function ShelfPage() {
         <main className="pt-20">
           <div className="max-w-[900px] mx-auto gold-divider" />
 
-          <FilterBar selected={selectedStack} onSelect={setSelectedStack} />
+          <FilterBar
+            selected={selectedStack}
+            onSelect={setSelectedStack}
+            selectedStatus={selectedStatus}
+            onSelectStatus={setSelectedStatus}
+            selectedProject={selectedProject}
+            onSelectProject={setSelectedProject}
+          />
 
           <div className="px-6 pb-20">
             {loading ? (
@@ -51,7 +59,13 @@ export function ShelfPage() {
                 서재를 불러오는 중...
               </div>
             ) : (
-              <BookShelf portfolios={portfolios} selectedStack={selectedStack} onDelete={removePortfolio} />
+              <BookShelf
+                portfolios={portfolios}
+                selectedStack={selectedStack}
+                selectedStatus={selectedStatus}
+                selectedProject={selectedProject}
+                onDelete={removePortfolio}
+              />
             )}
           </div>
         </main>

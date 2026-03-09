@@ -1,10 +1,16 @@
 import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { TechStack } from '../types';
+import type { TechStack, DevStatus, ProjectType } from '../types';
 import { ROLES } from '../data/roles';
 import { ALL_STACKS, STACK_ICONS } from '../data/stacks';
 import { BOOK_THEMES } from '../data/bookThemes';
 import type { BookTheme } from '../data/bookThemes';
+
+const ALL_STATUSES: DevStatus[] = ['취준', '재직', '학생', '이직준비'];
+const STATUS_ICONS: Record<DevStatus, string> = { 취준: '🔍', 재직: '💼', 학생: '🎓', 이직준비: '🚀' };
+
+const ALL_PROJECT_TYPES: ProjectType[] = ['토이', '팀', '사이드', '오픈소스'];
+const PROJECT_ICONS: Record<ProjectType, string> = { 토이: '🧸', 팀: '👥', 사이드: '⚡', 오픈소스: '🌐' };
 
 /* ── 섹션 구분 제목 컴포넌트 ── */
 export function SectionTitle({ children }: { children: ReactNode }) {
@@ -316,6 +322,92 @@ export function BookThemePicker({ name, role, themeIdx, selectedTheme, onThemeCh
           {selectedTheme.label}
         </p>
       </div>
+    </div>
+  );
+}
+
+/* ── 상태 선택 필드 ── */
+export function StatusField({ value, onChange }: {
+  value: DevStatus | '';
+  onChange: (v: DevStatus | '') => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {ALL_STATUSES.map((status) => {
+        const selected = value === status;
+        return (
+          <motion.button
+            key={status}
+            type="button"
+            whileHover={{ y: -2, scale: 1.04 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onChange(selected ? '' : status)}
+            className="flex items-center gap-1.5"
+            style={{
+              fontFamily: "'EB Garamond', serif",
+              fontSize: '0.88rem',
+              letterSpacing: '0.04em',
+              padding: '6px 14px',
+              borderRadius: 2,
+              cursor: 'pointer',
+              border: selected ? '1px solid #d4af37' : '1px solid rgba(212,175,55,0.2)',
+              background: selected
+                ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06))'
+                : 'rgba(212,175,55,0.03)',
+              color: selected ? '#f0c040' : 'rgba(200,176,138,0.6)',
+              boxShadow: selected ? '0 0 10px rgba(212,175,55,0.15)' : 'none',
+              transition: 'all 0.2s',
+            }}
+          >
+            <span>{STATUS_ICONS[status]}</span>
+            {status}
+            {selected && <span style={{ marginLeft: 2, fontSize: '0.7rem' }}>✓</span>}
+          </motion.button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ── 프로젝트 유형 선택 필드 ── */
+export function ProjectTypeField({ projectTypes, toggleProjectType }: {
+  projectTypes: ProjectType[];
+  toggleProjectType: (type: ProjectType) => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {ALL_PROJECT_TYPES.map((type) => {
+        const selected = projectTypes.includes(type);
+        return (
+          <motion.button
+            key={type}
+            type="button"
+            whileHover={{ y: -2, scale: 1.04 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => toggleProjectType(type)}
+            className="flex items-center gap-1.5"
+            style={{
+              fontFamily: "'EB Garamond', serif",
+              fontSize: '0.88rem',
+              letterSpacing: '0.04em',
+              padding: '6px 14px',
+              borderRadius: 2,
+              cursor: 'pointer',
+              border: selected ? '1px solid #d4af37' : '1px solid rgba(212,175,55,0.2)',
+              background: selected
+                ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06))'
+                : 'rgba(212,175,55,0.03)',
+              color: selected ? '#f0c040' : 'rgba(200,176,138,0.6)',
+              boxShadow: selected ? '0 0 10px rgba(212,175,55,0.15)' : 'none',
+              transition: 'all 0.2s',
+            }}
+          >
+            <span>{PROJECT_ICONS[type]}</span>
+            {type}
+            {selected && <span style={{ marginLeft: 2, fontSize: '0.7rem' }}>✓</span>}
+          </motion.button>
+        );
+      })}
     </div>
   );
 }

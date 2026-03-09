@@ -49,6 +49,8 @@ export function usePortfolioForm() {
         projectCount: 0,
         featured: false,
         uid: user?.uid ?? '',
+        ...(base.form.status ? { status: base.form.status } : {}),
+        ...(base.form.projectTypes.length > 0 ? { projectTypes: base.form.projectTypes } : {}),
       });
       base.setDone(true);
     } catch {

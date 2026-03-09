@@ -4,6 +4,7 @@ import { FloatingParticles } from '../components/FloatingParticles';
 import {
   SectionTitle,
   BasicInfoFields, TechStackFields, LinksFields, AboutMeField,
+  StatusField, ProjectTypeField,
   BookThemePicker, FormActionButtons, DoneScreen,
 } from '../components/PortfolioFormShared';
 import { GitHubAutofill } from '../components/GitHubAutofill';
@@ -24,6 +25,7 @@ export function CreatePortfolioPage() {
     setForm,
     touch,
     toggleStack,
+    toggleProjectType,
     handleSubmit,
     navigate,
   } = usePortfolioForm();
@@ -235,13 +237,31 @@ export function CreatePortfolioPage() {
                 </LinksFields>
               </div>
 
-              {/* ── 4. 자기소개 ── */}
+              {/* ── 4. 상태 ── */}
+              <div>
+                <SectionTitle>STATUS</SectionTitle>
+                <StatusField
+                  value={form.status}
+                  onChange={(v) => setField('status', v)}
+                />
+              </div>
+
+              {/* ── 5. 프로젝트 유형 ── */}
+              <div>
+                <SectionTitle>PROJECT TYPE</SectionTitle>
+                <ProjectTypeField
+                  projectTypes={form.projectTypes}
+                  toggleProjectType={toggleProjectType}
+                />
+              </div>
+
+              {/* ── 6. 자기소개 ── */}
               <div>
                 <SectionTitle>ABOUT ME</SectionTitle>
                 <AboutMeField value={form.description} onChange={(v) => setField('description', v)} />
               </div>
 
-              {/* ── 5. 책 테마 ── */}
+              {/* ── 7. 책 테마 ── */}
               <div>
                 <SectionTitle>BOOK THEME</SectionTitle>
                 <BookThemePicker
