@@ -123,7 +123,31 @@ export function CreatePortfolioPage() {
                 <TechStackFields techStack={form.techStack} toggleStack={toggleStack} showHint />
               </div>
 
-              {/* ── 3. 링크 ── */}
+              {/* ── 3. 상태 ── */}
+              <div>
+                <SectionTitle>STATUS</SectionTitle>
+                <StatusField
+                  value={form.status}
+                  onChange={(v) => setField('status', v)}
+                />
+              </div>
+
+              {/* ── 4. 프로젝트 유형 ── */}
+              <div>
+                <SectionTitle>PROJECT TYPE</SectionTitle>
+                <ProjectTypeField
+                  projectTypes={form.projectTypes}
+                  toggleProjectType={toggleProjectType}
+                />
+              </div>
+
+              {/* ── 5. 자기소개 ── */}
+              <div>
+                <SectionTitle>ABOUT ME</SectionTitle>
+                <AboutMeField value={form.description} onChange={(v) => setField('description', v)} />
+              </div>
+
+              {/* ── 6. 링크 ── */}
               <div>
                 <SectionTitle>LINKS</SectionTitle>
                 <LinksFields
@@ -235,30 +259,6 @@ export function CreatePortfolioPage() {
                     )}
                   </AnimatePresence>
                 </LinksFields>
-              </div>
-
-              {/* ── 4. 상태 ── */}
-              <div>
-                <SectionTitle>STATUS</SectionTitle>
-                <StatusField
-                  value={form.status}
-                  onChange={(v) => setField('status', v)}
-                />
-              </div>
-
-              {/* ── 5. 프로젝트 유형 ── */}
-              <div>
-                <SectionTitle>PROJECT TYPE</SectionTitle>
-                <ProjectTypeField
-                  projectTypes={form.projectTypes}
-                  toggleProjectType={toggleProjectType}
-                />
-              </div>
-
-              {/* ── 6. 자기소개 ── */}
-              <div>
-                <SectionTitle>ABOUT ME</SectionTitle>
-                <AboutMeField value={form.description} onChange={(v) => setField('description', v)} />
               </div>
 
               {/* ── 7. 책 테마 ── */}
