@@ -51,6 +51,7 @@ export function RepoAnalyzerPage() {
         <AnimatePresence>
           {isLoading && (
             <motion.div
+              key="loading"
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
@@ -86,6 +87,7 @@ export function RepoAnalyzerPage() {
         <AnimatePresence>
           {step === "error" && (
             <motion.div
+              key="error"
               className="error-box"
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -115,7 +117,7 @@ export function RepoAnalyzerPage() {
         <AnimatePresence>
           {(step === "review" || step === "saving" || step === "done") &&
             analysis && (
-              <AnalysisResult result={analysis} />
+              <AnalysisResult key="analysis-result" result={analysis} />
             )}
         </AnimatePresence>
 
@@ -123,6 +125,7 @@ export function RepoAnalyzerPage() {
         <AnimatePresence>
           {(step === "review" || step === "saving") && analysis && (
             <ProjectForm
+              key="project-form"
               analysis={analysis}
               onSubmit={save}
               isSubmitting={step === "saving"}
@@ -134,6 +137,7 @@ export function RepoAnalyzerPage() {
         <AnimatePresence>
           {step === "done" && (
             <motion.div
+              key="done"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}

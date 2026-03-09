@@ -2,30 +2,23 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { SectionTitle } from "@/components/PortfolioFormShared";
 import { ALL_STACKS, STACK_ICONS } from "@/data/stacks";
-import type { TechStack } from "@/types";
 import type { GeminiAnalysisResult } from "@/services/geminiService";
-
-interface ProjectFormData {
-  title: string;
-  description: string;
-  techStack: TechStack[];
-  features: string;
-}
+import type { ProjectData } from "@/services/firestoreService";
 
 interface ProjectFormProps {
   analysis: GeminiAnalysisResult | null;
-  onSubmit?: (data: ProjectFormData) => void;
+  onSubmit?: (data: ProjectData) => void;
   isSubmitting?: boolean;
 }
 
-function matchTechStacks(geminiStacks: string[]): TechStack[] {
+function matchTechStacks(geminiStacks: string[]): ProjectData["techStack"] {
   return ALL_STACKS.filter((stack) =>
     geminiStacks.some((s) => s.toLowerCase().includes(stack.toLowerCase()))
   );
 }
 
 export function ProjectForm({ analysis, onSubmit, isSubmitting = false }: ProjectFormProps) {
-  const [form, setForm] = useState<ProjectFormData>({
+  const [form, setForm] = useState<ProjectData>({
     title: "",
     description: "",
     techStack: [],

@@ -43,7 +43,11 @@ async function fetchGithubJson<T>(url: string, context: string): Promise<T> {
 
 function decodeBase64Readme(content: string): string {
   try {
-    const decoded = decodeURIComponent(escape(atob(content.replace(/\n/g, ""))));
+    const bytes = Uint8Array.from(
+      atob(content.replace(/\n/g, "")),
+      (c) => c.charCodeAt(0)
+    );
+    const decoded = new TextDecoder("utf-8").decode(bytes);
     return decoded.slice(0, README_MAX_LENGTH);
   } catch {
     return "";

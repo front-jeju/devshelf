@@ -32,6 +32,8 @@ type GeminiInput = Pick<GithubRepoData, "name" | "description" | "language" | "r
 const GEMINI_API_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
+
 function buildPrompt(data: GeminiInput): string {
   return `너는 시니어 소프트웨어 엔지니어다.
 다음 GitHub 프로젝트를 분석해라.
@@ -67,14 +69,15 @@ function isValidAnalysisResult(value: unknown): value is GeminiAnalysisResult {
 export async function analyzeWithGemini(
   data: GeminiInput
 ): Promise<GeminiAnalysisResult> {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-  if (!apiKey) {
-    throw new Error("VITE_GEMINI_API_KEY 환경 변수가 설정되지 않았습니다.");
+  if (!GEMINI_API_KEY) {
+    throw new Error(
+      "VITE_GEMINI_API_KEY 환경 변수가 설정되지 않았습니다. .env.local 파일을 확인하세요."
+    );
   }
 
   let response: Response;
   try {
-    response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+    response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
