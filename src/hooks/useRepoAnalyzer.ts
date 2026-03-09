@@ -15,6 +15,7 @@ export type Step =
 
 export interface UseRepoAnalyzerReturn {
   step: Step;
+  retrying: boolean;
   analysis: GeminiAnalysisResult | null;
   savedId: string | null;
   errorMsg: string;
@@ -25,6 +26,7 @@ export interface UseRepoAnalyzerReturn {
 
 export function useRepoAnalyzer(): UseRepoAnalyzerReturn {
   const [step, setStep] = useState<Step>("idle");
+  const [retrying, setRetrying] = useState(false);
   const [analysis, setAnalysis] = useState<GeminiAnalysisResult | null>(null);
   const [savedId, setSavedId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
@@ -61,14 +63,16 @@ export function useRepoAnalyzer(): UseRepoAnalyzerReturn {
       const repoData = await getGithubRepoData(url);
 
       setStep("analyzing");
-      const result = await analyzeWithGemini(repoData);
+      const result = await analyzeWithGemini(repoData, () => setRetrying(true));
 
       // 결과 캐싱 (실패해도 분석 결과는 정상 반환)
       setCachedAnalysis(cacheKey, result).catch(() => {});
 
+      setRetrying(false);
       setAnalysis(result);
       setStep("review");
     } catch (e) {
+      setRetrying(false);
       handleError(e, "분석 중 오류가 발생했습니다.");
     }
   }, [handleError]);
@@ -87,10 +91,11 @@ export function useRepoAnalyzer(): UseRepoAnalyzerReturn {
 
   const reset = useCallback(() => {
     setStep("idle");
+    setRetrying(false);
     setAnalysis(null);
     setSavedId(null);
     setErrorMsg("");
   }, []);
 
-  return { step, analysis, savedId, errorMsg, analyze, save, reset };
+  return { step, retrying, analysis, savedId, errorMsg, analyze, save, reset };
 }

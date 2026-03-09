@@ -13,10 +13,11 @@ const STEP_LABEL: Record<string, string> = {
 };
 
 export function RepoAnalyzerPage() {
-  const { step, analysis, savedId, errorMsg, analyze, save, reset } =
+  const { step, retrying, analysis, savedId, errorMsg, analyze, save, reset } =
     useRepoAnalyzer();
 
   const isLoading = step === "fetching" || step === "analyzing" || step === "saving";
+  const stepLabel = retrying ? "요청 한도 초과 — 잠시 후 재시도 중..." : STEP_LABEL[step];
 
   return (
     <div className="page-bg-flex py-16">
@@ -77,7 +78,7 @@ export function RepoAnalyzerPage() {
                   fontStyle: "italic",
                 }}
               >
-                {STEP_LABEL[step]}
+                {stepLabel}
               </span>
             </motion.div>
           )}

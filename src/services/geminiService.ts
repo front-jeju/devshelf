@@ -24,7 +24,7 @@ interface GeminiCandidate {
 
 interface GeminiApiResponse {
   candidates?: GeminiCandidate[];
-  error?: { message: string; code: number };
+  error?: { message: string; code: number; status?: string };
 }
 
 type GeminiInput = Pick<GithubRepoData, "name" | "description" | "language" | "readme">;
@@ -54,6 +54,41 @@ const RESPONSE_SCHEMA = {
   ],
 } as const;
 
+// 429 시 최대 2회 재시도 — 4s / 8s 간격
+// RPM(분당 초과)이면 재시도 성공, RPD(일일 소진)이면 모두 실패 후 에러
+const RETRY_DELAYS_MS = [15000, 30000];
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function fetchGemini(
+  key: string,
+  body: string,
+  onRetry?: (attempt: number) => void,
+): Promise<Response> {
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    const response = await fetch(`${GEMINI_API_URL}?key=${key}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body,
+    });
+
+    if (response.status !== 429) return response;
+
+    if (attempt === RETRY_DELAYS_MS.length) {
+      throw new Error(
+        "Gemini API: 요청 한도를 초과했습니다. 잠시 후 다시 시도하거나, 오늘 한도가 소진된 경우 내일 다시 시도하세요. (429)"
+      );
+    }
+
+    onRetry?.(attempt + 1);
+    await delay(RETRY_DELAYS_MS[attempt]);
+  }
+
+  throw new Error("Gemini API: 알 수 없는 오류가 발생했습니다.");
+}
+
 function buildPrompt(data: GeminiInput): string {
   return `너는 시니어 소프트웨어 엔지니어다.
 다음 GitHub 프로젝트를 분석해라.
@@ -66,7 +101,8 @@ ${data.readme}`;
 }
 
 export async function analyzeWithGemini(
-  data: GeminiInput
+  data: GeminiInput,
+  onRetry?: (attempt: number) => void,
 ): Promise<GeminiAnalysisResult> {
   if (!GEMINI_API_KEY) {
     throw new Error(
@@ -74,20 +110,20 @@ export async function analyzeWithGemini(
     );
   }
 
+  const body = JSON.stringify({
+    contents: [{ parts: [{ text: buildPrompt(data) }] }],
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: RESPONSE_SCHEMA,
+    },
+  });
+
   let response: Response;
   try {
-    response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: buildPrompt(data) }] }],
-        generationConfig: {
-          responseMimeType: "application/json",
-          responseSchema: RESPONSE_SCHEMA,
-        },
-      }),
-    });
-  } catch {
+    response = await fetchGemini(GEMINI_API_KEY, body, onRetry);
+  } catch (e) {
+    // fetchGemini가 던진 에러(429 분류 포함)는 그대로 전파
+    if (e instanceof Error) throw e;
     throw new Error("Gemini API: 네트워크 연결을 확인하세요.");
   }
 

@@ -20,7 +20,7 @@ interface GithubReadmeResponse {
   encoding: string;
 }
 
-const README_MAX_LENGTH = 5000;
+const README_MAX_LENGTH = 6000;
 
 // VITE_GITHUB_TOKEN을 설정하면 인증 요청으로 레이트 리밋이 60→5000 req/h로 증가한다.
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN as string | undefined;
@@ -46,14 +46,22 @@ async function fetchGithubJson<T>(url: string, context: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+// AI 분석에 불필요한 노이즈를 제거하고 토큰 예산을 실제 내용에 집중시킨다.
+function trimReadme(raw: string): string {
+  return raw
+    .replace(/^\[!\[.*?\]\(.*?\)\](?:\(.*?\))?\s*$/gm, "") // 배지 라인 제거 ([![...](...)][...])
+    .replace(/\n{3,}/g, "\n\n")                             // 3줄 이상 연속 공백 → 2줄로 축소
+    .trim()
+    .slice(0, README_MAX_LENGTH);
+}
+
 function decodeBase64Readme(content: string): string {
   try {
     const bytes = Uint8Array.from(
       atob(content.replace(/\n/g, "")),
       (c) => c.charCodeAt(0)
     );
-    const decoded = new TextDecoder("utf-8").decode(bytes);
-    return decoded.slice(0, README_MAX_LENGTH);
+    return trimReadme(new TextDecoder("utf-8").decode(bytes));
   } catch {
     return "";
   }
@@ -86,7 +94,7 @@ export async function getGithubRepoData(repoUrl: string): Promise<GithubRepoData
   let readme = "";
   if (readmeResult.status === "fulfilled") {
     const { content, encoding } = readmeResult.value;
-    readme = encoding === "base64" ? decodeBase64Readme(content) : content.slice(0, README_MAX_LENGTH);
+    readme = encoding === "base64" ? decodeBase64Readme(content) : trimReadme(content);
   }
 
   return {
