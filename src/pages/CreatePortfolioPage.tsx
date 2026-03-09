@@ -6,6 +6,7 @@ import {
   BasicInfoFields, TechStackFields, LinksFields, AboutMeField,
   BookThemePicker, FormActionButtons, DoneScreen,
 } from '../components/PortfolioFormShared';
+import { GitHubAutofill } from '../components/GitHubAutofill';
 import { usePortfolioForm } from '../hooks/usePortfolioForm';
 
 export function CreatePortfolioPage() {
@@ -20,6 +21,7 @@ export function CreatePortfolioPage() {
     iframeLoading, setIframeLoading,
     selectedTheme,
     setField,
+    setForm,
     touch,
     toggleStack,
     handleSubmit,
@@ -93,6 +95,13 @@ export function CreatePortfolioPage() {
             <div className="gold-divider mb-7" />
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+
+              {/* ── 0. AI 자동완성 ── */}
+              <GitHubAutofill
+                onAutofill={({ tagline, description, techStack }) => {
+                  setForm((prev) => ({ ...prev, tagline, description, techStack }));
+                }}
+              />
 
               {/* ── 1. 기본 정보 ── */}
               <div>
