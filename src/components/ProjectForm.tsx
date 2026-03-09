@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { SectionTitle } from "@/components/PortfolioFormShared";
 import { ALL_STACKS, STACK_ICONS } from "@/data/stacks";
@@ -26,16 +26,17 @@ export function ProjectForm({ analysis, onSubmit, isSubmitting = false }: Projec
     features: "",
   });
 
-  // AI 결과가 들어오면 폼 자동완성
-  useEffect(() => {
-    if (!analysis) return;
+  // AI 결과가 들어오면 폼 자동완성 (렌더 중 state 업데이트 패턴)
+  const [prevAnalysis, setPrevAnalysis] = useState(analysis);
+  if (prevAnalysis !== analysis && analysis !== null) {
+    setPrevAnalysis(analysis);
     setForm({
       title: analysis.projectTitle,
       description: analysis.detailedDescription,
       techStack: matchTechStacks(analysis.techStack),
       features: analysis.mainFeatures.join("\n"),
     });
-  }, [analysis]);
+  }
 
   function toggleStack(stack: TechStack) {
     setForm((prev) => ({
