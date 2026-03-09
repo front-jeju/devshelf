@@ -54,7 +54,7 @@ export async function fetchProjects(): Promise<ProjectDocument[]> {
       id: docSnap.id,
       title: data.title ?? "",
       description: data.description ?? "",
-      techStack: data.techStack ?? [],
+      techStack: (data.techStack ?? []) as TechStack[],
       features: data.features ?? "",
       createdAt: data.createdAt?.toDate().toISOString() ?? "",
     };

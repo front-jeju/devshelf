@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { SectionTitle } from "@/components/PortfolioFormShared";
 import { ALL_STACKS, STACK_ICONS } from "@/data/stacks";
+import type { TechStack } from "@/types";
 import type { GeminiAnalysisResult } from "@/services/geminiService";
 import type { ProjectData } from "@/services/firestoreService";
 
 interface ProjectFormProps {
   analysis: GeminiAnalysisResult | null;
-  onSubmit?: (data: ProjectData) => void;
+  onSubmit?: (data: ProjectData) => Promise<void> | void;
   isSubmitting?: boolean;
 }
 

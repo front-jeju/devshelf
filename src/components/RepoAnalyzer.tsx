@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 
 interface RepoAnalyzerProps {
-  onAnalyze: (url: string) => void;
+  onAnalyze: (url: string) => Promise<void> | void;
   isLoading: boolean;
 }
 
