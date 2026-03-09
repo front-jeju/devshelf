@@ -26,6 +26,7 @@ const LoginPage = lazy(() => import('./pages/LoginPage').then((m) => ({ default:
 const RegisterPage = lazy(() => import('./pages/RegisterPage').then((m) => ({ default: m.RegisterPage })));
 const CreatePortfolioPage = lazy(() => import('./pages/CreatePortfolioPage').then((m) => ({ default: m.CreatePortfolioPage })));
 const EditPortfolioPage = lazy(() => import('./pages/EditPortfolioPage').then((m) => ({ default: m.EditPortfolioPage })));
+const RepoAnalyzerPage = lazy(() => import('./pages/RepoAnalyzerPage').then((m) => ({ default: m.RepoAnalyzerPage })));
 
 /** 로그인 필수 라우트 — 미인증 시 /login으로 리다이렉트 */
 function PrivateRoute({ children }: { children: ReactNode }) {
@@ -53,6 +54,7 @@ function App() {
             <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
             <Route path="/portfolio/new" element={<PrivateRoute><CreatePortfolioPage /></PrivateRoute>} />
             <Route path="/portfolio/edit/:id" element={<PrivateRoute><EditPortfolioPage /></PrivateRoute>} />
+            <Route path="/analyzer" element={<PrivateRoute><RepoAnalyzerPage /></PrivateRoute>} />
           </Routes>
         </Suspense>
       </BrowserRouter>

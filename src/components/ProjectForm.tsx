@@ -15,6 +15,7 @@ interface ProjectFormData {
 interface ProjectFormProps {
   analysis: GeminiAnalysisResult | null;
   onSubmit?: (data: ProjectFormData) => void;
+  isSubmitting?: boolean;
 }
 
 function matchTechStacks(geminiStacks: string[]): TechStack[] {
@@ -23,7 +24,7 @@ function matchTechStacks(geminiStacks: string[]): TechStack[] {
   );
 }
 
-export function ProjectForm({ analysis, onSubmit }: ProjectFormProps) {
+export function ProjectForm({ analysis, onSubmit, isSubmitting = false }: ProjectFormProps) {
   const [form, setForm] = useState<ProjectFormData>({
     title: "",
     description: "",
@@ -210,11 +211,12 @@ export function ProjectForm({ analysis, onSubmit }: ProjectFormProps) {
           {/* 제출 버튼 */}
           <motion.button
             type="submit"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            disabled={isSubmitting}
+            whileHover={isSubmitting ? {} : { scale: 1.02 }}
+            whileTap={isSubmitting ? {} : { scale: 0.98 }}
             className="btn-gold mt-1"
           >
-            저장하기 →
+            {isSubmitting ? "저장하는 중..." : "저장하기 →"}
           </motion.button>
         </form>
       </div>
