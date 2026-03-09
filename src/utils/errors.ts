@@ -10,6 +10,7 @@ export function httpStatusMessage(status: number, context: string): string {
   switch (status) {
     case 401: return `${context}: 인증이 필요합니다. (401)`;
     case 403: return `${context}: API 요청 한도를 초과했습니다. 잠시 후 다시 시도하세요. (403)`;
+    case 429: return `${context}: 요청이 너무 많습니다. 잠시 후 다시 시도하세요. (429)`;
     case 404: return `${context}: 찾을 수 없습니다. URL을 확인하세요. (404)`;
     case 422: return `${context}: 잘못된 요청입니다. (422)`;
     case 500:

@@ -5,7 +5,6 @@ export interface GithubRepoData {
   name: string;
   description: string;
   language: string;
-  stars: number;
   readme: string;
 }
 
@@ -13,7 +12,6 @@ interface GithubRepoResponse {
   name: string;
   description: string | null;
   language: string | null;
-  stargazers_count: number;
   message?: string; // GitHub API 오류 응답 시 포함되는 필드
 }
 
@@ -23,7 +21,14 @@ interface GithubReadmeResponse {
 }
 
 const README_MAX_LENGTH = 5000;
-const GITHUB_HEADERS = { Accept: "application/vnd.github+json" };
+
+// VITE_GITHUB_TOKEN을 설정하면 인증 요청으로 레이트 리밋이 60→5000 req/h로 증가한다.
+const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN as string | undefined;
+
+const GITHUB_HEADERS: Record<string, string> = {
+  Accept: "application/vnd.github+json",
+  ...(GITHUB_TOKEN ? { Authorization: `Bearer ${GITHUB_TOKEN}` } : {}),
+};
 
 async function fetchGithubJson<T>(url: string, context: string): Promise<T> {
   let response: Response;
@@ -70,7 +75,7 @@ export async function getGithubRepoData(repoUrl: string): Promise<GithubRepoData
       : new Error("레포지토리 정보를 가져오지 못했습니다.");
   }
 
-  const { name, description, language, stargazers_count } = repoResult.value;
+  const { name, description, language } = repoResult.value;
 
   // README는 선택 — 실패해도 빈 문자열로 fallback
   let readme = "";
@@ -83,7 +88,6 @@ export async function getGithubRepoData(repoUrl: string): Promise<GithubRepoData
     name,
     description: description ?? "",
     language: language ?? "",
-    stars: stargazers_count,
     readme,
   };
 }

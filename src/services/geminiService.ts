@@ -30,9 +30,29 @@ interface GeminiApiResponse {
 type GeminiInput = Pick<GithubRepoData, "name" | "description" | "language" | "readme">;
 
 const GEMINI_API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
+
+// responseSchema를 사용하면 Gemini가 항상 이 구조의 JSON을 반환하도록 강제되어
+// 수동 파싱/검증 로직이 불필요해진다.
+const RESPONSE_SCHEMA = {
+  type: "OBJECT",
+  properties: {
+    projectTitle:        { type: "STRING" },
+    oneLineDescription:  { type: "STRING" },
+    detailedDescription: { type: "STRING" },
+    mainFeatures:        { type: "ARRAY", items: { type: "STRING" } },
+    techStack:           { type: "ARRAY", items: { type: "STRING" } },
+  },
+  required: [
+    "projectTitle",
+    "oneLineDescription",
+    "detailedDescription",
+    "mainFeatures",
+    "techStack",
+  ],
+} as const;
 
 function buildPrompt(data: GeminiInput): string {
   return `너는 시니어 소프트웨어 엔지니어다.
@@ -42,28 +62,7 @@ function buildPrompt(data: GeminiInput): string {
 설명: ${data.description}
 주요 언어: ${data.language}
 README:
-${data.readme}
-
-반드시 아래 JSON 형식으로만 응답해라. 다른 텍스트는 포함하지 마라.
-{
-  "projectTitle": "프로젝트 제목",
-  "oneLineDescription": "한 줄 설명",
-  "detailedDescription": "상세 설명",
-  "mainFeatures": ["기능1", "기능2"],
-  "techStack": ["기술1", "기술2"]
-}`;
-}
-
-function isValidAnalysisResult(value: unknown): value is GeminiAnalysisResult {
-  if (!value || typeof value !== "object") return false;
-  const v = value as Record<string, unknown>;
-  return (
-    typeof v.projectTitle === "string" &&
-    typeof v.oneLineDescription === "string" &&
-    typeof v.detailedDescription === "string" &&
-    Array.isArray(v.mainFeatures) &&
-    Array.isArray(v.techStack)
-  );
+${data.readme}`;
 }
 
 export async function analyzeWithGemini(
@@ -82,7 +81,10 @@ export async function analyzeWithGemini(
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ parts: [{ text: buildPrompt(data) }] }],
-        generationConfig: { responseMimeType: "application/json" },
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: RESPONSE_SCHEMA,
+        },
       }),
     });
   } catch {
@@ -95,7 +97,6 @@ export async function analyzeWithGemini(
 
   const json = (await response.json()) as GeminiApiResponse;
 
-  // API 레벨 에러 (200 OK지만 error 필드가 있는 경우)
   if (json.error) {
     throw new Error(`Gemini API 오류: ${json.error.message}`);
   }
@@ -105,16 +106,6 @@ export async function analyzeWithGemini(
     throw new Error("Gemini API 응답에서 텍스트를 찾을 수 없습니다.");
   }
 
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(rawText);
-  } catch {
-    throw new Error(`Gemini 응답 JSON 파싱 실패:\n${rawText.slice(0, 200)}`);
-  }
-
-  if (!isValidAnalysisResult(parsed)) {
-    throw new Error("Gemini 응답이 예상된 형식이 아닙니다.");
-  }
-
-  return parsed;
+  // responseSchema가 구조를 보장하므로 별도 검증 없이 파싱
+  return JSON.parse(rawText) as GeminiAnalysisResult;
 }

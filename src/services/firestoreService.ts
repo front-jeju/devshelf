@@ -3,6 +3,8 @@ import {
   addDoc,
   getDocs,
   doc,
+  getDoc,
+  setDoc,
   deleteDoc,
   serverTimestamp,
   query,
@@ -10,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import type { TechStack } from "@/types";
+import type { GeminiAnalysisResult } from "@/services/geminiService";
 
 export interface ProjectData {
   title: string;
@@ -69,4 +72,35 @@ export async function deleteProject(id: string): Promise<void> {
   if (!db) throw new Error("Firestore가 설정되지 않았습니다.");
 
   await deleteDoc(doc(db, "projects", id));
+}
+
+/**
+ * 캐시된 Gemini 분석 결과를 조회합니다.
+ * @param cacheKey - "owner__repo" 형태의 식별자
+ */
+export async function getCachedAnalysis(
+  cacheKey: string
+): Promise<GeminiAnalysisResult | null> {
+  if (!db) return null;
+
+  const snapshot = await getDoc(doc(db, "analysisCache", cacheKey));
+  if (!snapshot.exists()) return null;
+
+  return snapshot.data().result as GeminiAnalysisResult;
+}
+
+/**
+ * Gemini 분석 결과를 Firestore에 캐싱합니다.
+ * @param cacheKey - "owner__repo" 형태의 식별자
+ */
+export async function setCachedAnalysis(
+  cacheKey: string,
+  result: GeminiAnalysisResult
+): Promise<void> {
+  if (!db) return;
+
+  await setDoc(doc(db, "analysisCache", cacheKey), {
+    result,
+    cachedAt: serverTimestamp(),
+  });
 }

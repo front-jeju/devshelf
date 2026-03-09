@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { getGithubRepoData } from "@/services/githubService";
 import { analyzeWithGemini, type GeminiAnalysisResult } from "@/services/geminiService";
-import { addProject, type ProjectData } from "@/services/firestoreService";
+import { addProject, getCachedAnalysis, setCachedAnalysis, type ProjectData } from "@/services/firestoreService";
+import { parseGithubUrl } from "@/utils/parseGithubUrl";
 import { toErrorMessage } from "@/utils/errors";
 
 export type Step =
@@ -34,18 +35,34 @@ export function useRepoAnalyzer(): UseRepoAnalyzerReturn {
     setStep("error");
   }
 
-  /** 1단계·2단계: GitHub → Gemini */
+  /** 1단계·2단계: GitHub → Gemini (캐시 우선) */
   async function analyze(url: string) {
+    if (step === "fetching" || step === "analyzing") return;
+
     setErrorMsg("");
     setAnalysis(null);
     setSavedId(null);
 
     try {
       setStep("fetching");
+
+      // 캐시 확인 — 동일 레포는 Gemini를 재호출하지 않음
+      const { owner, repo } = parseGithubUrl(url);
+      const cacheKey = `${owner}__${repo}`.toLowerCase();
+      const cached = await getCachedAnalysis(cacheKey);
+      if (cached) {
+        setAnalysis(cached);
+        setStep("review");
+        return;
+      }
+
       const repoData = await getGithubRepoData(url);
 
       setStep("analyzing");
       const result = await analyzeWithGemini(repoData);
+
+      // 결과 캐싱 (실패해도 분석 결과는 정상 반환)
+      setCachedAnalysis(cacheKey, result).catch(() => {});
 
       setAnalysis(result);
       setStep("review");
