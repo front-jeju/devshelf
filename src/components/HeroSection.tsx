@@ -121,7 +121,6 @@ export function HeroSection() {
             fontSize: '1rem',
             letterSpacing: '0.3em',
             color: '#c8b08a',
-            fontStyle: 'italic',
             marginBottom: '1.5rem',
           }}
           initial={{ opacity: 0 }}
@@ -159,7 +158,6 @@ export function HeroSection() {
             fontFamily: "'Playfair Display', serif",
             fontSize: 'clamp(1rem, 2.5vw, 1.4rem)',
             color: '#c8b08a',
-            fontStyle: 'italic',
             letterSpacing: '0.05em',
             marginBottom: '2.5rem',
           }}
@@ -186,7 +184,7 @@ export function HeroSection() {
         >
           개발자의 이야기를 기록하는 서재에 오신 것을 환영합니다.
           <br />
-          <span style={{ color: 'rgba(200,176,138,0.55)', fontStyle: 'italic', fontSize: '0.95em' }}>
+          <span style={{ color: 'rgba(200,176,138,0.55)', fontSize: '0.95em' }}>
             — 다양한 개발자들의 포트폴리오를 둘러보세요.
           </span>
         </motion.p>

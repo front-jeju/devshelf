@@ -80,7 +80,6 @@ export function BookPageRight({ portfolio, onDelete, onClose }: BookPageRightPro
                   style={{
                     fontFamily: "'EB Garamond', serif",
                     fontSize: '0.82rem',
-                    fontStyle: 'italic',
                     color: 'rgba(80,50,20,0.6)',
                   }}
                 >
@@ -186,7 +185,6 @@ export function BookPageRight({ portfolio, onDelete, onClose }: BookPageRightPro
             style={{
               fontFamily: "'EB Garamond', serif",
               fontSize: '0.76rem',
-              fontStyle: 'italic',
               color: 'rgba(80,50,20,0.48)',
               letterSpacing: '0.14em',
               marginBottom: 8,
@@ -240,7 +238,6 @@ export function BookPageRight({ portfolio, onDelete, onClose }: BookPageRightPro
             style={{
               fontFamily: "'Playfair Display', serif",
               fontSize: '0.95rem',
-              fontStyle: 'italic',
               color: 'rgba(60,30,10,0.62)',
               lineHeight: 1.72,
               margin: '0 0 20px',

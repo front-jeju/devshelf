@@ -34,7 +34,7 @@ export function EditPortfolioPage() {
   if (isFetching) {
     return (
       <div className="page-bg flex items-center justify-center">
-        <div style={{ fontFamily: "'EB Garamond', serif", color: 'rgba(200,176,138,0.5)', fontStyle: 'italic', fontSize: '1rem', letterSpacing: '0.1em' }}>
+        <div style={{ fontFamily: "'EB Garamond', serif", color: 'rgba(200,176,138,0.5)', fontSize: '1rem', letterSpacing: '0.1em' }}>
           서재 정보를 불러오는 중...
         </div>
       </div>
@@ -113,7 +113,7 @@ export function EditPortfolioPage() {
           <div className="p-9 px-8">
             {/* 타이틀 */}
             <div className="text-center mb-7">
-              <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.25em', fontStyle: 'italic', marginBottom: 8 }}>
+              <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.25em', marginBottom: 8 }}>
                 — 나의 이야기를 다듬다 —
               </div>
               <h1

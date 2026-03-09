@@ -122,7 +122,7 @@ export function Header() {
                 >
                   {item.label}
                 </span>
-                <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.65rem', color: 'rgba(200,176,138,0.5)', fontStyle: 'italic' }}>
+                <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.65rem', color: 'rgba(200,176,138,0.5)' }}>
                   {item.sub}
                 </span>
               </motion.a>
@@ -137,7 +137,6 @@ export function Header() {
                   style={{
                     fontFamily: "'EB Garamond', serif",
                     fontSize: '0.85rem',
-                    fontStyle: 'italic',
                     color: '#c8b08a',
                     maxWidth: 140,
                     overflow: 'hidden',
@@ -272,7 +271,7 @@ export function Header() {
                   <span style={{ fontFamily: "'Cinzel', serif", fontSize: '0.82rem', letterSpacing: '0.12em', color: '#c8b08a' }}>
                     {item.label}
                   </span>
-                  <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.72rem', color: 'rgba(200,176,138,0.4)', fontStyle: 'italic' }}>
+                  <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.72rem', color: 'rgba(200,176,138,0.4)' }}>
                     {item.sub}
                   </span>
                 </motion.a>
@@ -282,7 +281,7 @@ export function Header() {
               <div className="pt-3 flex flex-col gap-2">
                 {user ? (
                   <>
-                    <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.85rem', color: 'rgba(200,176,138,0.6)', fontStyle: 'italic' }}>
+                    <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.85rem', color: 'rgba(200,176,138,0.6)' }}>
                       {user.displayName ?? user.email}
                     </p>
                     <Link to="/portfolio/new" onClick={() => setMenuOpen(false)}>

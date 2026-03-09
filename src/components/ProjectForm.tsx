@@ -70,7 +70,6 @@ export function ProjectForm({ analysis, onSubmit, isSubmitting = false }: Projec
               fontSize: "0.75rem",
               color: "rgba(200,176,138,0.5)",
               letterSpacing: "0.25em",
-              fontStyle: "italic",
               marginBottom: 8,
             }}
           >
@@ -169,7 +168,6 @@ export function ProjectForm({ analysis, onSubmit, isSubmitting = false }: Projec
                   fontFamily: "'EB Garamond', serif",
                   fontSize: "0.8rem",
                   color: "rgba(200,176,138,0.3)",
-                  fontStyle: "italic",
                 }}
               >
                 사용하는 기술 스택을 선택하세요 (복수 선택 가능)
@@ -196,7 +194,6 @@ export function ProjectForm({ analysis, onSubmit, isSubmitting = false }: Projec
                 fontFamily: "'EB Garamond', serif",
                 fontSize: "0.78rem",
                 color: "rgba(200,176,138,0.3)",
-                fontStyle: "italic",
               }}
             >
               * 줄바꿈으로 기능을 구분합니다

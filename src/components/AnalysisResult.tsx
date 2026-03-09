@@ -34,7 +34,6 @@ export function AnalysisResult({ result }: AnalysisResultProps) {
               fontFamily: "'EB Garamond', serif",
               fontSize: "0.9rem",
               color: "rgba(200,176,138,0.55)",
-              fontStyle: "italic",
               marginTop: 6,
             }}
           >

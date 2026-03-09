@@ -163,7 +163,6 @@ export function GitHubAutofill({ onAutofill }: GitHubAutofillProps) {
             style={{
               fontFamily: "'EB Garamond', serif",
               fontSize: "0.8rem",
-              fontStyle: "italic",
               color: "rgba(52,211,153,0.8)",
               margin: 0,
             }}

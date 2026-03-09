@@ -83,7 +83,7 @@ export function CreatePortfolioPage() {
           <div className="p-9 px-8">
             {/* 타이틀 */}
             <div className="text-center mb-7">
-              <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.25em', fontStyle: 'italic', marginBottom: 8 }}>
+              <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.25em', marginBottom: 8 }}>
                 — 나의 이야기를 서재에 —
               </div>
               <h1
@@ -214,7 +214,7 @@ export function CreatePortfolioPage() {
                             </div>
                             <div
                               className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap"
-                              style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.72rem', color: 'rgba(200,176,138,0.4)', fontStyle: 'italic' }}
+                              style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.72rem', color: 'rgba(200,176,138,0.4)' }}
                             >
                               {form.liveDemo}
                             </div>
@@ -235,7 +235,7 @@ export function CreatePortfolioPage() {
                                 transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
                                 style={{ width: 24, height: 24, border: '2px solid rgba(212,175,55,0.15)', borderTopColor: '#d4af37', borderRadius: '50%' }}
                               />
-                              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.4)', fontStyle: 'italic' }}>
+                              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.4)' }}>
                                 불러오는 중...
                               </span>
                             </div>
@@ -252,7 +252,7 @@ export function CreatePortfolioPage() {
                           />
                         </div>
 
-                        <p style={{ marginTop: 6, fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.3)', fontStyle: 'italic' }}>
+                        <p style={{ marginTop: 6, fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.3)' }}>
                           * 일부 사이트는 보안 정책(X-Frame-Options)으로 인해 미리보기가 제한될 수 있습니다.
                         </p>
                       </motion.div>

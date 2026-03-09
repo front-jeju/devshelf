@@ -58,7 +58,6 @@ export function LoginPage() {
                   fontSize: '0.75rem',
                   color: 'rgba(200,176,138,0.5)',
                   letterSpacing: '0.25em',
-                  fontStyle: 'italic',
                   marginBottom: 8,
                 }}
               >
@@ -130,7 +129,7 @@ export function LoginPage() {
             {/* OR 구분선 */}
             <div className="flex items-center gap-3 mb-6">
               <div className="flex-1 h-px" style={{ background: 'rgba(212,175,55,0.15)' }} />
-              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.78rem', color: 'rgba(200,176,138,0.35)', fontStyle: 'italic', letterSpacing: '0.1em' }}>
+              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.78rem', color: 'rgba(200,176,138,0.35)', letterSpacing: '0.1em' }}>
                 or
               </span>
               <div className="flex-1 h-px" style={{ background: 'rgba(212,175,55,0.15)' }} />
@@ -198,7 +197,7 @@ export function LoginPage() {
             <div className="gold-divider-faint my-7" />
 
             <div className="text-center">
-              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.9rem', color: 'rgba(200,176,138,0.5)', fontStyle: 'italic' }}>
+              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.9rem', color: 'rgba(200,176,138,0.5)' }}>
                 아직 서재 회원이 아니신가요?{' '}
               </span>
               <Link

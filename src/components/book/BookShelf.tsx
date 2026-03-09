@@ -195,7 +195,7 @@ export function BookShelf({ portfolios, selectedStack, selectedStatus, selectedP
           </h2>
           <div style={{ height: 1, flex: 1, maxWidth: 120, background: 'linear-gradient(90deg, rgba(212,175,55,0.4), transparent)' }} />
         </div>
-        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.6)', fontStyle: 'italic' }}>
+        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.6)' }}>
           {portfolios.length}권의 이야기가 당신을 기다리고 있습니다 · 책에 마우스를 올려보세요
         </p>
       </motion.div>

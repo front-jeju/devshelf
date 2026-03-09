@@ -239,7 +239,6 @@ export function BookCover({ portfolio, onOpen, onClose }: BookCoverProps) {
                 style={{
                   fontFamily: "'EB Garamond', serif",
                   fontSize: '0.86rem',
-                  fontStyle: 'italic',
                   color: `${portfolio.accentColor}cc`,
                   letterSpacing: '0.08em',
                   lineHeight: 1.4,
@@ -256,7 +255,6 @@ export function BookCover({ portfolio, onOpen, onClose }: BookCoverProps) {
                     fontSize: '0.76rem',
                     color: `${portfolio.accentColor}58`,
                     lineHeight: 1.65,
-                    fontStyle: 'italic',
                     marginTop: 2,
                   }}
                 >

@@ -62,7 +62,6 @@ export function RegisterPage() {
                   fontSize: '0.75rem',
                   color: 'rgba(200,176,138,0.5)',
                   letterSpacing: '0.25em',
-                  fontStyle: 'italic',
                   marginBottom: 8,
                 }}
               >
@@ -156,7 +155,7 @@ export function RegisterPage() {
                           />
                         ))}
                       </div>
-                      <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: passwordStrength.color, fontStyle: 'italic' }}>
+                      <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: passwordStrength.color }}>
                         보안 강도: {passwordStrength.label}
                       </div>
                     </motion.div>
@@ -235,7 +234,7 @@ export function RegisterPage() {
             <div className="gold-divider-faint my-7" />
 
             <div className="text-center">
-              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.9rem', color: 'rgba(200,176,138,0.5)', fontStyle: 'italic' }}>
+              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.9rem', color: 'rgba(200,176,138,0.5)' }}>
                 이미 계정이 있으신가요?{' '}
               </span>
               <Link

@@ -128,7 +128,6 @@ export function BookPageLeft({ portfolio }: BookPageLeftProps) {
                   marginTop: 14,
                   fontFamily: "'EB Garamond', serif",
                   fontSize: '0.78rem',
-                  fontStyle: 'italic',
                   color: 'rgba(80,50,20,0.35)',
                 }}
               >
@@ -149,7 +148,6 @@ export function BookPageLeft({ portfolio }: BookPageLeftProps) {
               style={{
                 fontFamily: "'EB Garamond', serif",
                 fontSize: '0.88rem',
-                fontStyle: 'italic',
                 color: 'rgba(80,50,20,0.38)',
                 textAlign: 'center',
                 padding: '0 28px',
@@ -218,7 +216,6 @@ export function BookPageLeft({ portfolio }: BookPageLeftProps) {
           style={{
             fontFamily: "'EB Garamond', serif",
             fontSize: '0.6rem',
-            fontStyle: 'italic',
             color: 'rgba(80,50,20,0.26)',
           }}
         >

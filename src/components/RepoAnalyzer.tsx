@@ -31,7 +31,6 @@ export const RepoAnalyzer = memo(function RepoAnalyzer({ onAnalyze, isLoading }:
               fontSize: "0.75rem",
               color: "rgba(200,176,138,0.5)",
               letterSpacing: "0.25em",
-              fontStyle: "italic",
               marginBottom: 8,
             }}
           >

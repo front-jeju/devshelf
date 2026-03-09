@@ -147,7 +147,7 @@ export function BasicInfoFields({ fields, touched, errors, onChange, onBlur }: {
       <div>
         <div className="flex justify-between items-center mb-2">
           <label className="label-field" style={{ marginBottom: 0 }}>한 줄 소개 <span style={{ color: '#d4af37' }}>*</span></label>
-          <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: fields.tagline.length > 60 ? '#f87171' : 'rgba(200,176,138,0.35)', fontStyle: 'italic' }}>
+          <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: fields.tagline.length > 60 ? '#f87171' : 'rgba(200,176,138,0.35)' }}>
             {fields.tagline.length} / 60
           </span>
         </div>
@@ -208,7 +208,7 @@ export function TechStackFields({ techStack, toggleStack, showHint = false }: {
         })}
       </div>
       {showHint && techStack.length === 0 && (
-        <p style={{ marginTop: 10, fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.3)', fontStyle: 'italic' }}>
+        <p style={{ marginTop: 10, fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.3)' }}>
           사용하는 기술 스택을 선택하세요 (복수 선택 가능)
         </p>
       )}
@@ -245,7 +245,7 @@ export function LinksFields({ liveDemo, liveDemoTouched, liveDemoError, github, 
       <div>
         <label className="label-field">
           GitHub URL{' '}
-          <span style={{ fontFamily: "'EB Garamond', serif", letterSpacing: 0, fontStyle: 'italic', color: 'rgba(200,176,138,0.4)' }}>(선택)</span>
+          <span style={{ fontFamily: "'EB Garamond', serif", letterSpacing: 0, color: 'rgba(200,176,138,0.4)' }}>(선택)</span>
         </label>
         <input
           type="url"
@@ -288,7 +288,7 @@ export function BookThemePicker({ name, role, themeIdx, selectedTheme, onThemeCh
     <div className="flex gap-4 items-center">
       <MiniBook name={name} role={role} theme={selectedTheme} />
       <div className="flex-1">
-        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.82rem', color: 'rgba(200,176,138,0.5)', fontStyle: 'italic', marginBottom: 12 }}>
+        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.82rem', color: 'rgba(200,176,138,0.5)', marginBottom: 12 }}>
           서재에 꽂힐 당신의 책 색상을 골라보세요.
         </p>
         <div className="flex flex-wrap gap-2">
@@ -469,7 +469,7 @@ export function DoneScreen({ name, role, theme, subtitle, title, description, on
       >
         <MiniBook name={name} role={role} theme={theme} />
       </motion.div>
-      <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.2em', fontStyle: 'italic', marginBottom: 10 }}>
+      <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.2em', marginBottom: 10 }}>
         {subtitle}
       </div>
       <h2
@@ -478,7 +478,7 @@ export function DoneScreen({ name, role, theme, subtitle, title, description, on
       >
         {title}
       </h2>
-      <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.7)', fontStyle: 'italic', lineHeight: 1.7, marginBottom: 32 }}>
+      <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.7)', lineHeight: 1.7, marginBottom: 32 }}>
         {description}
       </p>
       <motion.button

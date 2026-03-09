@@ -75,7 +75,6 @@ export function RepoAnalyzerPage() {
                   fontFamily: "'EB Garamond', serif",
                   fontSize: "0.85rem",
                   color: "rgba(200,176,138,0.5)",
-                  fontStyle: "italic",
                 }}
               >
                 {stepLabel}
@@ -153,7 +152,6 @@ export function RepoAnalyzerPage() {
                     fontSize: "0.75rem",
                     color: "rgba(200,176,138,0.5)",
                     letterSpacing: "0.25em",
-                    fontStyle: "italic",
                   }}
                 >
                   — 저장 완료 —
@@ -175,7 +173,6 @@ export function RepoAnalyzerPage() {
                       fontFamily: "'EB Garamond', serif",
                       fontSize: "0.8rem",
                       color: "rgba(200,176,138,0.35)",
-                      fontStyle: "italic",
                     }}
                   >
                     ID: {savedId}

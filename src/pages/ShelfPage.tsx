@@ -51,7 +51,6 @@ export function ShelfPage() {
                 style={{
                   fontFamily: "'EB Garamond', serif",
                   color: 'rgba(200,176,138,0.5)',
-                  fontStyle: 'italic',
                   fontSize: '1rem',
                   letterSpacing: '0.1em',
                 }}

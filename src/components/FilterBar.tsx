@@ -102,7 +102,7 @@ export function FilterBar({
           <span style={{ color: '#d4af37', fontSize: '1rem' }}>✦</span>
           <div className="h-px w-15" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.5), transparent)' }} />
         </div>
-        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.6)', fontStyle: 'italic' }}>
+        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.6)' }}>
           기술 스택으로 원하는 책을 찾아보세요
         </p>
       </motion.div>
