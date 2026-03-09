@@ -1,4 +1,5 @@
 import type { GithubRepoData } from "@/services/githubService";
+import { httpStatusMessage } from "@/utils/errors";
 
 export interface GeminiAnalysisResult {
   projectTitle: string;
@@ -6,6 +7,24 @@ export interface GeminiAnalysisResult {
   detailedDescription: string;
   mainFeatures: string[];
   techStack: string[];
+}
+
+// Gemini API 응답 원본 타입
+interface GeminiPart {
+  text: string;
+}
+
+interface GeminiContent {
+  parts: GeminiPart[];
+}
+
+interface GeminiCandidate {
+  content: GeminiContent;
+}
+
+interface GeminiApiResponse {
+  candidates?: GeminiCandidate[];
+  error?: { message: string; code: number };
 }
 
 type GeminiInput = Pick<GithubRepoData, "name" | "description" | "language" | "readme">;
@@ -33,40 +52,66 @@ ${data.readme}
 }`;
 }
 
+function isValidAnalysisResult(value: unknown): value is GeminiAnalysisResult {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  return (
+    typeof v.projectTitle === "string" &&
+    typeof v.oneLineDescription === "string" &&
+    typeof v.detailedDescription === "string" &&
+    Array.isArray(v.mainFeatures) &&
+    Array.isArray(v.techStack)
+  );
+}
+
 export async function analyzeWithGemini(
   data: GeminiInput
 ): Promise<GeminiAnalysisResult> {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-
   if (!apiKey) {
     throw new Error("VITE_GEMINI_API_KEY 환경 변수가 설정되지 않았습니다.");
   }
 
-  const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: buildPrompt(data) }] }],
-      generationConfig: { responseMimeType: "application/json" },
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Gemini API 오류 (${response.status})`);
+  let response: Response;
+  try {
+    response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: buildPrompt(data) }] }],
+        generationConfig: { responseMimeType: "application/json" },
+      }),
+    });
+  } catch {
+    throw new Error("Gemini API: 네트워크 연결을 확인하세요.");
   }
 
-  const json = await response.json();
+  if (!response.ok) {
+    throw new Error(httpStatusMessage(response.status, "Gemini API"));
+  }
 
-  const rawText: string =
-    json?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  const json = (await response.json()) as GeminiApiResponse;
 
+  // API 레벨 에러 (200 OK지만 error 필드가 있는 경우)
+  if (json.error) {
+    throw new Error(`Gemini API 오류: ${json.error.message}`);
+  }
+
+  const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
   if (!rawText) {
     throw new Error("Gemini API 응답에서 텍스트를 찾을 수 없습니다.");
   }
 
+  let parsed: unknown;
   try {
-    return JSON.parse(rawText) as GeminiAnalysisResult;
+    parsed = JSON.parse(rawText);
   } catch {
-    throw new Error(`Gemini 응답 JSON 파싱 실패:\n${rawText}`);
+    throw new Error(`Gemini 응답 JSON 파싱 실패:\n${rawText.slice(0, 200)}`);
   }
+
+  if (!isValidAnalysisResult(parsed)) {
+    throw new Error("Gemini 응답이 예상된 형식이 아닙니다.");
+  }
+
+  return parsed;
 }

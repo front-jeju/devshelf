@@ -2,6 +2,7 @@ import { useState } from "react";
 import { getGithubRepoData } from "@/services/githubService";
 import { analyzeWithGemini, type GeminiAnalysisResult } from "@/services/geminiService";
 import { addProject, type ProjectData } from "@/services/firestoreService";
+import { toErrorMessage } from "@/utils/errors";
 
 export type Step =
   | "idle"       // 초기 상태
@@ -28,6 +29,11 @@ export function useRepoAnalyzer(): UseRepoAnalyzerReturn {
   const [savedId, setSavedId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
 
+  function handleError(e: unknown, fallback: string) {
+    setErrorMsg(toErrorMessage(e, fallback));
+    setStep("error");
+  }
+
   /** 1단계·2단계: GitHub → Gemini */
   async function analyze(url: string) {
     setErrorMsg("");
@@ -44,8 +50,7 @@ export function useRepoAnalyzer(): UseRepoAnalyzerReturn {
       setAnalysis(result);
       setStep("review");
     } catch (e) {
-      setErrorMsg(e instanceof Error ? e.message : "분석 중 오류가 발생했습니다.");
-      setStep("error");
+      handleError(e, "분석 중 오류가 발생했습니다.");
     }
   }
 
@@ -57,8 +62,7 @@ export function useRepoAnalyzer(): UseRepoAnalyzerReturn {
       setSavedId(id);
       setStep("done");
     } catch (e) {
-      setErrorMsg(e instanceof Error ? e.message : "저장 중 오류가 발생했습니다.");
-      setStep("error");
+      handleError(e, "저장 중 오류가 발생했습니다.");
     }
   }
 
