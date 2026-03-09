@@ -184,10 +184,10 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.5, duration: 0.8 }}
         >
-          서재는 이야기이고, 프로젝트 페이지는 증명서다.
+          개발자의 이야기를 기록하는 서재에 오신 것을 환영합니다.
           <br />
           <span style={{ color: 'rgba(200,176,138,0.55)', fontStyle: 'italic', fontSize: '0.95em' }}>
-            — 개발자 한 명 한 명의 이야기를 책으로 경험하세요.
+            — 다양한 개발자들의 포트폴리오를 둘러보세요.
           </span>
         </motion.p>
 
@@ -239,20 +239,6 @@ export function HeroSection() {
           >
             내 서재 등록
           </motion.button>
-        </motion.div>
-
-        {/* 하단 장식 */}
-        <motion.div
-          className="flex items-center justify-center gap-4 mt-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 0.8 }}
-        >
-          <div className="h-px w-15" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.4))' }} />
-          <span style={{ color: 'rgba(212,175,55,0.4)', fontSize: '0.8rem', fontFamily: "'Cinzel', serif", letterSpacing: '0.2em' }}>
-            MMXXVI
-          </span>
-          <div className="h-px w-15" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.4), transparent)' }} />
         </motion.div>
       </div>
 

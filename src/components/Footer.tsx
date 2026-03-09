@@ -272,9 +272,6 @@ export function Footer() {
             Guestbook
           </a>
         </div>
-        <p className="font-body text-[0.75rem] text-parchment-dim/25">
-          MMXXVI · Built with React & Framer Motion
-        </p>
       </div>
     </footer>
   );
