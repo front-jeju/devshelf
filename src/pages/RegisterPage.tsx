@@ -26,6 +26,29 @@ export function RegisterPage() {
       <div className="page-overlay" />
       <div className="gold-top-line" />
 
+      {/* 뒤로 가기 */}
+      <motion.div
+        className="relative z-[2] w-full max-w-[460px] px-6 mb-4 flex justify-end"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <Link
+          to="/login"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            fontFamily: "'Cinzel', serif",
+            fontSize: '0.7rem',
+            letterSpacing: '0.12em',
+            color: 'rgba(200,176,138,0.55)',
+          }}
+        >
+          로그인으로 →
+        </Link>
+      </motion.div>
+
       {/* 로고 */}
       <motion.div
         className="relative z-[2] mb-9 text-center"

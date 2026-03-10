@@ -22,6 +22,29 @@ export function LoginPage() {
       <div className="page-overlay" />
       <div className="gold-top-line" />
 
+      {/* 뒤로 가기 */}
+      <motion.div
+        className="relative z-[2] w-full max-w-[420px] px-6 mb-4 flex justify-end"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <Link
+          to="/"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            fontFamily: "'Cinzel', serif",
+            fontSize: '0.7rem',
+            letterSpacing: '0.12em',
+            color: 'rgba(200,176,138,0.55)',
+          }}
+        >
+          홈으로 →
+        </Link>
+      </motion.div>
+
       {/* 로고 */}
       <motion.div
         className="relative z-[2] mb-10 text-center"
