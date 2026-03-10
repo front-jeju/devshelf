@@ -23,17 +23,25 @@ function matchTechStacks(geminiStacks: string[]): TechStack[] {
   );
 }
 
-export function GitHubAutofill({ onAutofill }: GitHubAutofillProps) {
+function useGithubAutofill(onAutofill: (result: AutofillResult) => void) {
   const [url, setUrl] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [retryAttempt, setRetryAttempt] = useState(0);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  function handleUrlChange(value: string) {
+    setUrl(value);
+    setSuccess(false);
+    setError("");
+  }
 
   async function handleAutofill() {
     if (!url.trim() || isAnalyzing) return;
     setError("");
     setSuccess(false);
     setIsAnalyzing(true);
+    setRetryAttempt(0);
     try {
       const cacheKey = parseRepoKey(url.trim());
       const cached = await getCachedAnalysis(cacheKey);
@@ -42,7 +50,7 @@ export function GitHubAutofill({ onAutofill }: GitHubAutofillProps) {
         result = cached;
       } else {
         const repoData = await getGithubRepoData(url.trim());
-        result = await analyzeWithGemini(repoData);
+        result = await analyzeWithGemini(repoData, setRetryAttempt);
         setCachedAnalysis(cacheKey, result).catch(() => {});
       }
       onAutofill({
@@ -56,8 +64,40 @@ export function GitHubAutofill({ onAutofill }: GitHubAutofillProps) {
       setError(toErrorMessage(e, "GitHub 분석에 실패했습니다."));
     } finally {
       setIsAnalyzing(false);
+      setRetryAttempt(0);
     }
   }
+
+  const buttonLabel = isAnalyzing
+    ? retryAttempt > 0
+      ? `재시도 중 (${retryAttempt}/2)`
+      : "분석 중"
+    : "자동완성 →";
+
+  return { url, isAnalyzing, error, success, buttonLabel, handleUrlChange, handleAutofill };
+}
+
+function Spinner() {
+  return (
+    <motion.span
+      animate={{ rotate: 360 }}
+      transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+      style={{
+        display: "inline-block",
+        width: 10,
+        height: 10,
+        border: "1.5px solid rgba(212,175,55,0.2)",
+        borderTopColor: "#d4af37",
+        borderRadius: "50%",
+      }}
+    />
+  );
+}
+
+export function GitHubAutofill({ onAutofill }: GitHubAutofillProps) {
+  const { url, isAnalyzing, error, success, buttonLabel, handleUrlChange, handleAutofill } =
+    useGithubAutofill(onAutofill);
+  const isDisabled = isAnalyzing || !url.trim();
 
   return (
     <div
@@ -86,11 +126,7 @@ export function GitHubAutofill({ onAutofill }: GitHubAutofillProps) {
         <input
           type="url"
           value={url}
-          onChange={(e) => {
-            setUrl(e.target.value);
-            setSuccess(false);
-            setError("");
-          }}
+          onChange={(e) => handleUrlChange(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAutofill()}
           placeholder="https://github.com/owner/repo"
           disabled={isAnalyzing}
@@ -100,9 +136,9 @@ export function GitHubAutofill({ onAutofill }: GitHubAutofillProps) {
         <motion.button
           type="button"
           onClick={handleAutofill}
-          disabled={isAnalyzing || !url.trim()}
-          whileHover={!isAnalyzing && url.trim() ? { scale: 1.03 } : {}}
-          whileTap={!isAnalyzing && url.trim() ? { scale: 0.97 } : {}}
+          disabled={isDisabled}
+          whileHover={!isDisabled ? { scale: 1.03 } : {}}
+          whileTap={!isDisabled ? { scale: 0.97 } : {}}
           style={{
             fontFamily: "'Cinzel', serif",
             fontSize: "0.62rem",
@@ -111,37 +147,20 @@ export function GitHubAutofill({ onAutofill }: GitHubAutofillProps) {
             padding: "0 16px",
             borderRadius: 2,
             border: "1px solid rgba(212,175,55,0.4)",
-            background:
-              isAnalyzing || !url.trim()
-                ? "rgba(212,175,55,0.04)"
-                : "rgba(212,175,55,0.12)",
-            color:
-              isAnalyzing || !url.trim()
-                ? "rgba(200,176,138,0.3)"
-                : "rgba(212,175,55,0.9)",
-            cursor: isAnalyzing || !url.trim() ? "not-allowed" : "pointer",
+            background: isDisabled ? "rgba(212,175,55,0.04)" : "rgba(212,175,55,0.12)",
+            color: isDisabled ? "rgba(200,176,138,0.3)" : "rgba(212,175,55,0.9)",
+            cursor: isDisabled ? "not-allowed" : "pointer",
             flexShrink: 0,
             whiteSpace: "nowrap",
           }}
         >
           {isAnalyzing ? (
             <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <motion.span
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
-                style={{
-                  display: "inline-block",
-                  width: 10,
-                  height: 10,
-                  border: "1.5px solid rgba(212,175,55,0.2)",
-                  borderTopColor: "#d4af37",
-                  borderRadius: "50%",
-                }}
-              />
-              분석 중
+              <Spinner />
+              {buttonLabel}
             </span>
           ) : (
-            "자동완성 →"
+            buttonLabel
           )}
         </motion.button>
       </div>
