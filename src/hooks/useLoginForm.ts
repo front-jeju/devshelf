@@ -18,7 +18,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from './useAuth';
 
 export type OAuthProvider = 'github' | 'google';
 

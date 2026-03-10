@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import type { GuestbookMessage } from '../types';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { addGuestbookMessage, updateGuestbookMessage, deleteGuestbookMessage, subscribeGuestbookMessages } from '../lib/guestbookService';
 
 export function Footer() {

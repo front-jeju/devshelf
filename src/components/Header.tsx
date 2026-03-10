@@ -18,7 +18,7 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 /** 네비게이션 링크 목록 (label: 영문, sub: 한글 설명, to: 경로) */
 const NAV_ITEMS = [

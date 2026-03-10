@@ -12,7 +12,7 @@
  */
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 /** 촛불 장식 컴포넌트. delay 값으로 각 촛불의 애니메이션 위상을 다르게 합니다. */
 function Candle({ delay = 0 }: { delay?: number }) {

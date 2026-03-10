@@ -21,7 +21,8 @@
 import { type ReactNode, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './index.css';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { useAuth } from './hooks/useAuth';
 
 const MainPage = lazy(() => import('./pages/MainPage').then((m) => ({ default: m.MainPage })));
 const ShelfPage = lazy(() => import('./pages/ShelfPage').then((m) => ({ default: m.ShelfPage })));
