@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import type { TechStack } from "@/types";
-import type { GeminiAnalysisResult } from "@/services/geminiService";
+import type { AnalysisResult } from "@/services/aiService";
 
 export interface ProjectData {
   title: string;
@@ -75,27 +75,27 @@ export async function deleteProject(id: string): Promise<void> {
 }
 
 /**
- * 캐시된 Gemini 분석 결과를 조회합니다.
+ * 캐시된 AI 분석 결과를 조회합니다.
  * @param cacheKey - "owner__repo" 형태의 식별자
  */
 export async function getCachedAnalysis(
   cacheKey: string
-): Promise<GeminiAnalysisResult | null> {
+): Promise<AnalysisResult | null> {
   if (!db) return null;
 
   const snapshot = await getDoc(doc(db, "analysisCache", cacheKey));
   if (!snapshot.exists()) return null;
 
-  return snapshot.data().result as GeminiAnalysisResult;
+  return snapshot.data().result as AnalysisResult;
 }
 
 /**
- * Gemini 분석 결과를 Firestore에 캐싱합니다.
+ * AI 분석 결과를 Firestore에 캐싱합니다.
  * @param cacheKey - "owner__repo" 형태의 식별자
  */
 export async function setCachedAnalysis(
   cacheKey: string,
-  result: GeminiAnalysisResult
+  result: AnalysisResult
 ): Promise<void> {
   if (!db) return;
 

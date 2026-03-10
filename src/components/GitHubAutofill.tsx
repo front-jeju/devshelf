@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getGithubRepoData, parseRepoKey } from "@/services/githubService";
-import { analyzeWithGemini } from "@/services/geminiService";
+import { analyzeRepo } from "@/services/aiService";
 import { getCachedAnalysis, setCachedAnalysis } from "@/services/firestoreService";
 import { toErrorMessage } from "@/utils/errors";
 import { ALL_STACKS } from "@/data/stacks";
@@ -17,16 +17,15 @@ interface GitHubAutofillProps {
   onAutofill: (result: AutofillResult) => void;
 }
 
-function matchTechStacks(geminiStacks: string[]): TechStack[] {
+function matchTechStacks(aiStacks: string[]): TechStack[] {
   return ALL_STACKS.filter((stack) =>
-    geminiStacks.some((s) => s.toLowerCase().includes(stack.toLowerCase()))
+    aiStacks.some((s) => s.toLowerCase().includes(stack.toLowerCase()))
   );
 }
 
 function useGithubAutofill(onAutofill: (result: AutofillResult) => void) {
   const [url, setUrl] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [retryAttempt, setRetryAttempt] = useState(0);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
@@ -41,7 +40,6 @@ function useGithubAutofill(onAutofill: (result: AutofillResult) => void) {
     setError("");
     setSuccess(false);
     setIsAnalyzing(true);
-    setRetryAttempt(0);
     try {
       const cacheKey = parseRepoKey(url.trim());
       const cached = await getCachedAnalysis(cacheKey);
@@ -50,7 +48,7 @@ function useGithubAutofill(onAutofill: (result: AutofillResult) => void) {
         result = cached;
       } else {
         const repoData = await getGithubRepoData(url.trim());
-        result = await analyzeWithGemini(repoData, setRetryAttempt);
+        result = await analyzeRepo(repoData);
         setCachedAnalysis(cacheKey, result).catch(() => {});
       }
       onAutofill({
@@ -64,15 +62,10 @@ function useGithubAutofill(onAutofill: (result: AutofillResult) => void) {
       setError(toErrorMessage(e, "GitHub 분석에 실패했습니다."));
     } finally {
       setIsAnalyzing(false);
-      setRetryAttempt(0);
     }
   }
 
-  const buttonLabel = isAnalyzing
-    ? retryAttempt > 0
-      ? `재시도 중 (${retryAttempt}/2)`
-      : "분석 중"
-    : "자동완성 →";
+  const buttonLabel = isAnalyzing ? "분석 중" : "자동완성 →";
 
   return { url, isAnalyzing, error, success, buttonLabel, handleUrlChange, handleAutofill };
 }
