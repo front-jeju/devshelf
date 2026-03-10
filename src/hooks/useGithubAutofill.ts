@@ -19,11 +19,15 @@ function matchTechStacks(aiStacks: string[]): TechStack[] {
 }
 
 export function useGithubAutofill(onAutofill: (result: AutofillResult) => void) {
+  const [url, setUrl] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  function handleUrlChange(_value: string) {
+  const buttonLabel = isAnalyzing ? "분석 중..." : "자동완성";
+
+  function handleUrlChange(value: string) {
+    setUrl(value);
     setSuccess(false);
     setError("");
   }
@@ -56,10 +60,10 @@ export function useGithubAutofill(onAutofill: (result: AutofillResult) => void) 
     }
   }
 
-  async function handleAutofillWithUrl(targetUrl: string) {
-    if (!targetUrl.trim() || isAnalyzing) return;
-    await runAnalysis(targetUrl.trim());
+  async function handleAutofill() {
+    if (!url.trim() || isAnalyzing) return;
+    await runAnalysis(url.trim());
   }
 
-  return { isAnalyzing, error, success, handleUrlChange, handleAutofillWithUrl };
+  return { url, isAnalyzing, error, success, buttonLabel, handleUrlChange, handleAutofill };
 }
