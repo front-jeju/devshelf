@@ -240,6 +240,70 @@ export function HeroSection() {
         </motion.div>
       </div>
 
+      {/* 팀 소개 */}
+      <motion.div
+        className="relative z-[2] w-full max-w-3xl mx-auto px-6"
+        style={{ marginTop: '5rem' }}
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 2.2, duration: 0.8 }}
+      >
+        {/* 구분선 */}
+        <div className="flex items-center gap-4 mb-8 justify-center">
+          <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3))' }} />
+          <span style={{ fontFamily: "'Cinzel', serif", fontSize: '0.6rem', letterSpacing: '0.3em', color: 'rgba(212,175,55,0.5)' }}>
+            ABOUT
+          </span>
+          <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.3), transparent)' }} />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              label: '개발 목적',
+              text: '개발자 포트폴리오를 더 쉽고 흥미롭게 탐색할 수 있는 서비스를 만들고자 했습니다.',
+            },
+            {
+              label: '문제 정의',
+              text: '기존에는 GitHub 저장소를 직접 탐색해야 했기 때문에 프로젝트 내용을 빠르게 이해하기 어렵고, 여러 포트폴리오를 탐색하는 과정도 단조로운 문제가 있었습니다.',
+            },
+            {
+              label: '해결 방법',
+              text: 'Gemini를 활용해 GitHub 프로젝트를 자동으로 분석·요약하고, 포트폴리오 미리보기 기능을 제공했으며, \'개발자의 서재\'라는 컨셉의 책 인터랙션 UI를 통해 포트폴리오 탐색 경험을 개선했습니다.',
+            },
+          ].map(({ label, text }) => (
+            <div
+              key={label}
+              style={{
+                border: '1px solid rgba(212,175,55,0.12)',
+                borderRadius: 3,
+                padding: '20px 18px',
+                background: 'rgba(212,175,55,0.02)',
+              }}
+            >
+              <p style={{
+                fontFamily: "'Cinzel', serif",
+                fontSize: '0.6rem',
+                letterSpacing: '0.25em',
+                color: 'rgba(212,175,55,0.6)',
+                marginBottom: '0.75rem',
+              }}>
+                {label}
+              </p>
+              <p style={{
+                fontFamily: "'EB Garamond', serif",
+                fontSize: '0.95rem',
+                color: 'rgba(200,176,138,0.75)',
+                lineHeight: 1.8,
+                margin: 0,
+              }}>
+                {text}
+              </p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
       {/* 스크롤 인디케이터 */}
       <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2"

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getGithubRepoData } from "@/services/githubService";
+import { getGithubRepoData, parseRepoKey } from "@/services/githubService";
 import { analyzeWithGemini } from "@/services/geminiService";
+import { getCachedAnalysis, setCachedAnalysis } from "@/services/firestoreService";
 import { toErrorMessage } from "@/utils/errors";
 import { ALL_STACKS } from "@/data/stacks";
 import type { TechStack } from "@/types";
@@ -34,8 +35,16 @@ export function GitHubAutofill({ onAutofill }: GitHubAutofillProps) {
     setSuccess(false);
     setIsAnalyzing(true);
     try {
-      const repoData = await getGithubRepoData(url.trim());
-      const result = await analyzeWithGemini(repoData);
+      const cacheKey = parseRepoKey(url.trim());
+      const cached = await getCachedAnalysis(cacheKey);
+      let result;
+      if (cached) {
+        result = cached;
+      } else {
+        const repoData = await getGithubRepoData(url.trim());
+        result = await analyzeWithGemini(repoData);
+        setCachedAnalysis(cacheKey, result).catch(() => {});
+      }
       onAutofill({
         tagline: result.oneLineDescription.slice(0, 60),
         description: result.detailedDescription,
