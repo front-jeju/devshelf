@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Eye, EyeOff } from 'lucide-react';
 import { FloatingParticles } from '../components/FloatingParticles';
 import { useRegisterForm } from '../hooks/useRegisterForm';
 
@@ -153,7 +154,7 @@ export function RegisterPage() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(200,176,138,0.5)', fontSize: '0.85rem', padding: 4 }}
                   >
-                    {showPassword ? '🙈' : '👁️'}
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
 
@@ -210,7 +211,7 @@ export function RegisterPage() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(200,176,138,0.5)', fontSize: '0.85rem', padding: 4 }}
                   >
-                    {showConfirm ? '🙈' : '👁️'}
+                    {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
 
                   {/* 일치 뱃지 */}

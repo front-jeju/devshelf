@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Eye, EyeOff } from 'lucide-react';
 import { FloatingParticles } from '../components/FloatingParticles';
 import { useLoginForm } from '../hooks/useLoginForm';
 
@@ -191,7 +192,7 @@ export function LoginPage() {
                     style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(200,176,138,0.5)', fontSize: '0.85rem', padding: 4 }}
                     title={showPassword ? '숨기기' : '보기'}
                   >
-                    {showPassword ? '🙈' : '👁️'}
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
