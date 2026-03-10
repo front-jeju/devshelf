@@ -18,7 +18,7 @@ export function LoginPage() {
   } = useLoginForm();
 
   return (
-    <div className="page-bg-flex">
+    <div className="page-bg-flex py-16">
       <FloatingParticles />
       <div className="page-overlay" />
       <div className="gold-top-line" />
@@ -42,7 +42,7 @@ export function LoginPage() {
             color: 'rgba(200,176,138,0.55)',
           }}
         >
-          홈으로 →
+          ← 홈으로
         </Link>
       </motion.div>
 

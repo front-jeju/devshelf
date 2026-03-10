@@ -46,7 +46,7 @@ export function RegisterPage() {
             color: 'rgba(200,176,138,0.55)',
           }}
         >
-          로그인으로 →
+          ← 로그인으로
         </Link>
       </motion.div>
 
