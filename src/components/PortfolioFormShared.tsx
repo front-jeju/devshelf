@@ -446,6 +446,94 @@ export function FormActionButtons({ isLoading, onCancel, loadingText, submitText
   );
 }
 
+/* ── GitHub AI 자동완성 패널 ── */
+export function GithubAutofillPanel({ github, isAnalyzing, error, success, onAutofill }: {
+  github: string;
+  isAnalyzing: boolean;
+  error: string;
+  success: boolean;
+  onAutofill: () => void;
+}) {
+  const hasValidRepo = /^https:\/\/github\.com\/.+\/.+/.test(github);
+  const isDisabled = isAnalyzing || !hasValidRepo;
+
+  return (
+    <div className="mt-2.5 flex flex-col gap-2">
+      <div
+        style={{
+          border: `1px solid ${hasValidRepo ? 'rgba(212,175,55,0.35)' : 'rgba(212,175,55,0.12)'}`,
+          borderRadius: 4,
+          background: hasValidRepo ? 'rgba(212,175,55,0.06)' : 'rgba(212,175,55,0.02)',
+          padding: '10px 14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          transition: 'all 0.2s',
+        }}
+      >
+        <div>
+          <div style={{ fontFamily: "'Cinzel', serif", fontSize: '0.65rem', letterSpacing: '0.16em', color: hasValidRepo ? 'rgba(212,175,55,0.8)' : 'rgba(212,175,55,0.35)', marginBottom: 3, transition: 'color 0.2s' }}>
+            AI 자동완성
+          </div>
+          <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: hasValidRepo ? 'rgba(200,176,138,0.5)' : 'rgba(200,176,138,0.25)', transition: 'color 0.2s' }}>
+            {hasValidRepo ? '기술 스택 · 소개 · 한줄 소개를 자동으로 채웁니다' : 'GitHub 레포 URL을 입력하면 자동완성이 활성화됩니다'}
+          </div>
+        </div>
+        <motion.button
+          type="button"
+          onClick={onAutofill}
+          disabled={isDisabled}
+          whileHover={!isDisabled ? { scale: 1.03 } : {}}
+          whileTap={!isDisabled ? { scale: 0.97 } : {}}
+          style={{
+            fontFamily: "'Cinzel', serif",
+            fontSize: '0.65rem',
+            letterSpacing: '0.14em',
+            fontWeight: 700,
+            padding: '8px 16px',
+            borderRadius: 3,
+            border: `1px solid ${isDisabled ? 'rgba(212,175,55,0.2)' : 'rgba(212,175,55,0.6)'}`,
+            background: isDisabled
+              ? 'rgba(212,175,55,0.02)'
+              : 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.1))',
+            color: isDisabled ? 'rgba(200,176,138,0.2)' : '#d4af37',
+            cursor: isDisabled ? 'not-allowed' : 'pointer',
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            transition: 'all 0.2s',
+          }}
+        >
+          {isAnalyzing && (
+            <motion.span
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              style={{ display: 'inline-block', width: 9, height: 9, border: '1.5px solid rgba(212,175,55,0.2)', borderTopColor: '#d4af37', borderRadius: '50%' }}
+            />
+          )}
+          {isAnalyzing ? '분석 중...' : '자동완성 →'}
+        </motion.button>
+      </div>
+      <AnimatePresence>
+        {error && (
+          <motion.p key="err" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+            style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(248,113,113,0.8)', margin: 0 }}>
+            {error}
+          </motion.p>
+        )}
+        {success && (
+          <motion.p key="ok" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+            style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(52,211,153,0.8)', margin: 0 }}>
+            ✓ 자동완성 완료 — 내용을 확인하고 필요 시 수정해주세요.
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 /* ── 완료 화면 ── */
 export function DoneScreen({ name, role, theme, subtitle, title, description, onNavigate }: {
   name: string;

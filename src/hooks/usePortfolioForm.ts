@@ -18,8 +18,6 @@ import { useAuth } from './useAuth';
 import { addPortfolio } from '../lib/portfolioService';
 import { usePortfolioFormBase } from './usePortfolioFormBase';
 
-export { BOOK_THEMES } from '../data/bookThemes';
-export type { BookTheme } from '../data/bookThemes';
 
 export function usePortfolioForm() {
   const navigate = useNavigate();

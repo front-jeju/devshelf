@@ -23,8 +23,6 @@ import { getPortfolioById, updatePortfolio } from '../lib/portfolioService';
 import { BOOK_THEMES } from '../data/bookThemes';
 import { usePortfolioFormBase } from './usePortfolioFormBase';
 
-export { BOOK_THEMES } from '../data/bookThemes';
-
 export function useEditPortfolioForm(portfolioId: string) {
   const navigate = useNavigate();
   const { user } = useAuth();

@@ -19,18 +19,16 @@ function matchTechStacks(aiStacks: string[]): TechStack[] {
 }
 
 export function useGithubAutofill(onAutofill: (result: AutofillResult) => void) {
-  const [url, setUrl] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  function handleUrlChange(value: string) {
-    setUrl(value);
+  function handleUrlChange(_value: string) {
     setSuccess(false);
     setError("");
   }
 
-  async function runAnalysis(targetUrl: string, clearUrl = false) {
+  async function runAnalysis(targetUrl: string) {
     setError("");
     setSuccess(false);
     setIsAnalyzing(true);
@@ -51,7 +49,6 @@ export function useGithubAutofill(onAutofill: (result: AutofillResult) => void) 
         techStack: matchTechStacks(result.techStack),
       });
       setSuccess(true);
-      if (clearUrl) setUrl("");
     } catch (e) {
       setError(toErrorMessage(e, "GitHub 분석에 실패했습니다."));
     } finally {
@@ -59,17 +56,10 @@ export function useGithubAutofill(onAutofill: (result: AutofillResult) => void) 
     }
   }
 
-  async function handleAutofill() {
-    if (!url.trim() || isAnalyzing) return;
-    await runAnalysis(url.trim(), true);
-  }
-
   async function handleAutofillWithUrl(targetUrl: string) {
     if (!targetUrl.trim() || isAnalyzing) return;
     await runAnalysis(targetUrl.trim());
   }
 
-  const buttonLabel = isAnalyzing ? "분석 중" : "자동완성 →";
-
-  return { url, isAnalyzing, error, success, buttonLabel, handleUrlChange, handleAutofill, handleAutofillWithUrl };
+  return { isAnalyzing, error, success, handleUrlChange, handleAutofillWithUrl };
 }
