@@ -217,7 +217,7 @@ export function TechStackFields({ techStack, toggleStack, showHint = false }: {
 }
 
 /* ── 링크 필드 (포트폴리오 URL + GitHub) ── */
-export function LinksFields({ liveDemo, liveDemoTouched, liveDemoError, github, onLiveDemoChange, onLiveDemoBlur, onGithubChange, children }: {
+export function LinksFields({ liveDemo, liveDemoTouched, liveDemoError, github, onLiveDemoChange, onLiveDemoBlur, onGithubChange, children, githubChildren }: {
   liveDemo: string;
   liveDemoTouched: boolean;
   liveDemoError: string;
@@ -226,6 +226,7 @@ export function LinksFields({ liveDemo, liveDemoTouched, liveDemoError, github, 
   onLiveDemoBlur: () => void;
   onGithubChange: (v: string) => void;
   children?: ReactNode;
+  githubChildren?: ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-3.5">
@@ -254,6 +255,7 @@ export function LinksFields({ liveDemo, liveDemoTouched, liveDemoError, github, 
           placeholder="https://github.com/username"
           className="input-field"
         />
+        {githubChildren}
       </div>
     </div>
   );

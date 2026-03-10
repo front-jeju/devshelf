@@ -23,7 +23,7 @@ function matchTechStacks(aiStacks: string[]): TechStack[] {
   );
 }
 
-function useGithubAutofill(onAutofill: (result: AutofillResult) => void) {
+export function useGithubAutofill(onAutofill: (result: AutofillResult) => void) {
   const [url, setUrl] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState("");
@@ -35,19 +35,18 @@ function useGithubAutofill(onAutofill: (result: AutofillResult) => void) {
     setError("");
   }
 
-  async function handleAutofill() {
-    if (!url.trim() || isAnalyzing) return;
+  async function runAnalysis(targetUrl: string, clearUrl = false) {
     setError("");
     setSuccess(false);
     setIsAnalyzing(true);
     try {
-      const cacheKey = parseRepoKey(url.trim());
+      const cacheKey = parseRepoKey(targetUrl);
       const cached = await getCachedAnalysis(cacheKey);
       let result;
       if (cached) {
         result = cached;
       } else {
-        const repoData = await getGithubRepoData(url.trim());
+        const repoData = await getGithubRepoData(targetUrl);
         result = await analyzeRepo(repoData);
         setCachedAnalysis(cacheKey, result).catch(() => {});
       }
@@ -57,7 +56,7 @@ function useGithubAutofill(onAutofill: (result: AutofillResult) => void) {
         techStack: matchTechStacks(result.techStack),
       });
       setSuccess(true);
-      setUrl("");
+      if (clearUrl) setUrl("");
     } catch (e) {
       setError(toErrorMessage(e, "GitHub 분석에 실패했습니다."));
     } finally {
@@ -65,9 +64,19 @@ function useGithubAutofill(onAutofill: (result: AutofillResult) => void) {
     }
   }
 
+  async function handleAutofill() {
+    if (!url.trim() || isAnalyzing) return;
+    await runAnalysis(url.trim(), true);
+  }
+
+  async function handleAutofillWithUrl(targetUrl: string) {
+    if (!targetUrl.trim() || isAnalyzing) return;
+    await runAnalysis(targetUrl.trim());
+  }
+
   const buttonLabel = isAnalyzing ? "분석 중" : "자동완성 →";
 
-  return { url, isAnalyzing, error, success, buttonLabel, handleUrlChange, handleAutofill };
+  return { url, isAnalyzing, error, success, buttonLabel, handleUrlChange, handleAutofill, handleAutofillWithUrl };
 }
 
 function Spinner() {

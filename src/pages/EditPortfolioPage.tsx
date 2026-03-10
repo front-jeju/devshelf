@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FloatingParticles } from '../components/FloatingParticles';
 import {
   SectionTitle,
@@ -7,6 +7,7 @@ import {
   StatusField, ProjectTypeField,
   BookThemePicker, FormActionButtons, DoneScreen,
 } from '../components/PortfolioFormShared';
+import { useGithubAutofill } from '../components/GitHubAutofill';
 import { useEditPortfolioForm } from '../hooks/useEditPortfolioForm';
 
 export function EditPortfolioPage() {
@@ -23,12 +24,17 @@ export function EditPortfolioPage() {
     notFound,
     selectedTheme,
     setField,
+    setForm,
     touch,
     toggleStack,
     toggleProjectType,
     handleSubmit,
     navigate,
   } = useEditPortfolioForm(id ?? '');
+
+  const githubAutofill = useGithubAutofill(({ tagline, description, techStack }) => {
+    setForm((prev) => ({ ...prev, tagline, description, techStack }));
+  });
 
   /* ── 데이터 불러오는 중 ── */
   if (isFetching) {
@@ -83,6 +89,34 @@ export function EditPortfolioPage() {
       <div className="page-overlay" />
       <div className="gold-top-line" />
 
+      {/* 뒤로 가기 */}
+      <motion.div
+        className="relative z-[2] w-full max-w-[600px] px-6 mb-4 flex justify-end"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            fontFamily: "'Cinzel', serif",
+            fontSize: '0.7rem',
+            letterSpacing: '0.12em',
+            color: 'rgba(200,176,138,0.55)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 0,
+          }}
+        >
+          ← 뒤로
+        </button>
+      </motion.div>
+
       {/* 로고 */}
       <motion.div
         className="relative z-[2] mb-9 text-center"
@@ -128,7 +162,102 @@ export function EditPortfolioPage() {
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
-              {/* ── 1. 기본 정보 ── */}
+              {/* ── 1. 링크 ── */}
+              <div>
+                <SectionTitle>LINKS</SectionTitle>
+                <LinksFields
+                  liveDemo={form.liveDemo}
+                  liveDemoTouched={touched.liveDemo}
+                  liveDemoError={errors.liveDemo}
+                  github={form.github}
+                  onLiveDemoChange={(v) => setField('liveDemo', v)}
+                  onLiveDemoBlur={() => touch('liveDemo')}
+                  onGithubChange={(v) => { setField('github', v); githubAutofill.handleUrlChange(v); }}
+                  githubChildren={
+                    <div className="mt-2.5 flex flex-col gap-2">
+                      {(() => {
+                        const hasValidRepo = /^https:\/\/github\.com\/.+\/.+/.test(form.github);
+                        const isDisabled = githubAutofill.isAnalyzing || !hasValidRepo;
+                        return (
+                          <div
+                            style={{
+                              border: `1px solid ${hasValidRepo ? 'rgba(212,175,55,0.35)' : 'rgba(212,175,55,0.12)'}`,
+                              borderRadius: 4,
+                              background: hasValidRepo ? 'rgba(212,175,55,0.06)' : 'rgba(212,175,55,0.02)',
+                              padding: '10px 14px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: 12,
+                              transition: 'all 0.2s',
+                            }}
+                          >
+                            <div>
+                              <div style={{ fontFamily: "'Cinzel', serif", fontSize: '0.65rem', letterSpacing: '0.16em', color: hasValidRepo ? 'rgba(212,175,55,0.8)' : 'rgba(212,175,55,0.35)', marginBottom: 3, transition: 'color 0.2s' }}>
+                                AI 자동완성
+                              </div>
+                              <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: hasValidRepo ? 'rgba(200,176,138,0.5)' : 'rgba(200,176,138,0.25)', transition: 'color 0.2s' }}>
+                                {hasValidRepo ? '기술 스택 · 소개 · 한줄 소개를 자동으로 채웁니다' : 'GitHub 레포 URL을 입력하면 자동완성이 활성화됩니다'}
+                              </div>
+                            </div>
+                            <motion.button
+                              type="button"
+                              onClick={() => githubAutofill.handleAutofillWithUrl(form.github)}
+                              disabled={isDisabled}
+                              whileHover={!isDisabled ? { scale: 1.03 } : {}}
+                              whileTap={!isDisabled ? { scale: 0.97 } : {}}
+                              style={{
+                                fontFamily: "'Cinzel', serif",
+                                fontSize: '0.65rem',
+                                letterSpacing: '0.14em',
+                                fontWeight: 700,
+                                padding: '8px 16px',
+                                borderRadius: 3,
+                                border: `1px solid ${isDisabled ? 'rgba(212,175,55,0.2)' : 'rgba(212,175,55,0.6)'}`,
+                                background: isDisabled
+                                  ? 'rgba(212,175,55,0.02)'
+                                  : 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.1))',
+                                color: isDisabled ? 'rgba(200,176,138,0.2)' : '#d4af37',
+                                cursor: isDisabled ? 'not-allowed' : 'pointer',
+                                flexShrink: 0,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 6,
+                                transition: 'all 0.2s',
+                              }}
+                            >
+                              {githubAutofill.isAnalyzing && (
+                                <motion.span
+                                  animate={{ rotate: 360 }}
+                                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                                  style={{ display: 'inline-block', width: 9, height: 9, border: '1.5px solid rgba(212,175,55,0.2)', borderTopColor: '#d4af37', borderRadius: '50%' }}
+                                />
+                              )}
+                              {githubAutofill.isAnalyzing ? '분석 중...' : '자동완성 →'}
+                            </motion.button>
+                          </div>
+                        );
+                      })()}
+                      <AnimatePresence>
+                        {githubAutofill.error && (
+                          <motion.p key="err" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                            style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(248,113,113,0.8)', margin: 0 }}>
+                            {githubAutofill.error}
+                          </motion.p>
+                        )}
+                        {githubAutofill.success && (
+                          <motion.p key="ok" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                            style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(52,211,153,0.8)', margin: 0 }}>
+                            ✓ 자동완성 완료 — 내용을 확인하고 필요 시 수정해주세요.
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  }
+                />
+              </div>
+
+              {/* ── 2. 기본 정보 ── */}
               <div>
                 <SectionTitle>BASIC INFO</SectionTitle>
                 <BasicInfoFields
@@ -140,24 +269,10 @@ export function EditPortfolioPage() {
                 />
               </div>
 
-              {/* ── 2. 기술 스택 ── */}
+              {/* ── 3. 기술 스택 ── */}
               <div>
                 <SectionTitle>TECH STACK</SectionTitle>
                 <TechStackFields techStack={form.techStack} toggleStack={toggleStack} />
-              </div>
-
-              {/* ── 3. 링크 ── */}
-              <div>
-                <SectionTitle>LINKS</SectionTitle>
-                <LinksFields
-                  liveDemo={form.liveDemo}
-                  liveDemoTouched={touched.liveDemo}
-                  liveDemoError={errors.liveDemo}
-                  github={form.github}
-                  onLiveDemoChange={(v) => setField('liveDemo', v)}
-                  onLiveDemoBlur={() => touch('liveDemo')}
-                  onGithubChange={(v) => setField('github', v)}
-                />
               </div>
 
               {/* ── 4. 상태 ── */}
