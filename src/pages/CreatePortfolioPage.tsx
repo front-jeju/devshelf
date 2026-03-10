@@ -7,7 +7,7 @@ import {
   StatusField, ProjectTypeField,
   BookThemePicker, FormActionButtons, DoneScreen,
 } from '../components/PortfolioFormShared';
-import { useGithubAutofill } from '../components/GitHubAutofill';
+import { useGithubAutofill } from '../hooks/useGithubAutofill';
 import { usePortfolioForm } from '../hooks/usePortfolioForm';
 
 export function CreatePortfolioPage() {
