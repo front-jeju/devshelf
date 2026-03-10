@@ -9,24 +9,26 @@
  *
  * 각 필터는 독립적으로 동작하며, 모두 AND 조건으로 결합됩니다.
  */
+import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
+import { Search, Briefcase, GraduationCap, TrendingUp, Gamepad2, Users, Zap, Globe } from 'lucide-react';
 import type { TechStack, DevStatus, ProjectType } from '../types';
 import { ALL_STACKS, STACK_ICONS } from '../data/stacks';
 
 const ALL_STATUSES: DevStatus[] = ['취준', '재직', '학생', '이직준비'];
-const STATUS_ICONS: Record<DevStatus, string> = {
-  취준: '🔍',
-  재직: '💼',
-  학생: '🎓',
-  이직준비: '🚀',
+const STATUS_ICONS: Record<DevStatus, ReactNode> = {
+  취준: <Search size={13} />,
+  재직: <Briefcase size={13} />,
+  학생: <GraduationCap size={13} />,
+  이직준비: <TrendingUp size={13} />,
 };
 
 const ALL_PROJECT_TYPES: ProjectType[] = ['토이', '팀', '사이드', '오픈소스'];
-const PROJECT_ICONS: Record<ProjectType, string> = {
-  토이: '🧸',
-  팀: '👥',
-  사이드: '⚡',
-  오픈소스: '🌐',
+const PROJECT_ICONS: Record<ProjectType, ReactNode> = {
+  토이: <Gamepad2 size={13} />,
+  팀: <Users size={13} />,
+  사이드: <Zap size={13} />,
+  오픈소스: <Globe size={13} />,
 };
 
 interface FilterBarProps {
@@ -66,8 +68,9 @@ function GroupLabel({ children }: { children: string }) {
         fontSize: '0.68rem',
         letterSpacing: '0.2em',
         color: 'rgba(200,176,138,0.45)',
-        alignSelf: 'center',
         whiteSpace: 'nowrap',
+        display: 'block',
+        marginBottom: 8,
       }}
     >
       {children}
@@ -103,20 +106,21 @@ export function FilterBar({
           <div className="h-px w-15" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.5), transparent)' }} />
         </div>
         <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.6)' }}>
-          기술 스택으로 원하는 책을 찾아보세요
+          기술 스택, 상태, 프로젝트 유형으로 원하는 책을 찾아보세요
         </p>
       </motion.div>
 
       <div className="flex flex-col gap-4 px-6 max-w-[900px] mx-auto">
         {/* ── 기술 스택 필터 ── */}
         <motion.div
-          className="flex flex-wrap items-center gap-3"
+          className="flex flex-col"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.15 }}
         >
           <GroupLabel>STACK</GroupLabel>
+          <div className="flex flex-wrap gap-3">
 
           <motion.button
             whileHover={{ y: -2, scale: 1.04 }}
@@ -146,6 +150,7 @@ export function FilterBar({
               {stack}
             </motion.button>
           ))}
+          </div>
         </motion.div>
 
         {/* 구분선 */}
@@ -153,14 +158,14 @@ export function FilterBar({
 
         {/* ── 상태 필터 ── */}
         <motion.div
-          className="flex flex-wrap items-center gap-3"
+          className="flex flex-col"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.25 }}
         >
-          <GroupLabel>상태</GroupLabel>
-
+          <GroupLabel>STATUS</GroupLabel>
+          <div className="flex flex-wrap gap-3">
           <motion.button
             whileHover={{ y: -2, scale: 1.04 }}
             whileTap={{ scale: 0.95 }}
@@ -189,6 +194,7 @@ export function FilterBar({
               {status}
             </motion.button>
           ))}
+          </div>
         </motion.div>
 
         {/* 구분선 */}
@@ -196,14 +202,14 @@ export function FilterBar({
 
         {/* ── 프로젝트 필터 ── */}
         <motion.div
-          className="flex flex-wrap items-center gap-3"
+          className="flex flex-col"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.35 }}
         >
-          <GroupLabel>프로젝트</GroupLabel>
-
+          <GroupLabel>PROJECT</GroupLabel>
+          <div className="flex flex-wrap gap-3">
           <motion.button
             whileHover={{ y: -2, scale: 1.04 }}
             whileTap={{ scale: 0.95 }}
@@ -232,6 +238,7 @@ export function FilterBar({
               {type}
             </motion.button>
           ))}
+          </div>
         </motion.div>
       </div>
 
