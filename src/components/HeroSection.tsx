@@ -242,6 +242,7 @@ export function HeroSection() {
 
       {/* 팀 소개 */}
       <motion.div
+        id="about"
         className="relative z-[2] w-full max-w-3xl mx-auto px-6"
         style={{ marginTop: '5rem' }}
         initial={{ opacity: 0, y: 24 }}

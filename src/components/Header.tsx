@@ -23,7 +23,7 @@ import { useAuth } from '../contexts/AuthContext';
 /** 네비게이션 링크 목록 (label: 영문, sub: 한글 설명, to: 경로) */
 const NAV_ITEMS = [
   { label: 'The Shelf', sub: '책장',  to: '/shelf' },
-  { label: 'Our Story', sub: '팀 소개', to: '/' },
+  { label: 'Our Story', sub: '팀 소개', to: '/#about' },
   { label: 'Guestbook', sub: '방명록', to: '/#guestbook' },
 ] as const;
 
