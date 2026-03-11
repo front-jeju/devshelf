@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Briefcase, GraduationCap, TrendingUp, Gamepad2, Users, Zap, Globe } from 'lucide-react';
 import type { TechStack, DevStatus, ProjectType } from '../types';
 import { ROLES } from '../data/roles';
 import { ALL_STACKS, STACK_ICONS } from '../data/stacks';
@@ -7,10 +8,20 @@ import { BOOK_THEMES } from '../data/bookThemes';
 import type { BookTheme } from '../data/bookThemes';
 
 const ALL_STATUSES: DevStatus[] = ['취준', '재직', '학생', '이직준비'];
-const STATUS_ICONS: Record<DevStatus, string> = { 취준: '🔍', 재직: '💼', 학생: '🎓', 이직준비: '🚀' };
+const STATUS_ICONS: Record<DevStatus, ReactNode> = {
+  취준: <Search size={13} />,
+  재직: <Briefcase size={13} />,
+  학생: <GraduationCap size={13} />,
+  이직준비: <TrendingUp size={13} />,
+};
 
 const ALL_PROJECT_TYPES: ProjectType[] = ['토이', '팀', '사이드', '오픈소스'];
-const PROJECT_ICONS: Record<ProjectType, string> = { 토이: '🧸', 팀: '👥', 사이드: '⚡', 오픈소스: '🌐' };
+const PROJECT_ICONS: Record<ProjectType, ReactNode> = {
+  토이: <Gamepad2 size={13} />,
+  팀: <Users size={13} />,
+  사이드: <Zap size={13} />,
+  오픈소스: <Globe size={13} />,
+};
 
 /* ── 섹션 구분 제목 컴포넌트 ── */
 export function SectionTitle({ children }: { children: ReactNode }) {
@@ -169,7 +180,7 @@ export function BasicInfoFields({ fields, touched, errors, onChange, onBlur }: {
 function ToggleChip({ selected, onClick, icon, label }: {
   selected: boolean;
   onClick: () => void;
-  icon: string;
+  icon: ReactNode;
   label: string;
 }) {
   return (
