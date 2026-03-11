@@ -152,10 +152,21 @@ export function FloatingParticles() {
     };
 
     draw();
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(frameId);
+      } else {
+        frameId = requestAnimationFrame(draw);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
       cancelAnimationFrame(frameId);
       clearTimeout(resizeTimer);
       window.removeEventListener('resize', resize);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, []);
 

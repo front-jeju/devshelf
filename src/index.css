@@ -181,7 +181,6 @@
     font-size: 0.7rem;
     color: #c8b08a;
     letter-spacing: 0.15em;
-    font-style: italic;
     text-align: center;
   }
 
@@ -256,7 +255,6 @@
 
   .input-field::placeholder {
     color: rgba(200, 176, 138, 0.35);
-    font-style: italic;
   }
 
   .label-field {
@@ -317,7 +315,6 @@
     font-family: 'EB Garamond', serif;
     font-size: 0.8rem;
     color: #f87171;
-    font-style: italic;
   }
 
   /* ── 책 3D 효과 ── */

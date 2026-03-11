@@ -1,3 +1,21 @@
+/**
+ * BookPageLeft.tsx
+ * OpenBook의 왼쪽 페이지 컴포넌트입니다.
+ * portfolio.liveDemo URL을 iframe으로 임베드해 실시간 미리보기를 제공합니다.
+ *
+ * 상태:
+ *   loading — iframe 로딩 중 여부 (스켈레톤 UI 표시 제어)
+ *   errored — iframe 로드 실패 여부 (X-Frame-Options 차단 등)
+ *
+ * 로직 흐름:
+ *   초기 → loading=true → 스켈레톤 애니메이션 표시
+ *   iframe onLoad  → loading=false → 스켈레톤 fade-out, iframe 표시
+ *   iframe onError → errored=true  → "Preview unavailable" 메시지 + 새 탭 열기 링크 표시
+ *
+ * 주의:
+ *   많은 사이트가 X-Frame-Options: DENY/SAMEORIGIN 헤더를 설정해 임베딩을 차단합니다.
+ *   이 경우 onError가 발화하지 않을 수 있어 로딩 스켈레톤이 지속될 수 있습니다.
+ */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Portfolio } from '../../types';
@@ -7,7 +25,9 @@ interface BookPageLeftProps {
 }
 
 export function BookPageLeft({ portfolio }: BookPageLeftProps) {
+  // iframe 로딩 중 스켈레톤 표시 여부
   const [loading, setLoading] = useState(true);
+  // iframe 로드 실패 (사이트가 임베딩 차단) 여부
   const [errored, setErrored] = useState(false);
 
   return (
@@ -108,7 +128,6 @@ export function BookPageLeft({ portfolio }: BookPageLeftProps) {
                   marginTop: 14,
                   fontFamily: "'EB Garamond', serif",
                   fontSize: '0.78rem',
-                  fontStyle: 'italic',
                   color: 'rgba(80,50,20,0.35)',
                 }}
               >
@@ -129,7 +148,6 @@ export function BookPageLeft({ portfolio }: BookPageLeftProps) {
               style={{
                 fontFamily: "'EB Garamond', serif",
                 fontSize: '0.88rem',
-                fontStyle: 'italic',
                 color: 'rgba(80,50,20,0.38)',
                 textAlign: 'center',
                 padding: '0 28px',
@@ -198,7 +216,6 @@ export function BookPageLeft({ portfolio }: BookPageLeftProps) {
           style={{
             fontFamily: "'EB Garamond', serif",
             fontSize: '0.6rem',
-            fontStyle: 'italic',
             color: 'rgba(80,50,20,0.26)',
           }}
         >

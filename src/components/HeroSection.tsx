@@ -1,7 +1,20 @@
+/**
+ * HeroSection.tsx
+ * 메인 페이지(/)의 풀스크린 히어로 영역입니다.
+ *
+ * 구성:
+ *   Candle        — 촛불 장식 컴포넌트 (데스크탑 좌우 2개씩 배치)
+ *   HeroSection   — 메인 타이틀, 설명 문구, CTA 버튼 2개, 스크롤 인디케이터
+ *
+ * CTA 버튼 로직:
+ *   "서재 둘러보기" → /shelf 이동
+ *   "내 서재 등록"  → 로그인 상태면 /portfolio/new, 비로그인이면 /login 으로 이동
+ */
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
+/** 촛불 장식 컴포넌트. delay 값으로 각 촛불의 애니메이션 위상을 다르게 합니다. */
 function Candle({ delay = 0 }: { delay?: number }) {
   return (
     <motion.div
@@ -108,7 +121,6 @@ export function HeroSection() {
             fontSize: '1rem',
             letterSpacing: '0.3em',
             color: '#c8b08a',
-            fontStyle: 'italic',
             marginBottom: '1.5rem',
           }}
           initial={{ opacity: 0 }}
@@ -146,7 +158,6 @@ export function HeroSection() {
             fontFamily: "'Playfair Display', serif",
             fontSize: 'clamp(1rem, 2.5vw, 1.4rem)',
             color: '#c8b08a',
-            fontStyle: 'italic',
             letterSpacing: '0.05em',
             marginBottom: '2.5rem',
           }}
@@ -171,10 +182,10 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.5, duration: 0.8 }}
         >
-          서재는 이야기이고, 프로젝트 페이지는 증명서다.
+          개발자의 이야기를 기록하는 서재에 오신 것을 환영합니다.
           <br />
-          <span style={{ color: 'rgba(200,176,138,0.55)', fontStyle: 'italic', fontSize: '0.95em' }}>
-            — 개발자 한 명 한 명의 이야기를 책으로 경험하세요.
+          <span style={{ color: 'rgba(200,176,138,0.55)', fontSize: '0.95em' }}>
+            — 다양한 개발자들의 포트폴리오를 둘러보세요.
           </span>
         </motion.p>
 
@@ -227,21 +238,73 @@ export function HeroSection() {
             내 서재 등록
           </motion.button>
         </motion.div>
-
-        {/* 하단 장식 */}
-        <motion.div
-          className="flex items-center justify-center gap-4 mt-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 0.8 }}
-        >
-          <div className="h-px w-15" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.4))' }} />
-          <span style={{ color: 'rgba(212,175,55,0.4)', fontSize: '0.8rem', fontFamily: "'Cinzel', serif", letterSpacing: '0.2em' }}>
-            MMXXVI
-          </span>
-          <div className="h-px w-15" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.4), transparent)' }} />
-        </motion.div>
       </div>
+
+      {/* 팀 소개 */}
+      <motion.div
+        id="about"
+        className="relative z-[2] w-full max-w-3xl mx-auto px-6"
+        style={{ marginTop: '5rem' }}
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 2.2, duration: 0.8 }}
+      >
+        {/* 구분선 */}
+        <div className="flex items-center gap-4 mb-8 justify-center">
+          <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3))' }} />
+          <span style={{ fontFamily: "'Cinzel', serif", fontSize: '0.6rem', letterSpacing: '0.3em', color: 'rgba(212,175,55,0.5)' }}>
+            OUR STORY
+          </span>
+          <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.3), transparent)' }} />
+        </div>
+
+        <div className="grid grid-cols-1 gap-6">
+          {[
+            {
+              label: '개발 목적',
+              text: '개발자 포트폴리오를\n더 쉽고 흥미롭게 탐색할 수 있는\n서비스를 만들고자 했습니다.',
+            },
+            {
+              label: '문제 정의',
+              text: '기존에는 GitHub 저장소를 직접 탐색해야 했기 때문에\n프로젝트 내용을 빠르게 이해하기 어렵고,\n여러 포트폴리오를 탐색하는 과정도\n단조로운 문제가 있었습니다.',
+            },
+            {
+              label: '해결 방법',
+              text: 'AI를 활용해 GitHub 프로젝트를 자동으로 분석·요약하고,\n포트폴리오 미리보기 기능을 제공했으며,\n\'개발자의 서재\'라는 컨셉의 책 인터랙션 UI를 통해\n포트폴리오 탐색 경험을 개선했습니다.',
+            },
+          ].map(({ label, text }) => (
+            <div
+              key={label}
+              style={{
+                border: '1px solid rgba(212,175,55,0.12)',
+                borderRadius: 3,
+                padding: '20px 18px',
+                background: 'rgba(212,175,55,0.02)',
+              }}
+            >
+              <p style={{
+                fontFamily: "'Cinzel', serif",
+                fontSize: '0.6rem',
+                letterSpacing: '0.25em',
+                color: 'rgba(212,175,55,0.6)',
+                marginBottom: '0.75rem',
+              }}>
+                {label}
+              </p>
+              <p style={{
+                fontFamily: "'EB Garamond', serif",
+                fontSize: '0.95rem',
+                color: 'rgba(200,176,138,0.75)',
+                lineHeight: 1.8,
+                margin: 0,
+                whiteSpace: 'pre-line',
+              }}>
+                {text}
+              </p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
 
       {/* 스크롤 인디케이터 */}
       <motion.div

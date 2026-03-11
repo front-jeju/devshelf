@@ -4,8 +4,11 @@ import { FloatingParticles } from '../components/FloatingParticles';
 import {
   SectionTitle,
   BasicInfoFields, TechStackFields, LinksFields, AboutMeField,
-  BookThemePicker, FormActionButtons, DoneScreen,
+  StatusField, ProjectTypeField,
+  BookThemePicker, FormActionButtons, DoneScreen, GithubAutofillPanel,
+  BackButton, SubmitError,
 } from '../components/PortfolioFormShared';
+import { useGithubAutofill } from '../hooks/useGithubAutofill';
 import { useEditPortfolioForm } from '../hooks/useEditPortfolioForm';
 
 export function EditPortfolioPage() {
@@ -22,17 +25,23 @@ export function EditPortfolioPage() {
     notFound,
     selectedTheme,
     setField,
+    setForm,
     touch,
     toggleStack,
+    toggleProjectType,
     handleSubmit,
     navigate,
   } = useEditPortfolioForm(id ?? '');
+
+  const githubAutofill = useGithubAutofill(({ tagline, description, techStack }) => {
+    setForm((prev) => ({ ...prev, tagline, description, techStack }));
+  });
 
   /* ── 데이터 불러오는 중 ── */
   if (isFetching) {
     return (
       <div className="page-bg flex items-center justify-center">
-        <div style={{ fontFamily: "'EB Garamond', serif", color: 'rgba(200,176,138,0.5)', fontStyle: 'italic', fontSize: '1rem', letterSpacing: '0.1em' }}>
+        <div style={{ fontFamily: "'EB Garamond', serif", color: 'rgba(200,176,138,0.5)', fontSize: '1rem', letterSpacing: '0.1em' }}>
           서재 정보를 불러오는 중...
         </div>
       </div>
@@ -81,6 +90,9 @@ export function EditPortfolioPage() {
       <div className="page-overlay" />
       <div className="gold-top-line" />
 
+      {/* 뒤로 가기 */}
+      <BackButton onClick={() => navigate(-1)} />
+
       {/* 로고 */}
       <motion.div
         className="relative z-[2] mb-9 text-center"
@@ -111,7 +123,7 @@ export function EditPortfolioPage() {
           <div className="p-9 px-8">
             {/* 타이틀 */}
             <div className="text-center mb-7">
-              <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.25em', fontStyle: 'italic', marginBottom: 8 }}>
+              <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.25em', marginBottom: 8 }}>
                 — 나의 이야기를 다듬다 —
               </div>
               <h1
@@ -126,7 +138,30 @@ export function EditPortfolioPage() {
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
-              {/* ── 1. 기본 정보 ── */}
+              {/* ── 1. 링크 ── */}
+              <div>
+                <SectionTitle>LINKS</SectionTitle>
+                <LinksFields
+                  liveDemo={form.liveDemo}
+                  liveDemoTouched={touched.liveDemo}
+                  liveDemoError={errors.liveDemo}
+                  github={form.github}
+                  onLiveDemoChange={(v) => setField('liveDemo', v)}
+                  onLiveDemoBlur={() => touch('liveDemo')}
+                  onGithubChange={(v) => { setField('github', v); githubAutofill.handleUrlChange(v); }}
+                  githubChildren={
+                    <GithubAutofillPanel
+                      github={form.github}
+                      isAnalyzing={githubAutofill.isAnalyzing}
+                      error={githubAutofill.error}
+                      success={githubAutofill.success}
+                      onAutofill={() => githubAutofill.handleAutofill()}
+                    />
+                  }
+                />
+              </div>
+
+              {/* ── 2. 기본 정보 ── */}
               <div>
                 <SectionTitle>BASIC INFO</SectionTitle>
                 <BasicInfoFields
@@ -138,33 +173,37 @@ export function EditPortfolioPage() {
                 />
               </div>
 
-              {/* ── 2. 기술 스택 ── */}
+              {/* ── 3. 기술 스택 ── */}
               <div>
                 <SectionTitle>TECH STACK</SectionTitle>
                 <TechStackFields techStack={form.techStack} toggleStack={toggleStack} />
               </div>
 
-              {/* ── 3. 링크 ── */}
+              {/* ── 4. 상태 ── */}
               <div>
-                <SectionTitle>LINKS</SectionTitle>
-                <LinksFields
-                  liveDemo={form.liveDemo}
-                  liveDemoTouched={touched.liveDemo}
-                  liveDemoError={errors.liveDemo}
-                  github={form.github}
-                  onLiveDemoChange={(v) => setField('liveDemo', v)}
-                  onLiveDemoBlur={() => touch('liveDemo')}
-                  onGithubChange={(v) => setField('github', v)}
+                <SectionTitle>STATUS</SectionTitle>
+                <StatusField
+                  value={form.status}
+                  onChange={(v) => setField('status', v)}
                 />
               </div>
 
-              {/* ── 4. 자기소개 ── */}
+              {/* ── 5. 프로젝트 유형 ── */}
+              <div>
+                <SectionTitle>PROJECT TYPE</SectionTitle>
+                <ProjectTypeField
+                  projectTypes={form.projectTypes}
+                  toggleProjectType={toggleProjectType}
+                />
+              </div>
+
+              {/* ── 6. 자기소개 ── */}
               <div>
                 <SectionTitle>ABOUT ME</SectionTitle>
                 <AboutMeField value={form.description} onChange={(v) => setField('description', v)} />
               </div>
 
-              {/* ── 5. 책 테마 ── */}
+              {/* ── 7. 책 테마 ── */}
               <div>
                 <SectionTitle>BOOK THEME</SectionTitle>
                 <BookThemePicker
@@ -177,15 +216,7 @@ export function EditPortfolioPage() {
               </div>
 
               {/* 에러 메시지 */}
-              {submitError && (
-                <motion.div
-                  className="error-box"
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  {submitError}
-                </motion.div>
-              )}
+              <SubmitError error={submitError} />
 
               <FormActionButtons
                 isLoading={isLoading}

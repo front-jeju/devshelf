@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Eye, EyeOff } from 'lucide-react';
 import { FloatingParticles } from '../components/FloatingParticles';
 import { useLoginForm } from '../hooks/useLoginForm';
 
@@ -17,10 +18,33 @@ export function LoginPage() {
   } = useLoginForm();
 
   return (
-    <div className="page-bg-flex">
+    <div className="page-bg-flex py-16">
       <FloatingParticles />
       <div className="page-overlay" />
       <div className="gold-top-line" />
+
+      {/* 뒤로 가기 */}
+      <motion.div
+        className="relative z-[2] w-full max-w-[420px] px-6 mb-4 flex justify-end"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <Link
+          to="/"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            fontFamily: "'Cinzel', serif",
+            fontSize: '0.7rem',
+            letterSpacing: '0.12em',
+            color: 'rgba(200,176,138,0.55)',
+          }}
+        >
+          ← 홈으로
+        </Link>
+      </motion.div>
 
       {/* 로고 */}
       <motion.div
@@ -58,7 +82,6 @@ export function LoginPage() {
                   fontSize: '0.75rem',
                   color: 'rgba(200,176,138,0.5)',
                   letterSpacing: '0.25em',
-                  fontStyle: 'italic',
                   marginBottom: 8,
                 }}
               >
@@ -130,7 +153,7 @@ export function LoginPage() {
             {/* OR 구분선 */}
             <div className="flex items-center gap-3 mb-6">
               <div className="flex-1 h-px" style={{ background: 'rgba(212,175,55,0.15)' }} />
-              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.78rem', color: 'rgba(200,176,138,0.35)', fontStyle: 'italic', letterSpacing: '0.1em' }}>
+              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.78rem', color: 'rgba(200,176,138,0.35)', letterSpacing: '0.1em' }}>
                 or
               </span>
               <div className="flex-1 h-px" style={{ background: 'rgba(212,175,55,0.15)' }} />
@@ -169,7 +192,7 @@ export function LoginPage() {
                     style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(200,176,138,0.5)', fontSize: '0.85rem', padding: 4 }}
                     title={showPassword ? '숨기기' : '보기'}
                   >
-                    {showPassword ? '🙈' : '👁️'}
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
@@ -198,7 +221,7 @@ export function LoginPage() {
             <div className="gold-divider-faint my-7" />
 
             <div className="text-center">
-              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.9rem', color: 'rgba(200,176,138,0.5)', fontStyle: 'italic' }}>
+              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.9rem', color: 'rgba(200,176,138,0.5)' }}>
                 아직 서재 회원이 아니신가요?{' '}
               </span>
               <Link

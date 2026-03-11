@@ -1,3 +1,21 @@
+/**
+ * OpenBook.tsx
+ * 책을 펼쳐 상세 정보를 보여주는 모달 컴포넌트입니다.
+ * BookShelf의 phase='open' 단계에서 표시됩니다.
+ *
+ * 반응형 분기:
+ *   데스크탑(≥768px) → DesktopBook: 좌우 2페이지 레이아웃 (책 펼치기 3D 애니메이션)
+ *   모바일(<768px)   → MobileCard: 탭 전환 카드 (PROFILE / PREVIEW)
+ *
+ * 내부 컴포넌트:
+ *   BookPageLeft  — 왼쪽 페이지: liveDemo URL iframe 미리보기
+ *   BookPageRight — 오른쪽 페이지: 프로필·기술스택·링크·수정/삭제
+ *
+ * 이벤트:
+ *   ESC 키     → onClose()
+ *   배경 클릭  → onClose()
+ *   resize     → isMobile 상태 갱신 (디바운스 150ms)
+ */
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Portfolio } from '../../types';
@@ -6,24 +24,30 @@ import { BookPageRight } from './BookPageRight';
 
 interface OpenBookProps {
   portfolio: Portfolio;
-  onDelete: (id: string) => void;
-  onClose: () => void;
+  onDelete: (id: string) => void; // 삭제 완료 후 부모(BookShelf)에서 목록 갱신
+  onClose: () => void;            // 모달 닫기
 }
 
 export function OpenBook({ portfolio, onDelete, onClose }: OpenBookProps) {
+  // 뷰포트 너비 기준으로 모바일/데스크탑 레이아웃 전환
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => setIsMobile(window.innerWidth < 768), 150);
+    };
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimer);
     };
   }, [onClose]);
 
@@ -84,12 +108,91 @@ function DesktopBook({ portfolio, onDelete, onClose }: OpenBookProps) {
       <div
         className="absolute pointer-events-none"
         style={{
-          bottom: -24,
-          left: '5%',
-          right: '5%',
-          height: 32,
-          background: 'radial-gradient(ellipse, rgba(0,0,0,0.8) 0%, transparent 70%)',
-          filter: 'blur(12px)',
+          bottom: -36,
+          left: '3%',
+          right: '3%',
+          height: 44,
+          background: 'radial-gradient(ellipse, rgba(0,0,0,0.88) 0%, transparent 70%)',
+          filter: 'blur(16px)',
+        }}
+      />
+
+      {/* LEFT edge — page fan (여러 장 표현) */}
+      {Array.from({ length: 7 }).map((_, i) => (
+        <div
+          key={`lf-${i}`}
+          className="absolute pointer-events-none"
+          style={{
+            top: (i + 1) * 4,
+            bottom: (i + 1) * 4,
+            left: -(i + 1) * 3,
+            width: 3,
+            zIndex: -1 - i,
+            borderRadius: '2px 0 0 2px',
+            background: `rgba(${244 - i * 3}, ${232 - i * 3}, ${210 - i * 3}, ${0.92 - i * 0.1})`,
+            boxShadow: '-1px 0 5px rgba(0,0,0,0.18)',
+          }}
+        />
+      ))}
+
+      {/* RIGHT edge — page fan (여러 장 표현) */}
+      {Array.from({ length: 7 }).map((_, i) => (
+        <div
+          key={`rf-${i}`}
+          className="absolute pointer-events-none"
+          style={{
+            top: (i + 1) * 4,
+            bottom: (i + 1) * 4,
+            right: -(i + 1) * 3,
+            width: 3,
+            zIndex: -1 - i,
+            borderRadius: '0 2px 2px 0',
+            background: `rgba(${244 - i * 3}, ${232 - i * 3}, ${210 - i * 3}, ${0.92 - i * 0.1})`,
+            boxShadow: '1px 0 5px rgba(0,0,0,0.18)',
+          }}
+        />
+      ))}
+
+      {/* Bookmark — 페이지 하단에서 나오는 리본 책갈피 (표지 아래 z-index로 상단 감춤) */}
+      <motion.div
+        initial={{ y: -10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute pointer-events-none"
+        style={{
+          bottom: -62,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 22,
+          height: 58,
+          zIndex: 5,
+          background: portfolio.accentColor,
+          clipPath: 'polygon(0 0, 100% 0, 100% 76%, 50% 100%, 0 76%)',
+          boxShadow: '0 5px 14px rgba(0,0,0,0.5), inset 1px 0 0 rgba(255,255,255,0.18)',
+          filter: 'brightness(0.88)',
+        }}
+      >
+        {/* 리본 광택 */}
+        <div style={{
+          position: 'absolute',
+          top: 0, left: 0, right: 0,
+          height: '42%',
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.22) 0%, transparent 100%)',
+        }} />
+      </motion.div>
+
+      {/* BOTTOM cover edge — 책 표지 두께 (책갈피 상단을 덮어 삽입된 것처럼 보이게 함) */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          left: -2,
+          right: -2,
+          bottom: -10,
+          height: 10,
+          zIndex: 6,
+          borderRadius: '0 0 5px 5px',
+          background: 'linear-gradient(180deg, rgba(55,35,15,0.95) 0%, rgba(35,20,8,0.98) 100%)',
+          boxShadow: '0 6px 16px rgba(0,0,0,0.55)',
         }}
       />
 
@@ -104,9 +207,10 @@ function DesktopBook({ portfolio, onDelete, onClose }: OpenBookProps) {
             borderRadius: '3px 6px 6px 3px',
             overflow: 'hidden',
             boxShadow: `
-              0 24px 80px rgba(0,0,0,0.92),
-              0 8px 32px rgba(0,0,0,0.6),
-              0 0 0 1px rgba(0,0,0,0.4)
+              0 32px 90px rgba(0,0,0,0.96),
+              0 12px 40px rgba(0,0,0,0.68),
+              0 0 0 1px rgba(0,0,0,0.5),
+              inset 0 1px 0 rgba(255,255,255,0.06)
             `,
           }}
         >
@@ -255,6 +359,7 @@ function MobileCard({ portfolio, onDelete, onClose }: OpenBookProps) {
       onClick={(e) => e.stopPropagation()}
       className="w-full max-w-[420px] rounded-md overflow-hidden flex flex-col"
       style={{
+        height: '88vh',
         maxHeight: '88vh',
         background: '#f6f1e7',
         boxShadow: '0 20px 60px rgba(0,0,0,0.88)',

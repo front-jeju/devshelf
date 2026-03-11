@@ -1,13 +1,35 @@
-import { type ReactNode } from 'react';
+/**
+ * App.tsx
+ * 앱의 최상위 컴포넌트입니다.
+ *
+ * 역할:
+ *   - AuthProvider로 전체 앱을 감싸 인증 상태를 전역 공유합니다.
+ *   - React Router로 URL별 페이지를 연결합니다.
+ *   - lazy + Suspense로 각 페이지를 코드 스플리팅해 초기 로딩 속도를 개선합니다.
+ *
+ * 라우트 구조:
+ *   /            → MainPage (공개)
+ *   /shelf       → ShelfPage (공개)
+ *   /login       → LoginPage (GuestRoute: 로그인 상태면 / 로 리다이렉트)
+ *   /register    → RegisterPage (GuestRoute)
+ *   /portfolio/new       → CreatePortfolioPage (PrivateRoute: 비로그인 시 /login 으로)
+ *   /portfolio/edit/:id  → EditPortfolioPage (PrivateRoute)
+ *
+ * 제거된 라우트:
+ *   /analyzer  → RepoAnalyzerPage (미사용으로 삭제)
+ */
+import { type ReactNode, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './index.css';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { MainPage } from './pages/MainPage';
-import { ShelfPage } from './pages/ShelfPage';
-import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
-import { CreatePortfolioPage } from './pages/CreatePortfolioPage';
-import { EditPortfolioPage } from './pages/EditPortfolioPage';
+import { AuthProvider } from './contexts/AuthContext';
+import { useAuth } from './hooks/useAuth';
+
+const MainPage = lazy(() => import('./pages/MainPage').then((m) => ({ default: m.MainPage })));
+const ShelfPage = lazy(() => import('./pages/ShelfPage').then((m) => ({ default: m.ShelfPage })));
+const LoginPage = lazy(() => import('./pages/LoginPage').then((m) => ({ default: m.LoginPage })));
+const RegisterPage = lazy(() => import('./pages/RegisterPage').then((m) => ({ default: m.RegisterPage })));
+const CreatePortfolioPage = lazy(() => import('./pages/CreatePortfolioPage').then((m) => ({ default: m.CreatePortfolioPage })));
+const EditPortfolioPage = lazy(() => import('./pages/EditPortfolioPage').then((m) => ({ default: m.EditPortfolioPage })));
 
 /** 로그인 필수 라우트 — 미인증 시 /login으로 리다이렉트 */
 function PrivateRoute({ children }: { children: ReactNode }) {
@@ -27,14 +49,16 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/shelf" element={<ShelfPage />} />
-          <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
-          <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
-          <Route path="/portfolio/new" element={<PrivateRoute><CreatePortfolioPage /></PrivateRoute>} />
-          <Route path="/portfolio/edit/:id" element={<PrivateRoute><EditPortfolioPage /></PrivateRoute>} />
-        </Routes>
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/shelf" element={<ShelfPage />} />
+            <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
+            <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
+            <Route path="/portfolio/new" element={<PrivateRoute><CreatePortfolioPage /></PrivateRoute>} />
+            <Route path="/portfolio/edit/:id" element={<PrivateRoute><EditPortfolioPage /></PrivateRoute>} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </AuthProvider>
   );

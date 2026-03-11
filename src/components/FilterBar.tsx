@@ -1,13 +1,91 @@
+/**
+ * FilterBar.tsx
+ * ShelfPage 상단에 표시되는 필터 바입니다.
+ *
+ * 필터 그룹:
+ *   기술 스택 — TechStack (React, TypeScript, ...)
+ *   상태      — DevStatus (취준, 재직, 학생, 이직준비)
+ *   프로젝트  — ProjectType (토이, 팀, 사이드, 오픈소스)
+ *
+ * 각 필터는 독립적으로 동작하며, 모두 AND 조건으로 결합됩니다.
+ */
+import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import type { TechStack } from '../types';
+import { Search, Briefcase, GraduationCap, TrendingUp, Gamepad2, Users, Zap, Globe } from 'lucide-react';
+import type { TechStack, DevStatus, ProjectType } from '../types';
 import { ALL_STACKS, STACK_ICONS } from '../data/stacks';
+
+const ALL_STATUSES: DevStatus[] = ['취준', '재직', '학생', '이직준비'];
+const STATUS_ICONS: Record<DevStatus, ReactNode> = {
+  취준: <Search size={13} />,
+  재직: <Briefcase size={13} />,
+  학생: <GraduationCap size={13} />,
+  이직준비: <TrendingUp size={13} />,
+};
+
+const ALL_PROJECT_TYPES: ProjectType[] = ['토이', '팀', '사이드', '오픈소스'];
+const PROJECT_ICONS: Record<ProjectType, ReactNode> = {
+  토이: <Gamepad2 size={13} />,
+  팀: <Users size={13} />,
+  사이드: <Zap size={13} />,
+  오픈소스: <Globe size={13} />,
+};
 
 interface FilterBarProps {
   selected: TechStack | null;
   onSelect: (stack: TechStack | null) => void;
+  selectedStatus: DevStatus | null;
+  onSelectStatus: (status: DevStatus | null) => void;
+  selectedProject: ProjectType | null;
+  onSelectProject: (project: ProjectType | null) => void;
 }
 
-export function FilterBar({ selected, onSelect }: FilterBarProps) {
+/** 필터 버튼 공통 스타일 계산 */
+function chipStyle(active: boolean) {
+  return {
+    fontFamily: "'EB Garamond', serif",
+    fontSize: '0.88rem',
+    letterSpacing: '0.05em',
+    padding: '6px 16px',
+    borderRadius: '2px',
+    cursor: 'pointer',
+    transition: 'all 0.25s',
+    border: active ? '1px solid #d4af37' : '1px solid rgba(212,175,55,0.2)',
+    background: active
+      ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06))'
+      : 'rgba(212,175,55,0.03)',
+    color: active ? '#f0c040' : 'rgba(200,176,138,0.7)',
+    boxShadow: active ? '0 0 12px rgba(212,175,55,0.15)' : 'none',
+  } as const;
+}
+
+/** 그룹 레이블 */
+function GroupLabel({ children }: { children: string }) {
+  return (
+    <span
+      style={{
+        fontFamily: "'Cinzel', serif",
+        fontSize: '0.68rem',
+        letterSpacing: '0.2em',
+        color: 'rgba(200,176,138,0.45)',
+        whiteSpace: 'nowrap',
+        display: 'block',
+        marginBottom: 8,
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+export function FilterBar({
+  selected,
+  onSelect,
+  selectedStatus,
+  onSelectStatus,
+  selectedProject,
+  onSelectProject,
+}: FilterBarProps) {
   return (
     <div className="relative py-12 pb-8">
       {/* 섹션 헤더 */}
@@ -27,75 +105,142 @@ export function FilterBar({ selected, onSelect }: FilterBarProps) {
           <span style={{ color: '#d4af37', fontSize: '1rem' }}>✦</span>
           <div className="h-px w-15" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.5), transparent)' }} />
         </div>
-        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.6)', fontStyle: 'italic' }}>
-          기술 스택으로 원하는 책을 찾아보세요
+        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.6)' }}>
+          기술 스택, 상태, 프로젝트 유형으로 원하는 책을 찾아보세요
         </p>
       </motion.div>
 
-      {/* 필터 버튼들 */}
-      <motion.div
-        className="flex flex-wrap justify-center gap-3 px-6"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.2, staggerChildren: 0.05 }}
-      >
-        {/* 전체 버튼 */}
-        <motion.button
-          whileHover={{ y: -3, scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => onSelect(null)}
-          style={{
-            fontFamily: "'Cinzel', serif",
-            fontSize: '0.75rem',
-            letterSpacing: '0.1em',
-            padding: '8px 20px',
-            borderRadius: '2px',
-            cursor: 'pointer',
-            transition: 'all 0.25s',
-            border: selected === null ? '1px solid #d4af37' : '1px solid rgba(212,175,55,0.3)',
-            background: selected === null
-              ? 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.08))'
-              : 'transparent',
-            color: selected === null ? '#f0c040' : '#c8b08a',
-            boxShadow: selected === null
-              ? '0 0 15px rgba(212,175,55,0.2), inset 0 0 10px rgba(212,175,55,0.05)'
-              : 'none',
-          }}
+      <div className="flex flex-col gap-4 px-6 max-w-[900px] mx-auto">
+        {/* ── 기술 스택 필터 ── */}
+        <motion.div
+          className="flex flex-col"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.15 }}
         >
-          All Books
-        </motion.button>
+          <GroupLabel>STACK</GroupLabel>
+          <div className="flex flex-wrap gap-3">
 
-        {ALL_STACKS.map((stack) => (
           <motion.button
-            key={stack}
-            whileHover={{ y: -3, scale: 1.05 }}
+            whileHover={{ y: -2, scale: 1.04 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => onSelect(selected === stack ? null : stack)}
-            className="flex items-center gap-1.5"
+            onClick={() => onSelect(null)}
             style={{
-              fontFamily: "'EB Garamond', serif",
-              fontSize: '0.9rem',
-              letterSpacing: '0.05em',
+              ...chipStyle(selected === null),
+              fontFamily: "'Cinzel', serif",
+              fontSize: '0.72rem',
+              letterSpacing: '0.1em',
               padding: '7px 18px',
-              borderRadius: '2px',
-              cursor: 'pointer',
-              transition: 'all 0.25s',
-              border: selected === stack
-                ? '1px solid #d4af37'
-                : '1px solid rgba(212,175,55,0.2)',
-              background: selected === stack
-                ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06))'
-                : 'rgba(212,175,55,0.03)',
-              color: selected === stack ? '#f0c040' : 'rgba(200,176,138,0.7)',
-              boxShadow: selected === stack ? '0 0 12px rgba(212,175,55,0.15)' : 'none',
             }}
           >
-            <span>{STACK_ICONS[stack]}</span>
-            {stack}
+            All
           </motion.button>
-        ))}
-      </motion.div>
+
+          {ALL_STACKS.map((stack) => (
+            <motion.button
+              key={stack}
+              whileHover={{ y: -2, scale: 1.04 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onSelect(selected === stack ? null : stack)}
+              className="flex items-center gap-1.5"
+              style={chipStyle(selected === stack)}
+            >
+              <span>{STACK_ICONS[stack]}</span>
+              {stack}
+            </motion.button>
+          ))}
+          </div>
+        </motion.div>
+
+        {/* 구분선 */}
+        <div style={{ height: 1, background: 'rgba(212,175,55,0.1)' }} />
+
+        {/* ── 상태 필터 ── */}
+        <motion.div
+          className="flex flex-col"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.25 }}
+        >
+          <GroupLabel>STATUS</GroupLabel>
+          <div className="flex flex-wrap gap-3">
+          <motion.button
+            whileHover={{ y: -2, scale: 1.04 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onSelectStatus(null)}
+            style={{
+              ...chipStyle(selectedStatus === null),
+              fontFamily: "'Cinzel', serif",
+              fontSize: '0.72rem',
+              letterSpacing: '0.1em',
+              padding: '7px 18px',
+            }}
+          >
+            All
+          </motion.button>
+
+          {ALL_STATUSES.map((status) => (
+            <motion.button
+              key={status}
+              whileHover={{ y: -2, scale: 1.04 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onSelectStatus(selectedStatus === status ? null : status)}
+              className="flex items-center gap-1.5"
+              style={chipStyle(selectedStatus === status)}
+            >
+              <span>{STATUS_ICONS[status]}</span>
+              {status}
+            </motion.button>
+          ))}
+          </div>
+        </motion.div>
+
+        {/* 구분선 */}
+        <div style={{ height: 1, background: 'rgba(212,175,55,0.1)' }} />
+
+        {/* ── 프로젝트 필터 ── */}
+        <motion.div
+          className="flex flex-col"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.35 }}
+        >
+          <GroupLabel>PROJECT</GroupLabel>
+          <div className="flex flex-wrap gap-3">
+          <motion.button
+            whileHover={{ y: -2, scale: 1.04 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onSelectProject(null)}
+            style={{
+              ...chipStyle(selectedProject === null),
+              fontFamily: "'Cinzel', serif",
+              fontSize: '0.72rem',
+              letterSpacing: '0.1em',
+              padding: '7px 18px',
+            }}
+          >
+            All
+          </motion.button>
+
+          {ALL_PROJECT_TYPES.map((type) => (
+            <motion.button
+              key={type}
+              whileHover={{ y: -2, scale: 1.04 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onSelectProject(selectedProject === type ? null : type)}
+              className="flex items-center gap-1.5"
+              style={chipStyle(selectedProject === type)}
+            >
+              <span>{PROJECT_ICONS[type]}</span>
+              {type}
+            </motion.button>
+          ))}
+          </div>
+        </motion.div>
+      </div>
 
       {/* 하단 장식선 */}
       <div
