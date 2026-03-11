@@ -123,7 +123,7 @@ export function CreatePortfolioPage() {
                       isAnalyzing={githubAutofill.isAnalyzing}
                       error={githubAutofill.error}
                       success={githubAutofill.success}
-                      onAutofill={() => githubAutofill.handleAutofillWithUrl(form.github)}
+                      onAutofill={() => githubAutofill.handleAutofill()}
                     />
                   }
                 >

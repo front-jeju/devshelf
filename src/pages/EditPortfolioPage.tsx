@@ -155,7 +155,7 @@ export function EditPortfolioPage() {
                       isAnalyzing={githubAutofill.isAnalyzing}
                       error={githubAutofill.error}
                       success={githubAutofill.success}
-                      onAutofill={() => githubAutofill.handleAutofillWithUrl(form.github)}
+                      onAutofill={() => githubAutofill.handleAutofill()}
                     />
                   }
                 />
