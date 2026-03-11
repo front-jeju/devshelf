@@ -108,12 +108,91 @@ function DesktopBook({ portfolio, onDelete, onClose }: OpenBookProps) {
       <div
         className="absolute pointer-events-none"
         style={{
-          bottom: -24,
-          left: '5%',
-          right: '5%',
-          height: 32,
-          background: 'radial-gradient(ellipse, rgba(0,0,0,0.8) 0%, transparent 70%)',
-          filter: 'blur(12px)',
+          bottom: -36,
+          left: '3%',
+          right: '3%',
+          height: 44,
+          background: 'radial-gradient(ellipse, rgba(0,0,0,0.88) 0%, transparent 70%)',
+          filter: 'blur(16px)',
+        }}
+      />
+
+      {/* LEFT edge — page fan (여러 장 표현) */}
+      {Array.from({ length: 7 }).map((_, i) => (
+        <div
+          key={`lf-${i}`}
+          className="absolute pointer-events-none"
+          style={{
+            top: (i + 1) * 4,
+            bottom: (i + 1) * 4,
+            left: -(i + 1) * 3,
+            width: 3,
+            zIndex: -1 - i,
+            borderRadius: '2px 0 0 2px',
+            background: `rgba(${244 - i * 3}, ${232 - i * 3}, ${210 - i * 3}, ${0.92 - i * 0.1})`,
+            boxShadow: '-1px 0 5px rgba(0,0,0,0.18)',
+          }}
+        />
+      ))}
+
+      {/* RIGHT edge — page fan (여러 장 표현) */}
+      {Array.from({ length: 7 }).map((_, i) => (
+        <div
+          key={`rf-${i}`}
+          className="absolute pointer-events-none"
+          style={{
+            top: (i + 1) * 4,
+            bottom: (i + 1) * 4,
+            right: -(i + 1) * 3,
+            width: 3,
+            zIndex: -1 - i,
+            borderRadius: '0 2px 2px 0',
+            background: `rgba(${244 - i * 3}, ${232 - i * 3}, ${210 - i * 3}, ${0.92 - i * 0.1})`,
+            boxShadow: '1px 0 5px rgba(0,0,0,0.18)',
+          }}
+        />
+      ))}
+
+      {/* Bookmark — 페이지 하단에서 나오는 리본 책갈피 (표지 아래 z-index로 상단 감춤) */}
+      <motion.div
+        initial={{ y: -10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute pointer-events-none"
+        style={{
+          bottom: -62,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 22,
+          height: 58,
+          zIndex: 5,
+          background: portfolio.accentColor,
+          clipPath: 'polygon(0 0, 100% 0, 100% 76%, 50% 100%, 0 76%)',
+          boxShadow: '0 5px 14px rgba(0,0,0,0.5), inset 1px 0 0 rgba(255,255,255,0.18)',
+          filter: 'brightness(0.88)',
+        }}
+      >
+        {/* 리본 광택 */}
+        <div style={{
+          position: 'absolute',
+          top: 0, left: 0, right: 0,
+          height: '42%',
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.22) 0%, transparent 100%)',
+        }} />
+      </motion.div>
+
+      {/* BOTTOM cover edge — 책 표지 두께 (책갈피 상단을 덮어 삽입된 것처럼 보이게 함) */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          left: -2,
+          right: -2,
+          bottom: -10,
+          height: 10,
+          zIndex: 6,
+          borderRadius: '0 0 5px 5px',
+          background: 'linear-gradient(180deg, rgba(55,35,15,0.95) 0%, rgba(35,20,8,0.98) 100%)',
+          boxShadow: '0 6px 16px rgba(0,0,0,0.55)',
         }}
       />
 
@@ -128,9 +207,10 @@ function DesktopBook({ portfolio, onDelete, onClose }: OpenBookProps) {
             borderRadius: '3px 6px 6px 3px',
             overflow: 'hidden',
             boxShadow: `
-              0 24px 80px rgba(0,0,0,0.92),
-              0 8px 32px rgba(0,0,0,0.6),
-              0 0 0 1px rgba(0,0,0,0.4)
+              0 32px 90px rgba(0,0,0,0.96),
+              0 12px 40px rgba(0,0,0,0.68),
+              0 0 0 1px rgba(0,0,0,0.5),
+              inset 0 1px 0 rgba(255,255,255,0.06)
             `,
           }}
         >
@@ -279,6 +359,7 @@ function MobileCard({ portfolio, onDelete, onClose }: OpenBookProps) {
       onClick={(e) => e.stopPropagation()}
       className="w-full max-w-[420px] rounded-md overflow-hidden flex flex-col"
       style={{
+        height: '88vh',
         maxHeight: '88vh',
         background: '#f6f1e7',
         boxShadow: '0 20px 60px rgba(0,0,0,0.88)',

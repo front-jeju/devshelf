@@ -22,12 +22,12 @@ export const STACK_ICONS: Record<TechStack, React.ReactNode> = {
 export const TECH_COLORS: Record<string, string> = {
   React: '#61DAFB',
   TypeScript: '#3178C6',
-  'Next.js': '#ffffff',
+  'Next.js': '#171717',
   Vue: '#42B883',
   'Node.js': '#339933',
   Python: '#FFD43B',
   'UI/UX': '#FF6B9D',
   Spring: '#6DB33F',
   GraphQL: '#E10098',
-  'Three.js': '#ffffff',
+  'Three.js': '#049EF4',
 };
