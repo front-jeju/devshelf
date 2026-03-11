@@ -261,10 +261,10 @@ export function Footer() {
           <Link to="/shelf" className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200">
             The Shelf
           </Link>
-          <Link to="/#about" className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200">
+          <Link to="/#about" onClick={(e) => { e.preventDefault(); document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }); }} className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200">
             Our Story
           </Link>
-          <Link to="/#guestbook" className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200">
+          <Link to="/#guestbook" onClick={(e) => { e.preventDefault(); document.getElementById('guestbook')?.scrollIntoView({ behavior: 'smooth' }); }} className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200">
             Guestbook
           </Link>
         </div>
