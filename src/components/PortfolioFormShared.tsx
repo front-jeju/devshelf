@@ -165,6 +165,43 @@ export function BasicInfoFields({ fields, touched, errors, onChange, onBlur }: {
   );
 }
 
+/* ── 토글 버튼 칩 (TechStackFields / StatusField / ProjectTypeField 공통) ── */
+function ToggleChip({ selected, onClick, icon, label }: {
+  selected: boolean;
+  onClick: () => void;
+  icon: string;
+  label: string;
+}) {
+  return (
+    <motion.button
+      type="button"
+      whileHover={{ y: -2, scale: 1.04 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={onClick}
+      className="flex items-center gap-1.5"
+      style={{
+        fontFamily: "'EB Garamond', serif",
+        fontSize: '0.88rem',
+        letterSpacing: '0.04em',
+        padding: '6px 14px',
+        borderRadius: 2,
+        cursor: 'pointer',
+        border: selected ? '1px solid #d4af37' : '1px solid rgba(212,175,55,0.2)',
+        background: selected
+          ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06))'
+          : 'rgba(212,175,55,0.03)',
+        color: selected ? '#f0c040' : 'rgba(200,176,138,0.6)',
+        boxShadow: selected ? '0 0 10px rgba(212,175,55,0.15)' : 'none',
+        transition: 'all 0.2s',
+      }}
+    >
+      <span>{icon}</span>
+      {label}
+      {selected && <span style={{ marginLeft: 2, fontSize: '0.7rem' }}>✓</span>}
+    </motion.button>
+  );
+}
+
 /* ── 기술 스택 필드 ── */
 export function TechStackFields({ techStack, toggleStack, showHint = false }: {
   techStack: TechStack[];
@@ -174,38 +211,15 @@ export function TechStackFields({ techStack, toggleStack, showHint = false }: {
   return (
     <>
       <div className="flex flex-wrap gap-2">
-        {ALL_STACKS.map((stack) => {
-          const selected = techStack.includes(stack);
-          return (
-            <motion.button
-              key={stack}
-              type="button"
-              whileHover={{ y: -2, scale: 1.04 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => toggleStack(stack)}
-              className="flex items-center gap-1.5"
-              style={{
-                fontFamily: "'EB Garamond', serif",
-                fontSize: '0.88rem',
-                letterSpacing: '0.04em',
-                padding: '6px 14px',
-                borderRadius: 2,
-                cursor: 'pointer',
-                border: selected ? '1px solid #d4af37' : '1px solid rgba(212,175,55,0.2)',
-                background: selected
-                  ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06))'
-                  : 'rgba(212,175,55,0.03)',
-                color: selected ? '#f0c040' : 'rgba(200,176,138,0.6)',
-                boxShadow: selected ? '0 0 10px rgba(212,175,55,0.15)' : 'none',
-                transition: 'all 0.2s',
-              }}
-            >
-              <span>{STACK_ICONS[stack]}</span>
-              {stack}
-              {selected && <span style={{ marginLeft: 2, fontSize: '0.7rem' }}>✓</span>}
-            </motion.button>
-          );
-        })}
+        {ALL_STACKS.map((stack) => (
+          <ToggleChip
+            key={stack}
+            selected={techStack.includes(stack)}
+            onClick={() => toggleStack(stack)}
+            icon={STACK_ICONS[stack]}
+            label={stack}
+          />
+        ))}
       </div>
       {showHint && techStack.length === 0 && (
         <p style={{ marginTop: 10, fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.3)' }}>
@@ -335,38 +349,15 @@ export function StatusField({ value, onChange }: {
 }) {
   return (
     <div className="flex flex-wrap gap-2">
-      {ALL_STATUSES.map((status) => {
-        const selected = value === status;
-        return (
-          <motion.button
-            key={status}
-            type="button"
-            whileHover={{ y: -2, scale: 1.04 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onChange(selected ? '' : status)}
-            className="flex items-center gap-1.5"
-            style={{
-              fontFamily: "'EB Garamond', serif",
-              fontSize: '0.88rem',
-              letterSpacing: '0.04em',
-              padding: '6px 14px',
-              borderRadius: 2,
-              cursor: 'pointer',
-              border: selected ? '1px solid #d4af37' : '1px solid rgba(212,175,55,0.2)',
-              background: selected
-                ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06))'
-                : 'rgba(212,175,55,0.03)',
-              color: selected ? '#f0c040' : 'rgba(200,176,138,0.6)',
-              boxShadow: selected ? '0 0 10px rgba(212,175,55,0.15)' : 'none',
-              transition: 'all 0.2s',
-            }}
-          >
-            <span>{STATUS_ICONS[status]}</span>
-            {status}
-            {selected && <span style={{ marginLeft: 2, fontSize: '0.7rem' }}>✓</span>}
-          </motion.button>
-        );
-      })}
+      {ALL_STATUSES.map((status) => (
+        <ToggleChip
+          key={status}
+          selected={value === status}
+          onClick={() => onChange(value === status ? '' : status)}
+          icon={STATUS_ICONS[status]}
+          label={status}
+        />
+      ))}
     </div>
   );
 }
@@ -378,39 +369,62 @@ export function ProjectTypeField({ projectTypes, toggleProjectType }: {
 }) {
   return (
     <div className="flex flex-wrap gap-2">
-      {ALL_PROJECT_TYPES.map((type) => {
-        const selected = projectTypes.includes(type);
-        return (
-          <motion.button
-            key={type}
-            type="button"
-            whileHover={{ y: -2, scale: 1.04 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => toggleProjectType(type)}
-            className="flex items-center gap-1.5"
-            style={{
-              fontFamily: "'EB Garamond', serif",
-              fontSize: '0.88rem',
-              letterSpacing: '0.04em',
-              padding: '6px 14px',
-              borderRadius: 2,
-              cursor: 'pointer',
-              border: selected ? '1px solid #d4af37' : '1px solid rgba(212,175,55,0.2)',
-              background: selected
-                ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06))'
-                : 'rgba(212,175,55,0.03)',
-              color: selected ? '#f0c040' : 'rgba(200,176,138,0.6)',
-              boxShadow: selected ? '0 0 10px rgba(212,175,55,0.15)' : 'none',
-              transition: 'all 0.2s',
-            }}
-          >
-            <span>{PROJECT_ICONS[type]}</span>
-            {type}
-            {selected && <span style={{ marginLeft: 2, fontSize: '0.7rem' }}>✓</span>}
-          </motion.button>
-        );
-      })}
+      {ALL_PROJECT_TYPES.map((type) => (
+        <ToggleChip
+          key={type}
+          selected={projectTypes.includes(type)}
+          onClick={() => toggleProjectType(type)}
+          icon={PROJECT_ICONS[type]}
+          label={type}
+        />
+      ))}
     </div>
+  );
+}
+
+/* ── 폼 뒤로 가기 버튼 ── */
+export function BackButton({ onClick }: { onClick: () => void }) {
+  return (
+    <motion.div
+      className="relative z-[2] w-full max-w-[600px] px-6 mb-4 flex justify-end"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
+      <button
+        type="button"
+        onClick={onClick}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          fontFamily: "'Cinzel', serif",
+          fontSize: '0.7rem',
+          letterSpacing: '0.12em',
+          color: 'rgba(200,176,138,0.55)',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: 0,
+        }}
+      >
+        ← 뒤로
+      </button>
+    </motion.div>
+  );
+}
+
+/* ── 폼 제출 에러 박스 ── */
+export function SubmitError({ error }: { error: string }) {
+  if (!error) return null;
+  return (
+    <motion.div
+      className="error-box"
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      {error}
+    </motion.div>
   );
 }
 

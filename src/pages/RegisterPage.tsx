@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff } from 'lucide-react';
 import { FloatingParticles } from '../components/FloatingParticles';
+import { FieldError } from '../components/PortfolioFormShared';
 import { useRegisterForm } from '../hooks/useRegisterForm';
 
 export function RegisterPage() {
@@ -116,7 +117,7 @@ export function RegisterPage() {
                   required
                   className={`input-field ${touched.name && errors.name ? 'error' : ''}`}
                 />
-                <FieldErrorMsg show={touched.name && !!errors.name} message={errors.name} />
+                <FieldError show={touched.name && !!errors.name} message={errors.name} />
               </div>
 
               {/* 이메일 */}
@@ -131,7 +132,7 @@ export function RegisterPage() {
                   required
                   className={`input-field ${touched.email && errors.email ? 'error' : ''}`}
                 />
-                <FieldErrorMsg show={touched.email && !!errors.email} message={errors.email} />
+                <FieldError show={touched.email && !!errors.email} message={errors.email} />
               </div>
 
               {/* 비밀번호 */}
@@ -186,7 +187,7 @@ export function RegisterPage() {
                   )}
                 </AnimatePresence>
 
-                <FieldErrorMsg show={touched.password && !!errors.password} message={errors.password} />
+                <FieldError show={touched.password && !!errors.password} message={errors.password} />
               </div>
 
               {/* 비밀번호 확인 */}
@@ -229,7 +230,7 @@ export function RegisterPage() {
                     )}
                   </AnimatePresence>
                 </div>
-                <FieldErrorMsg show={touched.confirm && !!errors.confirm} message={errors.confirm} />
+                <FieldError show={touched.confirm && !!errors.confirm} message={errors.confirm} />
               </div>
 
               {/* 서밋 에러 */}
@@ -281,23 +282,5 @@ export function RegisterPage() {
 
       <div className="h-10" />
     </div>
-  );
-}
-
-function FieldErrorMsg({ show, message }: { show: boolean; message: string }) {
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ opacity: 0, y: -4, height: 0 }}
-          animate={{ opacity: 1, y: 0, height: 'auto' }}
-          exit={{ opacity: 0, y: -4, height: 0 }}
-          transition={{ duration: 0.2 }}
-          className="overflow-hidden"
-        >
-          <div className="field-error">{message}</div>
-        </motion.div>
-      )}
-    </AnimatePresence>
   );
 }

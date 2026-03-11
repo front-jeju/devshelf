@@ -6,6 +6,7 @@ import {
   BasicInfoFields, TechStackFields, LinksFields, AboutMeField,
   StatusField, ProjectTypeField,
   BookThemePicker, FormActionButtons, DoneScreen, GithubAutofillPanel,
+  BackButton, SubmitError,
 } from '../components/PortfolioFormShared';
 import { useGithubAutofill } from '../hooks/useGithubAutofill';
 import { useEditPortfolioForm } from '../hooks/useEditPortfolioForm';
@@ -90,32 +91,7 @@ export function EditPortfolioPage() {
       <div className="gold-top-line" />
 
       {/* 뒤로 가기 */}
-      <motion.div
-        className="relative z-[2] w-full max-w-[600px] px-6 mb-4 flex justify-end"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
-      >
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            fontFamily: "'Cinzel', serif",
-            fontSize: '0.7rem',
-            letterSpacing: '0.12em',
-            color: 'rgba(200,176,138,0.55)',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-          }}
-        >
-          ← 뒤로
-        </button>
-      </motion.div>
+      <BackButton onClick={() => navigate(-1)} />
 
       {/* 로고 */}
       <motion.div
@@ -240,15 +216,7 @@ export function EditPortfolioPage() {
               </div>
 
               {/* 에러 메시지 */}
-              {submitError && (
-                <motion.div
-                  className="error-box"
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  {submitError}
-                </motion.div>
-              )}
+              <SubmitError error={submitError} />
 
               <FormActionButtons
                 isLoading={isLoading}
