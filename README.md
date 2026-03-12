@@ -25,8 +25,6 @@
 
 ### 1.3 팀 구성
 
-실제 사진을 업로드해 주세요.
-
 <table>
   <tr>
     <th>김남희</th>
@@ -530,15 +528,10 @@ sequenceDiagram
 
 | 에러 | 원인 | 해결 |
 |---|---|---|
-| `BOOK_THEMES` 상수 중복 | `usePortfolioForm`과 `useEditPortfolioForm` 양쪽에 동일 상수 정의 | `src/data/bookThemes.ts`로 추출 후 양 훅에서 import |
-| 수정 폼 useEffect 무한루프 | `base.setForm`이 의존성 배열에 포함되어 렌더마다 참조 변경 | `eslint-disable react-hooks/exhaustive-deps` 처리 + `portfolioId`, `user?.uid`만 의존성으로 지정 |
-| `Portfolio` 타입 `label` 누락 | `...selectedTheme` spread 시 `label` 필드가 Firestore에 저장되지만 타입에 없음 | `types/index.ts`의 `Portfolio` 인터페이스에 `label?: string` 추가 |
-| 모바일 네비게이션 미구현 | 초기 Header에 모바일 메뉴 없음 | Framer Motion `AnimatePresence` + 햄버거 버튼으로 드롭다운 메뉴 구현 |
-| 샘플 데이터가 프로덕션에 노출 | `portfolios.json`이 환경 구분 없이 항상 병합 | `import.meta.env.DEV` 조건으로 개발 환경에서만 샘플 데이터 병합 |
-| 토글 버튼 스타일 3중 중복 | `TechStackFields`, `StatusField`, `ProjectTypeField`에 동일 버튼 스타일 반복 | `PortfolioFormShared.tsx`에 `ToggleChip` 내부 컴포넌트로 추출 후 세 필드에서 재사용 |
-| 뒤로 가기 버튼 중복 | `CreatePortfolioPage`와 `EditPortfolioPage`에 동일한 뒤로 가기 버튼 JSX 반복 | `PortfolioFormShared.tsx`에 `BackButton` 컴포넌트로 추출 |
-| 제출 에러 박스 중복 | 폼 페이지 두 곳에서 동일한 에러 애니메이션 블록 반복 | `PortfolioFormShared.tsx`에 `SubmitError` 컴포넌트로 추출 |
-| `FieldErrorMsg` 로컬 중복 정의 | `RegisterPage`에 `PortfolioFormShared`의 `FieldError`와 동일한 컴포넌트를 별도 정의 | 로컬 함수 제거 후 공통 `FieldError` import로 통일 |
+| 배포 후 검은 화면 (프로덕션 장애) | Netlify에 `VITE_FIREBASE_*` 환경변수 미설정 → Firebase SDK 초기화 실패 → 앱 전체 크래시 | `firebase.ts`에서 필수 환경변수 없으면 `auth`, `db`를 `null`로 export + `isConfigured` boolean 추가, OAuth 버튼 비활성화 처리 |
+| `AuthContext` Fast Refresh 오류 | 컴포넌트(`AuthProvider`)와 훅(`useAuth`)을 같은 파일에서 export → HMR이 훅을 컴포넌트로 인식 불가 | `useAuth` → `hooks/useAuth.ts`로 분리, 파일당 하나의 export 단위 원칙 준수 |
+| `useEffect` 내 `setState` 동기 호출 | `useEffect` 안에서 `setLoading(false)`를 동기 호출하여 "Calling setState synchronously within an effect" 경고 발생 | `useState(!!auth)`로 초기 상태를 선언 시점에 결정, effect 내 setState 제거 |
+| `useEditPortfolioForm` useEffect 무한루프 | `base.setForm`이 의존성 배열에 포함되어 렌더마다 새 참조 생성 → effect 무한 재실행 | `portfolioId`, `user?.uid`만 의존성으로 지정, `base.setForm`은 의존성 배제 (`eslint-disable` 주석 처리) |
 
 ---
 
@@ -615,10 +608,9 @@ sequenceDiagram
 
 팀원 개인 회고를 작성해 주세요.
 
-- **김남희**: 이번 프로젝트를 통해 크게 바뀐 점은 개발에 대한 태도였다. 나는 평소 생각이 앞서고 행동이 느린 편이었다. 하지만 실제 개발을 진행하면서 완벽한 설계를 기다리기보다 작은 기능이라도 먼저 구현하고 반복적으로 개선하는 방식이 훨씬 빠른 학습으로 이어진다는 것을 체감했다.
-‘개발자의 서재’를 만들면서 나는 단순히 하나의 서비스를 만든 것이 아니라, 아이디어를 실제 서비스로 구현하는 과정 자체를 경험할 수 있었다. 앞으로도 새로운 아이디어가 떠오르면 고민만 하기보다 먼저 만들어 보고, 사용자 경험을 개선하며 발전시키는 개발자가 되고 싶다.
-- **김성민**:
-- **김유진**:
-- **김지민**:
-- **이영미**:
-- **조현진**:
+- **김남희**: 이번 프로젝트를 통해 크게 바뀐 점은 개발에 대한 태도였다. 나는 평소 생각이 앞서고 행동이 느린 편이었다. 하지만 실제 개발을 진행하면서 완벽한 설계를 기다리기보다 작은 기능이라도 먼저 구현하고 반복적으로 개선하는 방식이 훨씬 빠른 학습으로 이어진다는 것을 체감했다. ‘개발자의 서재’를 만들면서 아이디어를 실제 서비스로 구현하는 과정 자체를 경험할 수 있었다. 앞으로도 새로운 아이디어가 떠오르면 고민만 하기보다 먼저 만들어 보고, 사용자 경험을 개선하며 발전시키는 개발자가 되고 싶다.
+- **김성민**: 
+- **김유진**: 나만의 포트폴리오 웹사이트를 직접 기획하고 개발해보며, 지금까지 해온 경험과 활동들을 하나의 공간에 정리할 수 있어서 의미 있는 시간이었다. 단순히 정보를 나열하는 것이 아니라 나의 관심사와 개성을 표현할 수 있는 디자인과 인터랙션을 고민하며 개발하는 과정이 흥미로웠다.
+- **김지민**: 
+- **이영미**: 이번 프로젝트를 통해 개발을 처음 접하는 입장에서 많은 도전과 배움이 있었다. 익숙하지 않은 기술과 환경 속에서 시행착오도 있었지만, 팀원들과 함께 문제를 해결해 나가면서 개발의 흐름과 협업의 중요성을 느낄 수 있었다. 특히 작은 기능이 완성되어 화면에 구현되는 경험이 큰 동기부여가 되었다. 앞으로도 꾸준히 학습하며 뷰티 분야와 기술을 연결하는 새로운 가능성을 만들어 보고 싶다.
+- **조현진**: 개발자 포트폴리오를 한곳에서 볼 수 있는 플랫폼이 있으면 좋겠다는 팀원의 아이디어를 직접 실현해볼 수 있어서 의미 있었다. 동시에 나만의 포트폴리오를 처음으로 만들어보며 부트캠프 동안 쌓아온 것들을 되돌아볼 수 있는 시간이 됐다.
