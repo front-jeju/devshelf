@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import {
   onAuthStateChanged,
   signOut,
@@ -7,40 +7,16 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from 'firebase/auth';
-import type { User } from 'firebase/auth';
 import { auth, githubProvider, googleProvider, isConfigured } from '../lib/firebase';
-
-interface AuthContextValue {
-  user: User | null;
-  loading: boolean;
-  isConfigured: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  loginWithGithub: () => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextValue>({
-  user: null,
-  loading: true,
-  isConfigured: false,
-  login: async () => {},
-  loginWithGithub: async () => {},
-  loginWithGoogle: async () => {},
-  register: async () => {},
-  logout: async () => {},
-});
+import { AuthContext } from './authContextDef';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<import('firebase/auth').User | null>(null);
+  // Firebase 미설정 시에는 인증 확인이 불필요하므로 초기값을 false로 설정
+  const [loading, setLoading] = useState(!!auth);
 
   useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
+    if (!auth) return;
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
@@ -67,8 +43,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!auth) throw Object.assign(new Error('Firebase 설정이 필요합니다.'), { code: 'firebase/not-configured' });
     const { user: newUser } = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(newUser, { displayName: name });
-    // updateProfile은 user 객체를 in-place로 변경하지만 onAuthStateChanged를 재발화하지 않으므로
-    // 수동으로 React 상태를 갱신해 displayName이 즉시 반영되도록 함
     setUser({ ...newUser });
   };
 
@@ -82,5 +56,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
-
-export const useAuth = () => useContext(AuthContext);

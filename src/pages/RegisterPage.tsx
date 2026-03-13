@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Eye, EyeOff } from 'lucide-react';
 import { FloatingParticles } from '../components/FloatingParticles';
+import { FieldError } from '../components/PortfolioFormShared';
 import { useRegisterForm } from '../hooks/useRegisterForm';
 
 export function RegisterPage() {
@@ -25,6 +27,29 @@ export function RegisterPage() {
       <FloatingParticles />
       <div className="page-overlay" />
       <div className="gold-top-line" />
+
+      {/* 뒤로 가기 */}
+      <motion.div
+        className="relative z-[2] w-full max-w-[460px] px-6 mb-4 flex justify-end"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <Link
+          to="/login"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            fontFamily: "'Cinzel', serif",
+            fontSize: '0.7rem',
+            letterSpacing: '0.12em',
+            color: 'rgba(200,176,138,0.55)',
+          }}
+        >
+          ← 로그인으로
+        </Link>
+      </motion.div>
 
       {/* 로고 */}
       <motion.div
@@ -62,7 +87,6 @@ export function RegisterPage() {
                   fontSize: '0.75rem',
                   color: 'rgba(200,176,138,0.5)',
                   letterSpacing: '0.25em',
-                  fontStyle: 'italic',
                   marginBottom: 8,
                 }}
               >
@@ -93,7 +117,7 @@ export function RegisterPage() {
                   required
                   className={`input-field ${touched.name && errors.name ? 'error' : ''}`}
                 />
-                <FieldErrorMsg show={touched.name && !!errors.name} message={errors.name} />
+                <FieldError show={touched.name && !!errors.name} message={errors.name} />
               </div>
 
               {/* 이메일 */}
@@ -108,7 +132,7 @@ export function RegisterPage() {
                   required
                   className={`input-field ${touched.email && errors.email ? 'error' : ''}`}
                 />
-                <FieldErrorMsg show={touched.email && !!errors.email} message={errors.email} />
+                <FieldError show={touched.email && !!errors.email} message={errors.email} />
               </div>
 
               {/* 비밀번호 */}
@@ -131,7 +155,7 @@ export function RegisterPage() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(200,176,138,0.5)', fontSize: '0.85rem', padding: 4 }}
                   >
-                    {showPassword ? '🙈' : '👁️'}
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
 
@@ -156,14 +180,14 @@ export function RegisterPage() {
                           />
                         ))}
                       </div>
-                      <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: passwordStrength.color, fontStyle: 'italic' }}>
+                      <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: passwordStrength.color }}>
                         보안 강도: {passwordStrength.label}
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
 
-                <FieldErrorMsg show={touched.password && !!errors.password} message={errors.password} />
+                <FieldError show={touched.password && !!errors.password} message={errors.password} />
               </div>
 
               {/* 비밀번호 확인 */}
@@ -188,7 +212,7 @@ export function RegisterPage() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(200,176,138,0.5)', fontSize: '0.85rem', padding: 4 }}
                   >
-                    {showConfirm ? '🙈' : '👁️'}
+                    {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
 
                   {/* 일치 뱃지 */}
@@ -206,7 +230,7 @@ export function RegisterPage() {
                     )}
                   </AnimatePresence>
                 </div>
-                <FieldErrorMsg show={touched.confirm && !!errors.confirm} message={errors.confirm} />
+                <FieldError show={touched.confirm && !!errors.confirm} message={errors.confirm} />
               </div>
 
               {/* 서밋 에러 */}
@@ -235,7 +259,7 @@ export function RegisterPage() {
             <div className="gold-divider-faint my-7" />
 
             <div className="text-center">
-              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.9rem', color: 'rgba(200,176,138,0.5)', fontStyle: 'italic' }}>
+              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.9rem', color: 'rgba(200,176,138,0.5)' }}>
                 이미 계정이 있으신가요?{' '}
               </span>
               <Link
@@ -258,23 +282,5 @@ export function RegisterPage() {
 
       <div className="h-10" />
     </div>
-  );
-}
-
-function FieldErrorMsg({ show, message }: { show: boolean; message: string }) {
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ opacity: 0, y: -4, height: 0 }}
-          animate={{ opacity: 1, y: 0, height: 'auto' }}
-          exit={{ opacity: 0, y: -4, height: 0 }}
-          transition={{ duration: 0.2 }}
-          className="overflow-hidden"
-        >
-          <div className="field-error">{message}</div>
-        </motion.div>
-      )}
-    </AnimatePresence>
   );
 }

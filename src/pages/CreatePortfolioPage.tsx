@@ -4,8 +4,11 @@ import { FloatingParticles } from '../components/FloatingParticles';
 import {
   SectionTitle,
   BasicInfoFields, TechStackFields, LinksFields, AboutMeField,
-  BookThemePicker, FormActionButtons, DoneScreen,
+  StatusField, ProjectTypeField,
+  BookThemePicker, FormActionButtons, DoneScreen, GithubAutofillPanel,
+  BackButton, SubmitError,
 } from '../components/PortfolioFormShared';
+import { useGithubAutofill } from '../hooks/useGithubAutofill';
 import { usePortfolioForm } from '../hooks/usePortfolioForm';
 
 export function CreatePortfolioPage() {
@@ -20,11 +23,17 @@ export function CreatePortfolioPage() {
     iframeLoading, setIframeLoading,
     selectedTheme,
     setField,
+    setForm,
     touch,
     toggleStack,
+    toggleProjectType,
     handleSubmit,
     navigate,
   } = usePortfolioForm();
+
+  const githubAutofill = useGithubAutofill(({ tagline, description, techStack }) => {
+    setForm((prev) => ({ ...prev, tagline, description, techStack }));
+  });
 
   if (done) {
     return (
@@ -48,6 +57,9 @@ export function CreatePortfolioPage() {
       <FloatingParticles />
       <div className="page-overlay" />
       <div className="gold-top-line" />
+
+      {/* 뒤로 가기 */}
+      <BackButton onClick={() => navigate(-1)} />
 
       {/* 로고 */}
       <motion.div
@@ -79,7 +91,7 @@ export function CreatePortfolioPage() {
           <div className="p-9 px-8">
             {/* 타이틀 */}
             <div className="text-center mb-7">
-              <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.25em', fontStyle: 'italic', marginBottom: 8 }}>
+              <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.25em', marginBottom: 8 }}>
                 — 나의 이야기를 서재에 —
               </div>
               <h1
@@ -94,25 +106,7 @@ export function CreatePortfolioPage() {
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
-              {/* ── 1. 기본 정보 ── */}
-              <div>
-                <SectionTitle>BASIC INFO</SectionTitle>
-                <BasicInfoFields
-                  fields={{ name: form.name, role: form.role, tagline: form.tagline }}
-                  touched={touched}
-                  errors={errors}
-                  onChange={(key, value) => setField(key, value)}
-                  onBlur={(key) => touch(key)}
-                />
-              </div>
-
-              {/* ── 2. 기술 스택 ── */}
-              <div>
-                <SectionTitle>TECH STACK</SectionTitle>
-                <TechStackFields techStack={form.techStack} toggleStack={toggleStack} showHint />
-              </div>
-
-              {/* ── 3. 링크 ── */}
+              {/* ── 1. 링크 ── */}
               <div>
                 <SectionTitle>LINKS</SectionTitle>
                 <LinksFields
@@ -122,7 +116,16 @@ export function CreatePortfolioPage() {
                   github={form.github}
                   onLiveDemoChange={(v) => { setField('liveDemo', v); setShowPreview(false); }}
                   onLiveDemoBlur={() => touch('liveDemo')}
-                  onGithubChange={(v) => setField('github', v)}
+                  onGithubChange={(v) => { setField('github', v); githubAutofill.handleUrlChange(v); }}
+                  githubChildren={
+                    <GithubAutofillPanel
+                      github={form.github}
+                      isAnalyzing={githubAutofill.isAnalyzing}
+                      error={githubAutofill.error}
+                      success={githubAutofill.success}
+                      onAutofill={() => githubAutofill.handleAutofill()}
+                    />
+                  }
                 >
                   {/* 미리보기 토글 버튼 */}
                   {form.liveDemo && /^https?:\/\/.+/.test(form.liveDemo) && !errors.liveDemo && (
@@ -179,7 +182,7 @@ export function CreatePortfolioPage() {
                             </div>
                             <div
                               className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap"
-                              style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.72rem', color: 'rgba(200,176,138,0.4)', fontStyle: 'italic' }}
+                              style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.72rem', color: 'rgba(200,176,138,0.4)' }}
                             >
                               {form.liveDemo}
                             </div>
@@ -200,7 +203,7 @@ export function CreatePortfolioPage() {
                                 transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
                                 style={{ width: 24, height: 24, border: '2px solid rgba(212,175,55,0.15)', borderTopColor: '#d4af37', borderRadius: '50%' }}
                               />
-                              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.4)', fontStyle: 'italic' }}>
+                              <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.4)' }}>
                                 불러오는 중...
                               </span>
                             </div>
@@ -217,7 +220,7 @@ export function CreatePortfolioPage() {
                           />
                         </div>
 
-                        <p style={{ marginTop: 6, fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.3)', fontStyle: 'italic' }}>
+                        <p style={{ marginTop: 6, fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: 'rgba(200,176,138,0.3)' }}>
                           * 일부 사이트는 보안 정책(X-Frame-Options)으로 인해 미리보기가 제한될 수 있습니다.
                         </p>
                       </motion.div>
@@ -226,13 +229,49 @@ export function CreatePortfolioPage() {
                 </LinksFields>
               </div>
 
-              {/* ── 4. 자기소개 ── */}
+              {/* ── 2. 기본 정보 ── */}
+              <div>
+                <SectionTitle>BASIC INFO</SectionTitle>
+                <BasicInfoFields
+                  fields={{ name: form.name, role: form.role, tagline: form.tagline }}
+                  touched={touched}
+                  errors={errors}
+                  onChange={(key, value) => setField(key, value)}
+                  onBlur={(key) => touch(key)}
+                />
+              </div>
+
+              {/* ── 3. 기술 스택 ── */}
+              <div>
+                <SectionTitle>TECH STACK</SectionTitle>
+                <TechStackFields techStack={form.techStack} toggleStack={toggleStack} showHint />
+              </div>
+
+              {/* ── 4. 상태 ── */}
+              <div>
+                <SectionTitle>STATUS</SectionTitle>
+                <StatusField
+                  value={form.status}
+                  onChange={(v) => setField('status', v)}
+                />
+              </div>
+
+              {/* ── 5. 프로젝트 유형 ── */}
+              <div>
+                <SectionTitle>PROJECT TYPE</SectionTitle>
+                <ProjectTypeField
+                  projectTypes={form.projectTypes}
+                  toggleProjectType={toggleProjectType}
+                />
+              </div>
+
+              {/* ── 6. 자기소개 ── */}
               <div>
                 <SectionTitle>ABOUT ME</SectionTitle>
                 <AboutMeField value={form.description} onChange={(v) => setField('description', v)} />
               </div>
 
-              {/* ── 5. 책 테마 ── */}
+              {/* ── 7. 책 테마 ── */}
               <div>
                 <SectionTitle>BOOK THEME</SectionTitle>
                 <BookThemePicker
@@ -245,15 +284,7 @@ export function CreatePortfolioPage() {
               </div>
 
               {/* 에러 메시지 */}
-              {submitError && (
-                <motion.div
-                  className="error-box"
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  {submitError}
-                </motion.div>
-              )}
+              <SubmitError error={submitError} />
 
               <FormActionButtons
                 isLoading={isLoading}

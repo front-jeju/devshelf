@@ -1,11 +1,32 @@
+/**
+ * BookShelf.tsx
+ * 포트폴리오 목록을 책장 형태로 표시하는 메인 컴포넌트입니다.
+ *
+ * 구성:
+ *   BookShelf  — 전체 책장 프레임 + 책 클릭 상태 관리
+ *   ShelfRow   — 책장의 한 행 (최대 BOOKS_PER_ROW개 책 + 장식용 빈 책)
+ *   DecorBook  — 양 끝에 배치되는 장식용 빈 책
+ *
+ * 책 클릭 상태 머신 (BookPhase):
+ *   null → 'cover' (BookCover 오버레이 표시)
+ *   'cover' → 'open' (OpenBook 오버레이로 전환)
+ *   'open' → null (닫기)
+ *
+ * 로직 흐름:
+ *   책 클릭 → handleSelect → selection = { portfolio, phase: 'cover' }
+ *   BookCover에서 "OPEN" 클릭 → handleOpen → phase = 'open'
+ *   OpenBook에서 ESC/닫기 → handleClose → selection = null
+ */
 import { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookCard } from './BookCard';
 import { BookCover } from './BookCover';
 import { OpenBook } from './OpenBook';
-import type { Portfolio, TechStack } from '../../types';
+import type { Portfolio, TechStack, DevStatus, ProjectType } from '../../types';
 
+/** 책 상세 보기의 단계: 'cover' = 표지 오버레이, 'open' = 펼쳐진 책 모달 */
 type BookPhase = 'cover' | 'open';
+/** 현재 선택된 책과 단계를 함께 저장하는 상태 타입 */
 interface BookSelection {
   portfolio: Portfolio;
   phase: BookPhase;
@@ -14,12 +35,16 @@ interface BookSelection {
 interface BookShelfProps {
   portfolios: Portfolio[];
   selectedStack: TechStack | null;
+  selectedStatus: DevStatus | null;
+  selectedProject: ProjectType | null;
   onDelete: (id: string) => void;
 }
 
-function ShelfRow({ portfolios, selectedStack, rowIndex, onSelect }: {
+function ShelfRow({ portfolios, selectedStack, selectedStatus, selectedProject, rowIndex, onSelect }: {
   portfolios: Portfolio[];
   selectedStack: TechStack | null;
+  selectedStatus: DevStatus | null;
+  selectedProject: ProjectType | null;
   rowIndex: number;
   onSelect: (portfolio: Portfolio) => void;
 }) {
@@ -42,7 +67,10 @@ function ShelfRow({ portfolios, selectedStack, rowIndex, onSelect }: {
 
         {/* 실제 포트폴리오 책들 */}
         {portfolios.map((portfolio) => {
-          const isFiltered = selectedStack !== null && !portfolio.techStack.includes(selectedStack);
+          const isFiltered =
+            (selectedStack !== null && !portfolio.techStack.includes(selectedStack)) ||
+            (selectedStatus !== null && portfolio.status !== selectedStatus) ||
+            (selectedProject !== null && !portfolio.projectTypes?.includes(selectedProject));
           return (
             <BookCard
               key={portfolio.id}
@@ -115,7 +143,7 @@ function DecorBook({ color, width, height }: { color: string; width: number; hei
 
 const BOOKS_PER_ROW = 6;
 
-export function BookShelf({ portfolios, selectedStack, onDelete }: BookShelfProps) {
+export function BookShelf({ portfolios, selectedStack, selectedStatus, selectedProject, onDelete }: BookShelfProps) {
   const [selection, setSelection] = useState<BookSelection | null>(null);
 
   const handleSelect = useCallback((portfolio: Portfolio) => {
@@ -167,7 +195,7 @@ export function BookShelf({ portfolios, selectedStack, onDelete }: BookShelfProp
           </h2>
           <div style={{ height: 1, flex: 1, maxWidth: 120, background: 'linear-gradient(90deg, rgba(212,175,55,0.4), transparent)' }} />
         </div>
-        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.6)', fontStyle: 'italic' }}>
+        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.6)' }}>
           {portfolios.length}권의 이야기가 당신을 기다리고 있습니다 · 책에 마우스를 올려보세요
         </p>
       </motion.div>
@@ -209,6 +237,8 @@ export function BookShelf({ portfolios, selectedStack, onDelete }: BookShelfProp
               key={idx}
               portfolios={rowPortfolios}
               selectedStack={selectedStack}
+              selectedStatus={selectedStatus}
+              selectedProject={selectedProject}
               rowIndex={idx}
               onSelect={handleSelect}
             />

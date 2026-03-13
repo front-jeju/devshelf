@@ -1,10 +1,27 @@
 import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { TechStack } from '../types';
+import { Search, Briefcase, GraduationCap, TrendingUp, Gamepad2, Users, Zap, Globe } from 'lucide-react';
+import type { TechStack, DevStatus, ProjectType } from '../types';
 import { ROLES } from '../data/roles';
 import { ALL_STACKS, STACK_ICONS } from '../data/stacks';
 import { BOOK_THEMES } from '../data/bookThemes';
 import type { BookTheme } from '../data/bookThemes';
+
+const ALL_STATUSES: DevStatus[] = ['취준', '재직', '학생', '이직준비'];
+const STATUS_ICONS: Record<DevStatus, ReactNode> = {
+  취준: <Search size={13} />,
+  재직: <Briefcase size={13} />,
+  학생: <GraduationCap size={13} />,
+  이직준비: <TrendingUp size={13} />,
+};
+
+const ALL_PROJECT_TYPES: ProjectType[] = ['토이', '팀', '사이드', '오픈소스'];
+const PROJECT_ICONS: Record<ProjectType, ReactNode> = {
+  토이: <Gamepad2 size={13} />,
+  팀: <Users size={13} />,
+  사이드: <Zap size={13} />,
+  오픈소스: <Globe size={13} />,
+};
 
 /* ── 섹션 구분 제목 컴포넌트 ── */
 export function SectionTitle({ children }: { children: ReactNode }) {
@@ -141,7 +158,7 @@ export function BasicInfoFields({ fields, touched, errors, onChange, onBlur }: {
       <div>
         <div className="flex justify-between items-center mb-2">
           <label className="label-field" style={{ marginBottom: 0 }}>한 줄 소개 <span style={{ color: '#d4af37' }}>*</span></label>
-          <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: fields.tagline.length > 60 ? '#f87171' : 'rgba(200,176,138,0.35)', fontStyle: 'italic' }}>
+          <span style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.75rem', color: fields.tagline.length > 60 ? '#f87171' : 'rgba(200,176,138,0.35)' }}>
             {fields.tagline.length} / 60
           </span>
         </div>
@@ -159,6 +176,43 @@ export function BasicInfoFields({ fields, touched, errors, onChange, onBlur }: {
   );
 }
 
+/* ── 토글 버튼 칩 (TechStackFields / StatusField / ProjectTypeField 공통) ── */
+function ToggleChip({ selected, onClick, icon, label }: {
+  selected: boolean;
+  onClick: () => void;
+  icon: ReactNode;
+  label: string;
+}) {
+  return (
+    <motion.button
+      type="button"
+      whileHover={{ y: -2, scale: 1.04 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={onClick}
+      className="flex items-center gap-1.5"
+      style={{
+        fontFamily: "'EB Garamond', serif",
+        fontSize: '0.88rem',
+        letterSpacing: '0.04em',
+        padding: '6px 14px',
+        borderRadius: 2,
+        cursor: 'pointer',
+        border: selected ? '1px solid #d4af37' : '1px solid rgba(212,175,55,0.2)',
+        background: selected
+          ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06))'
+          : 'rgba(212,175,55,0.03)',
+        color: selected ? '#f0c040' : 'rgba(200,176,138,0.6)',
+        boxShadow: selected ? '0 0 10px rgba(212,175,55,0.15)' : 'none',
+        transition: 'all 0.2s',
+      }}
+    >
+      <span>{icon}</span>
+      {label}
+      {selected && <span style={{ marginLeft: 2, fontSize: '0.7rem' }}>✓</span>}
+    </motion.button>
+  );
+}
+
 /* ── 기술 스택 필드 ── */
 export function TechStackFields({ techStack, toggleStack, showHint = false }: {
   techStack: TechStack[];
@@ -168,41 +222,18 @@ export function TechStackFields({ techStack, toggleStack, showHint = false }: {
   return (
     <>
       <div className="flex flex-wrap gap-2">
-        {ALL_STACKS.map((stack) => {
-          const selected = techStack.includes(stack);
-          return (
-            <motion.button
-              key={stack}
-              type="button"
-              whileHover={{ y: -2, scale: 1.04 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => toggleStack(stack)}
-              className="flex items-center gap-1.5"
-              style={{
-                fontFamily: "'EB Garamond', serif",
-                fontSize: '0.88rem',
-                letterSpacing: '0.04em',
-                padding: '6px 14px',
-                borderRadius: 2,
-                cursor: 'pointer',
-                border: selected ? '1px solid #d4af37' : '1px solid rgba(212,175,55,0.2)',
-                background: selected
-                  ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06))'
-                  : 'rgba(212,175,55,0.03)',
-                color: selected ? '#f0c040' : 'rgba(200,176,138,0.6)',
-                boxShadow: selected ? '0 0 10px rgba(212,175,55,0.15)' : 'none',
-                transition: 'all 0.2s',
-              }}
-            >
-              <span>{STACK_ICONS[stack]}</span>
-              {stack}
-              {selected && <span style={{ marginLeft: 2, fontSize: '0.7rem' }}>✓</span>}
-            </motion.button>
-          );
-        })}
+        {ALL_STACKS.map((stack) => (
+          <ToggleChip
+            key={stack}
+            selected={techStack.includes(stack)}
+            onClick={() => toggleStack(stack)}
+            icon={STACK_ICONS[stack]}
+            label={stack}
+          />
+        ))}
       </div>
       {showHint && techStack.length === 0 && (
-        <p style={{ marginTop: 10, fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.3)', fontStyle: 'italic' }}>
+        <p style={{ marginTop: 10, fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.3)' }}>
           사용하는 기술 스택을 선택하세요 (복수 선택 가능)
         </p>
       )}
@@ -211,7 +242,7 @@ export function TechStackFields({ techStack, toggleStack, showHint = false }: {
 }
 
 /* ── 링크 필드 (포트폴리오 URL + GitHub) ── */
-export function LinksFields({ liveDemo, liveDemoTouched, liveDemoError, github, onLiveDemoChange, onLiveDemoBlur, onGithubChange, children }: {
+export function LinksFields({ liveDemo, liveDemoTouched, liveDemoError, github, onLiveDemoChange, onLiveDemoBlur, onGithubChange, children, githubChildren }: {
   liveDemo: string;
   liveDemoTouched: boolean;
   liveDemoError: string;
@@ -220,6 +251,7 @@ export function LinksFields({ liveDemo, liveDemoTouched, liveDemoError, github, 
   onLiveDemoBlur: () => void;
   onGithubChange: (v: string) => void;
   children?: ReactNode;
+  githubChildren?: ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-3.5">
@@ -239,7 +271,7 @@ export function LinksFields({ liveDemo, liveDemoTouched, liveDemoError, github, 
       <div>
         <label className="label-field">
           GitHub URL{' '}
-          <span style={{ fontFamily: "'EB Garamond', serif", letterSpacing: 0, fontStyle: 'italic', color: 'rgba(200,176,138,0.4)' }}>(선택)</span>
+          <span style={{ fontFamily: "'EB Garamond', serif", letterSpacing: 0, color: 'rgba(200,176,138,0.4)' }}>(선택)</span>
         </label>
         <input
           type="url"
@@ -248,6 +280,7 @@ export function LinksFields({ liveDemo, liveDemoTouched, liveDemoError, github, 
           placeholder="https://github.com/username"
           className="input-field"
         />
+        {githubChildren}
       </div>
     </div>
   );
@@ -282,7 +315,7 @@ export function BookThemePicker({ name, role, themeIdx, selectedTheme, onThemeCh
     <div className="flex gap-4 items-center">
       <MiniBook name={name} role={role} theme={selectedTheme} />
       <div className="flex-1">
-        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.82rem', color: 'rgba(200,176,138,0.5)', fontStyle: 'italic', marginBottom: 12 }}>
+        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.82rem', color: 'rgba(200,176,138,0.5)', marginBottom: 12 }}>
           서재에 꽂힐 당신의 책 색상을 골라보세요.
         </p>
         <div className="flex flex-wrap gap-2">
@@ -320,6 +353,92 @@ export function BookThemePicker({ name, role, themeIdx, selectedTheme, onThemeCh
   );
 }
 
+/* ── 상태 선택 필드 ── */
+export function StatusField({ value, onChange }: {
+  value: DevStatus | '';
+  onChange: (v: DevStatus | '') => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {ALL_STATUSES.map((status) => (
+        <ToggleChip
+          key={status}
+          selected={value === status}
+          onClick={() => onChange(value === status ? '' : status)}
+          icon={STATUS_ICONS[status]}
+          label={status}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ── 프로젝트 유형 선택 필드 ── */
+export function ProjectTypeField({ projectTypes, toggleProjectType }: {
+  projectTypes: ProjectType[];
+  toggleProjectType: (type: ProjectType) => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {ALL_PROJECT_TYPES.map((type) => (
+        <ToggleChip
+          key={type}
+          selected={projectTypes.includes(type)}
+          onClick={() => toggleProjectType(type)}
+          icon={PROJECT_ICONS[type]}
+          label={type}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ── 폼 뒤로 가기 버튼 ── */
+export function BackButton({ onClick }: { onClick: () => void }) {
+  return (
+    <motion.div
+      className="relative z-[2] w-full max-w-[600px] px-6 mb-4 flex justify-end"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
+      <button
+        type="button"
+        onClick={onClick}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          fontFamily: "'Cinzel', serif",
+          fontSize: '0.7rem',
+          letterSpacing: '0.12em',
+          color: 'rgba(200,176,138,0.55)',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: 0,
+        }}
+      >
+        ← 뒤로
+      </button>
+    </motion.div>
+  );
+}
+
+/* ── 폼 제출 에러 박스 ── */
+export function SubmitError({ error }: { error: string }) {
+  if (!error) return null;
+  return (
+    <motion.div
+      className="error-box"
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      {error}
+    </motion.div>
+  );
+}
+
 /* ── 폼 액션 버튼 (취소 / 제출) ── */
 export function FormActionButtons({ isLoading, onCancel, loadingText, submitText }: {
   isLoading: boolean;
@@ -352,6 +471,94 @@ export function FormActionButtons({ isLoading, onCancel, loadingText, submitText
   );
 }
 
+/* ── GitHub AI 자동완성 패널 ── */
+export function GithubAutofillPanel({ github, isAnalyzing, error, success, onAutofill }: {
+  github: string;
+  isAnalyzing: boolean;
+  error: string;
+  success: boolean;
+  onAutofill: () => void;
+}) {
+  const hasValidRepo = /^https:\/\/github\.com\/.+\/.+/.test(github);
+  const isDisabled = isAnalyzing || !hasValidRepo;
+
+  return (
+    <div className="mt-2.5 flex flex-col gap-2">
+      <div
+        style={{
+          border: `1px solid ${hasValidRepo ? 'rgba(212,175,55,0.35)' : 'rgba(212,175,55,0.12)'}`,
+          borderRadius: 4,
+          background: hasValidRepo ? 'rgba(212,175,55,0.06)' : 'rgba(212,175,55,0.02)',
+          padding: '10px 14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          transition: 'all 0.2s',
+        }}
+      >
+        <div>
+          <div style={{ fontFamily: "'Cinzel', serif", fontSize: '0.65rem', letterSpacing: '0.16em', color: hasValidRepo ? 'rgba(212,175,55,0.8)' : 'rgba(212,175,55,0.35)', marginBottom: 3, transition: 'color 0.2s' }}>
+            AI 자동완성
+          </div>
+          <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: hasValidRepo ? 'rgba(200,176,138,0.5)' : 'rgba(200,176,138,0.25)', transition: 'color 0.2s' }}>
+            {hasValidRepo ? '기술 스택 · 소개 · 한줄 소개를 자동으로 채웁니다' : 'GitHub 레포 URL을 입력하면 자동완성이 활성화됩니다'}
+          </div>
+        </div>
+        <motion.button
+          type="button"
+          onClick={onAutofill}
+          disabled={isDisabled}
+          whileHover={!isDisabled ? { scale: 1.03 } : {}}
+          whileTap={!isDisabled ? { scale: 0.97 } : {}}
+          style={{
+            fontFamily: "'Cinzel', serif",
+            fontSize: '0.65rem',
+            letterSpacing: '0.14em',
+            fontWeight: 700,
+            padding: '8px 16px',
+            borderRadius: 3,
+            border: `1px solid ${isDisabled ? 'rgba(212,175,55,0.2)' : 'rgba(212,175,55,0.6)'}`,
+            background: isDisabled
+              ? 'rgba(212,175,55,0.02)'
+              : 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.1))',
+            color: isDisabled ? 'rgba(200,176,138,0.2)' : '#d4af37',
+            cursor: isDisabled ? 'not-allowed' : 'pointer',
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            transition: 'all 0.2s',
+          }}
+        >
+          {isAnalyzing && (
+            <motion.span
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              style={{ display: 'inline-block', width: 9, height: 9, border: '1.5px solid rgba(212,175,55,0.2)', borderTopColor: '#d4af37', borderRadius: '50%' }}
+            />
+          )}
+          {isAnalyzing ? '분석 중...' : '자동완성 →'}
+        </motion.button>
+      </div>
+      <AnimatePresence>
+        {error && (
+          <motion.p key="err" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+            style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(248,113,113,0.8)', margin: 0 }}>
+            {error}
+          </motion.p>
+        )}
+        {success && (
+          <motion.p key="ok" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+            style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(52,211,153,0.8)', margin: 0 }}>
+            ✓ 자동완성 완료 — 내용을 확인하고 필요 시 수정해주세요.
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 /* ── 완료 화면 ── */
 export function DoneScreen({ name, role, theme, subtitle, title, description, onNavigate }: {
   name: string;
@@ -377,7 +584,7 @@ export function DoneScreen({ name, role, theme, subtitle, title, description, on
       >
         <MiniBook name={name} role={role} theme={theme} />
       </motion.div>
-      <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.2em', fontStyle: 'italic', marginBottom: 10 }}>
+      <div style={{ fontFamily: "'EB Garamond', serif", fontSize: '0.8rem', color: 'rgba(200,176,138,0.5)', letterSpacing: '0.2em', marginBottom: 10 }}>
         {subtitle}
       </div>
       <h2
@@ -386,7 +593,7 @@ export function DoneScreen({ name, role, theme, subtitle, title, description, on
       >
         {title}
       </h2>
-      <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.7)', fontStyle: 'italic', lineHeight: 1.7, marginBottom: 32 }}>
+      <p style={{ fontFamily: "'EB Garamond', serif", fontSize: '1rem', color: 'rgba(200,176,138,0.7)', lineHeight: 1.7, marginBottom: 32 }}>
         {description}
       </p>
       <motion.button

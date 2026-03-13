@@ -1,14 +1,30 @@
+/**
+ * BookCover.tsx
+ * 책을 클릭했을 때 나타나는 '표지 오버레이' 컴포넌트입니다.
+ * BookShelf의 phase='cover' 단계에서 표시됩니다.
+ *
+ * 역할:
+ *   - 선택된 포트폴리오의 이름·역할·태그라인을 표지 디자인으로 보여줍니다.
+ *   - 표지 클릭 → onOpen() → BookShelf에서 phase='open' (OpenBook)으로 전환합니다.
+ *   - ESC 키 또는 배경 클릭 → onClose() → 오버레이를 닫습니다.
+ *
+ * 로직 흐름:
+ *   useEffect로 keydown 이벤트 리스너 등록 → ESC 감지 → onClose()
+ *   배경(motion.div) 클릭 → onClose()
+ *   표지(motion.div) 클릭 → e.stopPropagation() 후 onOpen()
+ */
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import type { Portfolio } from '../../types';
 
 interface BookCoverProps {
   portfolio: Portfolio;
-  onOpen: () => void;
-  onClose: () => void;
+  onOpen: () => void;   // 표지 클릭 시 호출 → OpenBook으로 전환
+  onClose: () => void;  // ESC/배경 클릭 시 호출 → 오버레이 닫기
 }
 
 export function BookCover({ portfolio, onOpen, onClose }: BookCoverProps) {
+  // ESC 키로 오버레이를 닫는 키보드 이벤트 등록
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -223,7 +239,6 @@ export function BookCover({ portfolio, onOpen, onClose }: BookCoverProps) {
                 style={{
                   fontFamily: "'EB Garamond', serif",
                   fontSize: '0.86rem',
-                  fontStyle: 'italic',
                   color: `${portfolio.accentColor}cc`,
                   letterSpacing: '0.08em',
                   lineHeight: 1.4,
@@ -240,7 +255,6 @@ export function BookCover({ portfolio, onOpen, onClose }: BookCoverProps) {
                     fontSize: '0.76rem',
                     color: `${portfolio.accentColor}58`,
                     lineHeight: 1.65,
-                    fontStyle: 'italic',
                     marginTop: 2,
                   }}
                 >

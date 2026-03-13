@@ -1,14 +1,35 @@
+/**
+ * BookCard.tsx
+ * 책장에 꽂혀있는 책 한 권을 표현하는 컴포넌트입니다.
+ *
+ * 시각적 특징:
+ *   - 책 등(spine)이 세로로 표시되며 이름·역할이 rotated 텍스트로 렌더링됩니다.
+ *   - portfolio.spineColor / coverColor / accentColor로 책마다 고유한 색상을 가집니다.
+ *   - featured=true인 경우 오른쪽 상단에 황금 점 배지가 표시됩니다.
+ *
+ * 상태:
+ *   isHovered — 마우스 오버 시 책이 왼쪽으로 튀어나오는 3D 효과 활성화
+ *
+ * 로직 흐름:
+ *   hover → isHovered=true → 책 x:-12, rotateY:8, 그림자 강조
+ *   isFiltered=true → opacity/saturation 감소, 클릭 비활성화
+ *   클릭 → onSelect(portfolio) → BookShelf에서 BookCover 오버레이 표시
+ *
+ * memo로 감싸진 이유:
+ *   책이 많을 때 FilterBar 클릭마다 전체 재렌더를 방지합니다.
+ */
 import { useState, memo } from 'react';
 import { motion } from 'framer-motion';
 import type { Portfolio } from '../../types';
 
 interface BookCardProps {
   portfolio: Portfolio;
-  isFiltered: boolean;
-  onSelect: (portfolio: Portfolio) => void;
+  isFiltered: boolean;  // true면 현재 필터 조건에 맞지 않아 흐리게 표시
+  onSelect: (portfolio: Portfolio) => void; // 클릭 시 BookShelf에 선택 알림
 }
 
 export const BookCard = memo(function BookCard({ portfolio, isFiltered, onSelect }: BookCardProps) {
+  // 마우스 오버 여부 (3D 튀어나오기 효과 제어)
   const [isHovered, setIsHovered] = useState(false);
 
   return (

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import type { GuestbookMessage } from '../types';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { addGuestbookMessage, updateGuestbookMessage, deleteGuestbookMessage, subscribeGuestbookMessages } from '../lib/guestbookService';
 
 export function Footer() {
@@ -97,7 +97,7 @@ export function Footer() {
           <div className="h-px w-[50px] bg-gradient-to-r from-gold/40 to-transparent" />
         </div>
 
-        <p className="font-display text-[1.1rem] italic text-parchment-dim/60 mb-6 leading-[1.8]">
+        <p className="font-display text-[1.1rem] text-parchment-dim/60 mb-6 leading-[1.8]">
           이 서재를 방문한 흔적을 남겨주세요.
           <br />당신의 한 마디로 누군가의 이야기를 시작할 수 있습니다.
         </p>
@@ -118,7 +118,7 @@ export function Footer() {
               className={`input-field mb-1 ${errors.name ? 'error' : ''}`}
             />
             {errors.name && (
-              <p className="font-body text-[0.78rem] italic text-red-400/80 mb-2 pl-1">이름을 입력해주세요.</p>
+              <p className="font-body text-[0.78rem] text-red-400/80 mb-2 pl-1">이름을 입력해주세요.</p>
             )}
 
             <textarea
@@ -130,7 +130,7 @@ export function Footer() {
               className={`input-field resize-none ${errors.text ? 'error' : ''}`}
             />
             {errors.text && (
-              <p className="font-body text-[0.78rem] italic text-red-400/80 mt-1 pl-1">메시지를 입력해주세요.</p>
+              <p className="font-body text-[0.78rem] text-red-400/80 mt-1 pl-1">메시지를 입력해주세요.</p>
             )}
 
             <div className="flex justify-between items-center mt-2.5">
@@ -153,7 +153,7 @@ export function Footer() {
           </div>
         ) : (
           <div className="rounded bg-gradient-to-br from-gold/5 to-gold/[0.02] border border-gold/20 px-6 py-6 text-center">
-            <p className="font-display text-[0.95rem] italic text-parchment-dim/50 mb-4">
+            <p className="font-display text-[0.95rem] text-parchment-dim/50 mb-4">
               방명록은 로그인한 사용자만 작성할 수 있습니다.
             </p>
             <Link to="/login">
@@ -237,7 +237,7 @@ export function Footer() {
                         </div>
                       </div>
                     ) : (
-                      <p className="font-body text-[0.9rem] italic text-parchment-dim/70 leading-[1.6] m-0">
+                      <p className="font-body text-[0.9rem] text-parchment-dim/70 leading-[1.6] m-0">
                         {msg.message}
                       </p>
                     )}
@@ -254,27 +254,20 @@ export function Footer() {
         <div className="gold-gradient-text mb-2 font-magic text-[0.85rem] font-bold tracking-[0.15em]">
           DEVSHELF
         </div>
-        <p className="font-body text-[0.8rem] text-parchment-dim/40 italic mb-4">
+        <p className="font-body text-[0.8rem] text-parchment-dim/40 mb-4">
           개발자의 서재 — 모든 코드는 하나의 이야기다
         </p>
         <div className="flex justify-center gap-6 mb-5">
           <Link to="/shelf" className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200">
             The Shelf
           </Link>
-          <Link to="/" className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200">
+          <Link to="/#about" onClick={(e) => { e.preventDefault(); document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }); }} className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200">
             Our Story
           </Link>
-          <a
-            href="#guestbook"
-            onClick={(e) => { e.preventDefault(); document.getElementById('guestbook')?.scrollIntoView({ behavior: 'smooth' }); }}
-            className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200"
-          >
+          <Link to="/#guestbook" onClick={(e) => { e.preventDefault(); document.getElementById('guestbook')?.scrollIntoView({ behavior: 'smooth' }); }} className="font-magic text-[0.72rem] tracking-[0.1em] text-parchment-dim/40 transition-colors duration-200">
             Guestbook
-          </a>
+          </Link>
         </div>
-        <p className="font-body text-[0.75rem] text-parchment-dim/25">
-          MMXXVI · Built with React & Framer Motion
-        </p>
       </div>
     </footer>
   );

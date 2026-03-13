@@ -1,7 +1,25 @@
+/**
+ * useRegisterForm.ts
+ * 회원가입 페이지(RegisterPage)의 폼 상태·유효성 검사·제출 로직을 담당하는 훅입니다.
+ *
+ * 유효성 검사 항목 (validate 함수):
+ *   name     — 최소 2자
+ *   email    — 이메일 형식 정규식
+ *   password — 최소 8자 + 영문·숫자 모두 포함
+ *   confirm  — password와 일치
+ *
+ * passwordStrength:
+ *   비밀번호 강도를 4단계(약함/보통/양호/강함)로 계산해 UI 바 색상에 사용합니다.
+ *
+ * 로직 흐름:
+ *   handleBlur(field) → touched 상태 업데이트 → 에러 메시지 표시 시작
+ *   handleSubmit → touchAll() → isFormValid 체크 → register() → / 로 navigate
+ *   실패 시 → Firebase 에러 코드별 한국어 메시지를 submitError에 저장
+ */
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from './useAuth';
 
 interface FieldError {
   name: string;
