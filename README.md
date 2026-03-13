@@ -137,8 +137,7 @@
 
 ## 3. 요구사항 명세와 기능 명세
 
-```
-mermaid
+```mermaid
 mindmap
   root((DevShelf))
     서재 탐색
